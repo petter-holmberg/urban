@@ -38,16 +38,16 @@
 #include "urbfont.h"
 #include <algorithm>
 #include <allegro.h>
-#include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
+#include <cmath>
+#include <cstdio>
+#include <cstdlib>
 
 #define SCREEN_HEIGHT 240
 
 #define LIGHT_SIZE 128.0
 
 #define cblit(bmp, dest, x, y) \
-    masked_blit(bmp, dest, 0, 0, x - bmp->w / 2, y, bmp->w, bmp->h)
+    masked_blit(bmp, dest, 0, 0, (x) - (bmp)->w / 2, y, (bmp)->w, (bmp)->h)
 
 typedef unsigned char uchar;
 
@@ -110,55 +110,66 @@ const char* special_thanks = "\n"
                              "  PLAY URBAN";
 
 uchar lightmap[256 * 256] = {};
-BITMAP* _buffer_ = NULL;
-BITMAP* heightmap = NULL;
+BITMAP* _buffer_ = nullptr;
+BITMAP* heightmap = nullptr;
 
 static void InitLightmap()
 {
-    float nx, ny, nz;
+    float nx = NAN;
+    float ny = NAN;
+    float nz = NAN;
     static int first = 1;
 
-    if (!first)
+    if (first == 0) {
         return;
+    }
 
     first = 0;
 
-    for (int y = 0; y < 256; y++)
+    for (int y = 0; y < 256; y++) {
         for (int x = 0; x < 256; x++) {
             nx = ((x - 128) / LIGHT_SIZE);
             ny = ((y - 128) / LIGHT_SIZE);
             nz = 1 - sqrt(nx * nx + ny * ny);
 
-            if (nz < 0)
+            if (nz < 0) {
                 nz = 0;
+            }
 
-            lightmap[x + y * 256] = (uchar)(std::min(255.0f, nz * 191 + nz * nz * nz * nz * nz * nz * nz * nz * nz * 64));
+            lightmap[x + y * 256] = (uchar)(std::min(255.0F, nz * 191 + nz * nz * nz * nz * nz * nz * nz * nz * nz * 64));
         }
+    }
 }
 
 static void DoBump(BITMAP* hmap, int starty, int stopy)
 {
-    int nx, ny;
-    int rx, ry;
-    int nx1, ny1;
+    int nx = 0;
+    int ny = 0;
+    int rx = 0;
+    int ry = 0;
+    int nx1 = 0;
+    int ny1 = 0;
     int lval = 0;
-    unsigned int i;
+    unsigned int i = 0;
 
-    if (starty < 1)
+    if (starty < 1) {
         starty = 1;
+    }
 
-    if (stopy > SCREEN_HEIGHT - 2)
+    if (stopy > SCREEN_HEIGHT - 2) {
         stopy = SCREEN_HEIGHT - 2;
+    }
 
-    for (int y = starty; y < stopy; y++)
+    for (int y = starty; y < stopy; y++) {
         for (int x = 1; x < 319; x++) {
 
             nx = hmap->line[y][x + 1] - hmap->line[y][x - 1];
             ny = hmap->line[y + 1][x] - hmap->line[y - 1][x];
 
             for (i = 0, lval = 0; i < NUM_LIGHTS; i++) {
-                if (LI[i].enabled == 0)
+                if (LI[i].enabled == 0) {
                     continue;
+                }
 
                 rx = x - LI[i].x;
                 ry = y - LI[i].y;
@@ -166,23 +177,29 @@ static void DoBump(BITMAP* hmap, int starty, int stopy)
                 nx1 = nx - (rx - 128);
                 ny1 = ny - (ry - 128);
 
-                if (nx1 > 255 || nx1 < 0)
+                if (nx1 > 255 || nx1 < 0) {
                     nx1 = 255;
+                }
 
-                if (ny1 > 255 || ny1 < 0)
+                if (ny1 > 255 || ny1 < 0) {
                     ny1 = 255;
+                }
                 lval += lightmap[nx1 + ny1 * 256];
             }
-            if (lval > 255)
+            if (lval > 255) {
                 lval = 255;
+            }
             putpixel(_buffer_, x, y, lval);
         }
+    }
 }
 
-static BITMAP* morf(BITMAP* source, BITMAP* dest, int starty, int stopy, int numframes)
+static auto morf(BITMAP* source, BITMAP* dest, int starty, int stopy, int numframes) -> BITMAP*
 {
-    int i, j, k;
-    BITMAP* tmp;
+    int i = 0;
+    int j = 0;
+    int k = 0;
+    BITMAP* tmp = nullptr;
 
     tmp = create_bitmap(source->w, source->h);
 
@@ -191,15 +208,17 @@ static BITMAP* morf(BITMAP* source, BITMAP* dest, int starty, int stopy, int num
 #define _T (tmp->line[j][i])
 
     for (k = 1; k <= numframes; k++) {
-        for (j = starty; j < stopy; j++)
+        for (j = starty; j < stopy; j++) {
             for (i = 0; i < 320; i++) {
                 _T = _S + (int)((float)(_D - _S) * ((float)k / (float)numframes));
             }
+        }
         DoBump(tmp, starty + 1, stopy - 1);
         blit(_buffer_, screen, 0, starty, 0, starty, _buffer_->w, stopy - starty + 1);
 
-        if (keypressed())
+        if (keypressed() != 0) {
             break;
+        }
     }
     return tmp;
 #undef _D
@@ -209,7 +228,7 @@ static BITMAP* morf(BITMAP* source, BITMAP* dest, int starty, int stopy, int num
 
 #define DELAY(x) ({       \
     int mul;              \
-    mul = x / 10;         \
+    mul = (x) / 10;       \
     for (; mul; mul--) {  \
         rest(10);         \
         if (keypressed()) \
@@ -220,13 +239,14 @@ static BITMAP* morf(BITMAP* source, BITMAP* dest, int starty, int stopy, int num
 void showcredits()
 {
     PALETTE pal;
-    UrbanFont* ufont = NULL;
-    BITMAP* hmap = NULL;
-    BITMAP* tmp = NULL;
-    BITMAP* txt = NULL;
+    UrbanFont* ufont = nullptr;
+    BITMAP* hmap = nullptr;
+    BITMAP* tmp = nullptr;
+    BITMAP* txt = nullptr;
 
-    int starty = 0, stopy = SCREEN_HEIGHT;
-    int i;
+    int starty = 0;
+    int stopy = SCREEN_HEIGHT;
+    int i = 0;
     int quitting = 0;
 
     InitLightmap();
@@ -240,8 +260,9 @@ void showcredits()
     clear(screen);
     set_palette(pal);
 
-    if (heightmap == NULL)
+    if (heightmap == nullptr) {
         heightmap = create_bitmap(320, 240);
+    }
 
     clear(heightmap);
     clear(_buffer_);
@@ -268,7 +289,7 @@ void showcredits()
         LI[i].enabled = 1;
         DoBump(heightmap, 0, SCREEN_HEIGHT);
         blit(_buffer_, screen, 0, 0, 0, 0, _buffer_->w, _buffer_->h);
-        if (keypressed()) {
+        if (keypressed() != 0) {
             for (; i >= 0; i--) {
 
                 rest(500);
@@ -297,10 +318,11 @@ void showcredits()
         txt = ufont->print(_ci[i].name);
         cblit(txt, heightmap, 160, 80);
 
-        if (i == 0 || (i > 0 && _ci[i - 1].erase_title))
+        if (i == 0 || (i > 0 && (_ci[i - 1].erase_title != 0))) {
             starty = 10;
-        else
+        } else {
             starty = 70;
+        }
 
         stopy = 80 + txt->h;
         destroy_bitmap(txt);
@@ -309,7 +331,7 @@ void showcredits()
 
         DELAY(900);
 
-        if (keypressed()) {
+        if (keypressed() != 0) {
             destroy_bitmap(tmp);
             tmp = morf(hmap, heightmap, 0, SCREEN_HEIGHT, 1);
             for (i = NUM_LIGHTS - 1; i >= 0; i--) {
@@ -325,16 +347,17 @@ void showcredits()
             return;
         }
 
-        if (_ci[i].erase_title == 0)
+        if (_ci[i].erase_title == 0) {
             starty = 70;
-        else
+        } else {
             starty = 10;
+        }
 
         /*                destroy_bitmap(morf(tmp, hmap, starty, stopy, 10));*/
         destroy_bitmap(tmp);
     }
 
-    if (special_thanks && !quitting) {
+    if ((special_thanks != nullptr) && (quitting == 0)) {
         ufont->SetScale(60);
         txt = ufont->print(special_thanks);
 
@@ -343,7 +366,7 @@ void showcredits()
         destroy_bitmap(morf(hmap, heightmap, 0, SCREEN_HEIGHT, 10));
         blit(_buffer_, screen, 0, 0, 0, 0, _buffer_->w, _buffer_->h);
         tmp = create_bitmap(320, SCREEN_HEIGHT - 20);
-        int y;
+        int y = 0;
         for (y = SCREEN_HEIGHT - 60, i = NUM_LIGHTS - 1; y > -txt->h; y -= 1) {
             blit(hmap, heightmap, 0, 0, 0, 0, hmap->w, hmap->h);
             clear(tmp);
@@ -353,7 +376,7 @@ void showcredits()
             DoBump(heightmap, 0, SCREEN_HEIGHT);
             blit(_buffer_, screen, 0, 0, 0, 0, _buffer_->w, _buffer_->h);
 
-            if (keypressed() || ((y + txt->h < 100) && (y % 20) == 0)) {
+            if ((keypressed() != 0) || ((y + txt->h < 100) && (y % 20) == 0)) {
                 for (i = NUM_LIGHTS - 1; i >= 0; i--) {
 
                     rest(500);
