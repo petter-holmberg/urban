@@ -5,37 +5,38 @@
 #define QUALITY_HIGH 2
 
 struct KeyConf {
-	int key_up;
-	int key_down;
-	int key_left;
-	int key_right;
-	int key_jump;
-	int key_fire;
-	int key_prevweapon;
-	int key_nextweapon;
-        int ctrl_type;
-        int music_vol;
-        int sfx_vol;
-        int gfx_quality;
+    int key_up;
+    int key_down;
+    int key_left;
+    int key_right;
+    int key_jump;
+    int key_fire;
+    int key_prevweapon;
+    int key_nextweapon;
+    int ctrl_type;
+    int music_vol;
+    int sfx_vol;
+    int gfx_quality;
 };
 
 class Config {
-	public:
-		Config();
-	        ~Config();
-		void Start();
-                struct KeyConf keyconf;
-	private:
-		void StartControls();
-		void ChangeGFXQuality();
-		void ChangeMusicVol();
-		void ChangeSFXVol();
-		int GetKey(const char *Label);
-		int GetButton(const char *Label);
-		void ConfigureKeyboard();
-		void ConfigureGamepad();
-        	void Load();
-                void Save();
+public:
+    Config();
+    ~Config();
+    void Start();
+    struct KeyConf keyconf;
+
+private:
+    void StartControls();
+    void ChangeGFXQuality();
+    void ChangeMusicVol();
+    void ChangeSFXVol();
+    int GetKey(const char* Label);
+    int GetButton(const char* Label);
+    void ConfigureKeyboard();
+    void ConfigureGamepad();
+    void Load();
+    void Save();
 };
 
 #endif
