@@ -28,79 +28,97 @@
 
     thomas.nyberg@usa.net				jonas_b@bitsmart.com
 *****************************************************************************/
-#include <allegro.h>
 #include "ctrls.h"
+#include <allegro.h>
 
-Controllers::Controllers() {
-//	controller_type = CONTROLLER_NONE;
-}
-
-Controllers::~Controllers() {
-}
-
-int Controllers::up() {
-	return 0;
+Controllers::Controllers()
+{
+    //	controller_type = CONTROLLER_NONE;
 }
 
-int Controllers::down() {
-	return 0;
+Controllers::~Controllers()
+{
 }
 
-int Controllers::left() {
-	return 0;
+int Controllers::up()
+{
+    return 0;
 }
 
-int Controllers::right() {
-	return 0;
+int Controllers::down()
+{
+    return 0;
 }
 
-int Controllers::jump() {
-	return 0;
+int Controllers::left()
+{
+    return 0;
 }
 
-int Controllers::fire() {
-	return 0;
+int Controllers::right()
+{
+    return 0;
 }
 
-
-int Controllers::weapon1() {
-	return 0;
+int Controllers::jump()
+{
+    return 0;
 }
 
-int Controllers::weapon2() {
-	return 0;
-}
-int Controllers::weapon3() {
-	return 0;
-}
-int Controllers::weapon4() {
-	return 0;
-}
-int Controllers::weapon5() {
-	return 0;
-}
-int Controllers::weapon6() {
-	return 0;
-}
-int Controllers::weapon7() {
-	return 0;
-}
-int Controllers::weapon8() {
-	return 0;
-}
-int Controllers::weapon9() {
-	return 0;
+int Controllers::fire()
+{
+    return 0;
 }
 
-int Controllers::next_weapon() {
-	return 0;
+int Controllers::weapon1()
+{
+    return 0;
 }
 
-int Controllers::prev_weapon() {
-	return 0;
+int Controllers::weapon2()
+{
+    return 0;
+}
+int Controllers::weapon3()
+{
+    return 0;
+}
+int Controllers::weapon4()
+{
+    return 0;
+}
+int Controllers::weapon5()
+{
+    return 0;
+}
+int Controllers::weapon6()
+{
+    return 0;
+}
+int Controllers::weapon7()
+{
+    return 0;
+}
+int Controllers::weapon8()
+{
+    return 0;
+}
+int Controllers::weapon9()
+{
+    return 0;
 }
 
-int Controllers::update() {
-	return 0;
+int Controllers::next_weapon()
+{
+    return 0;
 }
 
+int Controllers::prev_weapon()
+{
+    return 0;
+}
+
+int Controllers::update()
+{
+    return 0;
+}
