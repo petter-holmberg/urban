@@ -1,0 +1,117 @@
+URBAN - THE CYBORG PROJECT
+http://urban.home.dhs.org
+--------------------------
+README
+
+1.0 To start the game
+	DOS:
+	  Execute 'Urban.exe' in the 'urban'-directory.
+	
+	Unix:
+	  Type 'urban' in a shell. If you are running X, urban will open a
+	  window to run the game in. The X-server has to be running i 256
+	  color mode. If you are using a Xfree86 server you might be able
+	  to run urban in full-screen mode, by login in as root and to type 
+	  the following into an xterm:
+	  
+	  GGI_DISPLAY=dga urban
+	
+2.0 Story
+
+	During the end of the 20:th century, the american public started to
+	get tired of seeing their sons and daughters returning in bags from
+	wars in Europe and the Far East. In order to continue the struggle
+	for political stability and a secure economic flow, without the 
+	insight from an increasingly irritated population, new invincible 
+	soldiers was needed. The best scientists available were assigned to 
+	work on the creation of such a soldier. Far below the surface of the 
+	ground, in a military base in the Nevada desert, they started to 
+	develop a warrior, half man, half robot - a Cyborg. After a couple of
+	months of hard work, the project was very close to completion. The 
+	only thing that remained was to find a human being, ready to be 
+	rebuilt to better serve his country.
+	
+	But it turned out to be harder than expected to find such a human. 
+	After trying through all the regular channels, they realized that it 
+	would be impossible to get volunteers within the military community. 
+	The politicians expected results, and since no prototype had been 
+	completed yet, financing was starting to become a problem. In order 
+	to prevent the termintation of the project, it was now decided that 
+	the plan of getting a volunteer was to be abandoned. Instead, it was 
+	decided that "volunteers" were to be chosen among the civilian 
+	nobodys, who no one would miss anyway, and use them insted.
+
+	The head of the research department called for a top secret meeting
+	with the CIA and the commanding officer of the base, where they 
+	decided who would be chosen for the project. The first one to be 
+	chosen, and in a matter of days kidnapped from his own bedroom, 
+	was an uneducated father of two children living in Nevada. Urban 
+	Gutter. After being sent to sleep he was taken to the Nevada base, 
+	where the project finally could be completed. After going through a 
+	thorough brainwash, the work of replacing easily damaged biological 
+	organs with metal equivalents was started.
+
+	The project was almost completed, when the accident suddenly struck. 
+	During the final stage of the control-code uploading, Urban Gutter 
+	suddenly came to his sence. Without any security device drivers yet 
+	installed, he turned his rage against his creators, and started 
+	massacre everyone in the surgery room on a cold-blooded and completely
+	inhumane way, before he started to head for the surface.
+
+	You are all that's left of Urban Gutter, a cyborg of no feelings, 
+	with the one and only mission to get out of the military base, and 
+	to create the worst blood bath possible on the way.	
+	
+3.0 Controls
+
+	Standard Controls:
+		Right  : Right arrow 
+		Vänster: Left arrow
+		Down   : Down arrow
+		Up     : Up arrow
+		Jump   : Space
+		Fire   : Left Ctrl
+		Previous weapon : Left-shift
+		Next weapon     : Right-shift
+
+	Vapen:
+		1. Shotgun
+		2. Flame thrower
+		3. Ice thrower
+		4. Rocket launcher
+		5. Plasma gun
+		6. Mini gun
+		7. Electric weapon
+
+	Övrigt:
+		Exit       : Esc
+		Screen shot: F12   * only dos *
+		Pause      : F9
+
+	3.1     Customize controls:
+
+		        Start 'urban' and select "Config"-"Controls" on the 
+			menu, there can you select your own keys for moving
+			shooting and jumping.
+
+4.0 Why doesn't the sound work?
+
+
+	The DOS-version of Urban supports the following cards: SoundBlaster, 
+	Gravis Ultrasound and ESS. To use a SoundBlaster card, make sure you
+	have set the environment variable BLASTER correctly.
+	
+	The Linux version supports all the soundcards that are supported by
+	linux.
+
+
+Jonas Borgström jonas_b@bitsmart.com
+Thomas Nyberg   thomas.nyberg@linux.nu
+Markus Boman    markus@boman.pp.se
+Petter Holmberg petter.holmberg@2.sbbs.se
+Dick Adolfsson  dickadolfsson@hotmail.com
+Emil Eriksson   emil.eriksson@technologist.com
+
+
+
+

@@ -1,0 +1,426 @@
+# Makefile.in generated automatically by automake 1.4 from Makefile.am
+
+# Copyright (C) 1994, 1995-8, 1999 Free Software Foundation, Inc.
+# This Makefile.in is free software; the Free Software Foundation
+# gives unlimited permission to copy and/or distribute it,
+# with or without modifications, as long as this notice is preserved.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY, to the extent permitted by law; without
+# even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+# PARTICULAR PURPOSE.
+
+
+SHELL = @SHELL@
+
+srcdir = @srcdir@
+top_srcdir = @top_srcdir@
+VPATH = @srcdir@
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+
+bindir = @bindir@
+sbindir = @sbindir@
+libexecdir = @libexecdir@
+datadir = @datadir@
+sysconfdir = @sysconfdir@
+sharedstatedir = @sharedstatedir@
+localstatedir = @localstatedir@
+libdir = @libdir@
+infodir = @infodir@
+mandir = @mandir@
+includedir = @includedir@
+oldincludedir = /usr/include
+
+DESTDIR =
+
+pkgdatadir = $(datadir)/@PACKAGE@
+pkglibdir = $(libdir)/@PACKAGE@
+pkgincludedir = $(includedir)/@PACKAGE@
+
+top_builddir = ../..
+
+ACLOCAL = @ACLOCAL@
+AUTOCONF = @AUTOCONF@
+AUTOMAKE = @AUTOMAKE@
+AUTOHEADER = @AUTOHEADER@
+
+INSTALL = @INSTALL@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@ $(AM_INSTALL_PROGRAM_FLAGS)
+INSTALL_DATA = @INSTALL_DATA@
+INSTALL_SCRIPT = @INSTALL_SCRIPT@
+transform = @program_transform_name@
+
+NORMAL_INSTALL = :
+PRE_INSTALL = :
+POST_INSTALL = :
+NORMAL_UNINSTALL = :
+PRE_UNINSTALL = :
+POST_UNINSTALL = :
+CC = @CC@
+CXX = @CXX@
+GGI_LIBS = @GGI_LIBS@
+LIBMIKMOD_CFLAGS = @LIBMIKMOD_CFLAGS@
+LIBMIKMOD_CONFIG = @LIBMIKMOD_CONFIG@
+LIBMIKMOD_LDADD = @LIBMIKMOD_LDADD@
+LIBMIKMOD_LIBS = @LIBMIKMOD_LIBS@
+LN_S = @LN_S@
+MAKEINFO = @MAKEINFO@
+PACKAGE = @PACKAGE@
+PTHREAD_LIBS = @PTHREAD_LIBS@
+RANLIB = @RANLIB@
+VERSION = @VERSION@
+datdir = @datdir@
+
+noinst_LIBRARIES = libobjects.a
+libobjects_a_SOURCES = airexp.cc 	airstrke.cc 	airgren.cc 	anim.cc 	animate.cc 	arnold.cc 	barrel.cc 	beam.cc 	bdyparts.cc 	blood.cc 	bubble.cc 	bubblmak.cc 	burning.cc 	card.cc 	checkp.cc 	clugren.cc 	cluster.cc 	compscrn.cc 	crycheck.cc 	dekor.cc 	dolph.cc 	door.cc 	drgreen.cc 	einstein.cc 	elevator.cc 	elevstat.cc 	elevwire.cc 	explode.cc 	exptile.cc 	fire.cc 	fireball.cc 	floorgun.cc 	frosen.cc 	gnistor.cc 	grenade.cc 	hs_bulle.cc 	iceball.cc 	mine.cc 	missile.cc 	object.cc 	plasma.cc 	player.cc 	points.cc 	powerup.cc 	rambo.cc 	rocket.cc 	science.cc 	seagal.cc 	smallexp.cc 	soldier.cc 	soldier2.cc 	soldier3.cc 	soldier4.cc 	spy.cc 	tank.cc 	tankwhel.cc 	vaktm.cc 	water.cc
+
+
+INCLUDES = -I../include
+mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
+CONFIG_HEADER = ../../amconfig.h
+CONFIG_CLEAN_FILES = 
+LIBRARIES =  $(noinst_LIBRARIES)
+
+
+DEFS = @DEFS@ -I. -I$(srcdir) -I../..
+CPPFLAGS = @CPPFLAGS@
+LDFLAGS = @LDFLAGS@
+LIBS = @LIBS@
+libobjects_a_LIBADD = 
+libobjects_a_OBJECTS =  airexp.o airstrke.o airgren.o anim.o animate.o \
+arnold.o barrel.o beam.o bdyparts.o blood.o bubble.o bubblmak.o \
+burning.o card.o checkp.o clugren.o cluster.o compscrn.o crycheck.o \
+dekor.o dolph.o door.o drgreen.o einstein.o elevator.o elevstat.o \
+elevwire.o explode.o exptile.o fire.o fireball.o floorgun.o frosen.o \
+gnistor.o grenade.o hs_bulle.o iceball.o mine.o missile.o object.o \
+plasma.o player.o points.o powerup.o rambo.o rocket.o science.o \
+seagal.o smallexp.o soldier.o soldier2.o soldier3.o soldier4.o spy.o \
+tank.o tankwhel.o vaktm.o water.o
+AR = ar
+CXXFLAGS = @CXXFLAGS@
+CXXCOMPILE = $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
+CXXLD = $(CXX)
+CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(LDFLAGS) -o $@
+DIST_COMMON =  Makefile.am Makefile.in
+
+
+DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
+
+TAR = tar
+GZIP_ENV = --best
+SOURCES = $(libobjects_a_SOURCES)
+OBJECTS = $(libobjects_a_OBJECTS)
+
+all: all-redirect
+.SUFFIXES:
+.SUFFIXES: .S .c .cc .o .s
+$(srcdir)/Makefile.in: Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4) 
+	cd $(top_srcdir) && $(AUTOMAKE) --gnu --include-deps src/objects/Makefile
+
+Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status
+	cd $(top_builddir) \
+	  && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= $(SHELL) ./config.status
+
+
+mostlyclean-noinstLIBRARIES:
+
+clean-noinstLIBRARIES:
+	-test -z "$(noinst_LIBRARIES)" || rm -f $(noinst_LIBRARIES)
+
+distclean-noinstLIBRARIES:
+
+maintainer-clean-noinstLIBRARIES:
+
+.c.o:
+	$(COMPILE) -c $<
+
+.s.o:
+	$(COMPILE) -c $<
+
+.S.o:
+	$(COMPILE) -c $<
+
+mostlyclean-compile:
+	-rm -f *.o core *.core
+
+clean-compile:
+
+distclean-compile:
+	-rm -f *.tab.c
+
+maintainer-clean-compile:
+
+libobjects.a: $(libobjects_a_OBJECTS) $(libobjects_a_DEPENDENCIES)
+	-rm -f libobjects.a
+	$(AR) cru libobjects.a $(libobjects_a_OBJECTS) $(libobjects_a_LIBADD)
+	$(RANLIB) libobjects.a
+.cc.o:
+	$(CXXCOMPILE) -c $<
+
+tags: TAGS
+
+ID: $(HEADERS) $(SOURCES) $(LISP)
+	list='$(SOURCES) $(HEADERS)'; \
+	unique=`for i in $$list; do echo $$i; done | \
+	  awk '    { files[$$0] = 1; } \
+	       END { for (i in files) print i; }'`; \
+	here=`pwd` && cd $(srcdir) \
+	  && mkid -f$$here/ID $$unique $(LISP)
+
+TAGS:  $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) $(LISP)
+	tags=; \
+	here=`pwd`; \
+	list='$(SOURCES) $(HEADERS)'; \
+	unique=`for i in $$list; do echo $$i; done | \
+	  awk '    { files[$$0] = 1; } \
+	       END { for (i in files) print i; }'`; \
+	test -z "$(ETAGS_ARGS)$$unique$(LISP)$$tags" \
+	  || (cd $(srcdir) && etags $(ETAGS_ARGS) $$tags  $$unique $(LISP) -o $$here/TAGS)
+
+mostlyclean-tags:
+
+clean-tags:
+
+distclean-tags:
+	-rm -f TAGS ID
+
+maintainer-clean-tags:
+
+distdir = $(top_builddir)/$(PACKAGE)-$(VERSION)/$(subdir)
+
+subdir = src/objects
+
+distdir: $(DISTFILES)
+	@for file in $(DISTFILES); do \
+	  d=$(srcdir); \
+	  if test -d $$d/$$file; then \
+	    cp -pr $$d/$$file $(distdir)/$$file; \
+	  else \
+	    test -f $(distdir)/$$file \
+	    || ln $$d/$$file $(distdir)/$$file 2> /dev/null \
+	    || cp -p $$d/$$file $(distdir)/$$file || :; \
+	  fi; \
+	done
+einstein.o: einstein.cc ../include/allegro.h ../include/engine.h \
+	../include/map.h ../include/datfile.h ../include/object.h \
+	../include/anim.h ../include/icache.h ../include/sound.h \
+	../include/scache.h ../include/score.h ../include/death.h
+elevator.o: elevator.cc ../include/allegro.h ../include/engine.h \
+	../include/map.h ../include/datfile.h ../include/object.h \
+	../include/anim.h ../include/icache.h ../include/sound.h \
+	../include/scache.h ../include/score.h ../include/object2.h
+elevstat.o: elevstat.cc ../include/allegro.h ../include/engine.h \
+	../include/map.h ../include/datfile.h ../include/object.h \
+	../include/anim.h ../include/icache.h ../include/sound.h \
+	../include/scache.h ../include/score.h ../include/object2.h
+elevwire.o: elevwire.cc ../include/allegro.h ../include/engine.h \
+	../include/map.h ../include/datfile.h ../include/object.h \
+	../include/anim.h ../include/icache.h ../include/sound.h \
+	../include/scache.h ../include/score.h ../include/object2.h
+explode.o: explode.cc ../include/allegro.h ../include/object.h \
+	../include/anim.h ../include/engine.h ../include/map.h \
+	../include/datfile.h ../include/icache.h ../include/sound.h \
+	../include/scache.h ../include/score.h
+exptile.o: exptile.cc ../include/allegro.h ../include/engine.h \
+	../include/map.h ../include/datfile.h ../include/object.h \
+	../include/anim.h ../include/icache.h ../include/sound.h \
+	../include/scache.h ../include/score.h ../include/object2.h
+fireball.o: fireball.cc ../include/allegro.h ../include/object.h \
+	../include/anim.h ../include/engine.h ../include/map.h \
+	../include/datfile.h ../include/icache.h ../include/sound.h \
+	../include/scache.h ../include/score.h
+fire.o: fire.cc ../include/allegro.h ../include/object.h \
+	../include/anim.h ../include/engine.h ../include/map.h \
+	../include/datfile.h ../include/icache.h ../include/sound.h \
+	../include/scache.h ../include/score.h
+floorgun.o: floorgun.cc ../include/allegro.h ../include/engine.h \
+	../include/map.h ../include/datfile.h ../include/object.h \
+	../include/anim.h ../include/icache.h ../include/sound.h \
+	../include/scache.h ../include/score.h
+frosen.o: frosen.cc ../include/allegro.h ../include/engine.h \
+	../include/map.h ../include/datfile.h ../include/object.h \
+	../include/anim.h ../include/icache.h ../include/sound.h \
+	../include/scache.h ../include/score.h
+gnistor.o: gnistor.cc ../include/allegro.h ../include/object.h \
+	../include/anim.h ../include/engine.h ../include/map.h \
+	../include/datfile.h ../include/icache.h ../include/sound.h \
+	../include/scache.h ../include/score.h
+grenade.o: grenade.cc ../include/allegro.h ../include/engine.h \
+	../include/map.h ../include/datfile.h ../include/object.h \
+	../include/anim.h ../include/icache.h ../include/sound.h \
+	../include/scache.h ../include/score.h
+hs_bulle.o: hs_bulle.cc ../include/allegro.h ../include/engine.h \
+	../include/map.h ../include/datfile.h ../include/object.h \
+	../include/anim.h ../include/icache.h ../include/sound.h \
+	../include/scache.h ../include/score.h
+iceball.o: iceball.cc ../include/allegro.h ../include/object.h \
+	../include/anim.h ../include/engine.h ../include/map.h \
+	../include/datfile.h ../include/icache.h ../include/sound.h \
+	../include/scache.h ../include/score.h
+mine.o: mine.cc ../include/allegro.h ../include/engine.h \
+	../include/map.h ../include/datfile.h ../include/object.h \
+	../include/anim.h ../include/icache.h ../include/sound.h \
+	../include/scache.h ../include/score.h
+missile.o: missile.cc ../include/allegro.h ../include/engine.h \
+	../include/map.h ../include/datfile.h ../include/object.h \
+	../include/anim.h ../include/icache.h ../include/sound.h \
+	../include/scache.h ../include/score.h ../include/object2.h
+object.o: object.cc ../include/allegro.h ../include/icache.h \
+	../include/datfile.h ../include/object.h ../include/anim.h \
+	../include/engine.h ../include/map.h ../include/sound.h \
+	../include/scache.h ../include/score.h
+plasma.o: plasma.cc ../include/allegro.h ../include/engine.h \
+	../include/map.h ../include/datfile.h ../include/object.h \
+	../include/anim.h ../include/icache.h ../include/sound.h \
+	../include/scache.h ../include/score.h ../include/object2.h
+player.o: player.cc ../include/allegro.h ../include/object.h \
+	../include/anim.h ../include/object2.h ../include/ctrls.h \
+	../include/engine.h ../include/map.h ../include/datfile.h \
+	../include/icache.h ../include/sound.h ../include/scache.h \
+	../include/score.h ../include/config.h ../include/death.h \
+	../include/cheat.h
+points.o: points.cc ../include/allegro.h ../include/engine.h \
+	../include/map.h ../include/datfile.h ../include/object.h \
+	../include/anim.h ../include/icache.h ../include/sound.h \
+	../include/scache.h ../include/score.h ../include/object2.h
+powerup.o: powerup.cc ../include/allegro.h ../include/engine.h \
+	../include/map.h ../include/datfile.h ../include/object.h \
+	../include/anim.h ../include/icache.h ../include/sound.h \
+	../include/scache.h ../include/score.h
+rambo.o: rambo.cc ../include/allegro.h ../include/engine.h \
+	../include/map.h ../include/datfile.h ../include/object.h \
+	../include/anim.h ../include/icache.h ../include/sound.h \
+	../include/scache.h ../include/score.h ../include/ai.h \
+	../include/death.h
+rocket.o: rocket.cc ../include/allegro.h ../include/engine.h \
+	../include/map.h ../include/datfile.h ../include/object.h \
+	../include/anim.h ../include/icache.h ../include/sound.h \
+	../include/scache.h ../include/score.h ../include/object2.h
+science.o: science.cc ../include/allegro.h ../include/engine.h \
+	../include/map.h ../include/datfile.h ../include/object.h \
+	../include/anim.h ../include/icache.h ../include/sound.h \
+	../include/scache.h ../include/score.h ../include/death.h
+seagal.o: seagal.cc ../include/allegro.h ../include/engine.h \
+	../include/map.h ../include/datfile.h ../include/object.h \
+	../include/anim.h ../include/icache.h ../include/sound.h \
+	../include/scache.h ../include/score.h ../include/object2.h \
+	../include/ai.h ../include/death.h
+smallexp.o: smallexp.cc ../include/allegro.h ../include/engine.h \
+	../include/map.h ../include/datfile.h ../include/object.h \
+	../include/anim.h ../include/icache.h ../include/sound.h \
+	../include/scache.h ../include/score.h ../include/object2.h
+soldier2.o: soldier2.cc ../include/allegro.h ../include/engine.h \
+	../include/map.h ../include/datfile.h ../include/object.h \
+	../include/anim.h ../include/icache.h ../include/sound.h \
+	../include/scache.h ../include/score.h ../include/object2.h \
+	../include/ai.h ../include/death.h
+soldier3.o: soldier3.cc ../include/allegro.h ../include/engine.h \
+	../include/map.h ../include/datfile.h ../include/object.h \
+	../include/anim.h ../include/icache.h ../include/sound.h \
+	../include/scache.h ../include/score.h ../include/object2.h \
+	../include/ai.h ../include/death.h
+soldier4.o: soldier4.cc ../include/allegro.h ../include/engine.h \
+	../include/map.h ../include/datfile.h ../include/object.h \
+	../include/anim.h ../include/icache.h ../include/sound.h \
+	../include/scache.h ../include/score.h ../include/object2.h \
+	../include/ai.h ../include/death.h
+soldier.o: soldier.cc ../include/allegro.h ../include/engine.h \
+	../include/map.h ../include/datfile.h ../include/object.h \
+	../include/anim.h ../include/icache.h ../include/sound.h \
+	../include/scache.h ../include/score.h ../include/death.h
+spy.o: spy.cc ../include/allegro.h ../include/engine.h ../include/map.h \
+	../include/datfile.h ../include/object.h ../include/anim.h \
+	../include/icache.h ../include/sound.h ../include/scache.h \
+	../include/score.h
+tank.o: tank.cc ../include/allegro.h ../include/game.h \
+	../include/engine.h ../include/map.h ../include/datfile.h \
+	../include/object.h ../include/anim.h ../include/icache.h \
+	../include/sound.h ../include/scache.h ../include/score.h \
+	../include/object2.h
+tankwhel.o: tankwhel.cc ../include/allegro.h ../include/engine.h \
+	../include/map.h ../include/datfile.h ../include/object.h \
+	../include/anim.h ../include/icache.h ../include/sound.h \
+	../include/scache.h ../include/score.h ../include/object2.h
+vaktm.o: vaktm.cc ../include/allegro.h ../include/engine.h \
+	../include/map.h ../include/datfile.h ../include/object.h \
+	../include/anim.h ../include/icache.h ../include/sound.h \
+	../include/scache.h ../include/score.h
+water.o: water.cc ../include/allegro.h ../include/engine.h \
+	../include/map.h ../include/datfile.h ../include/object.h \
+	../include/anim.h ../include/icache.h ../include/sound.h \
+	../include/scache.h ../include/score.h ../include/object2.h
+
+info-am:
+info: info-am
+dvi-am:
+dvi: dvi-am
+check-am: all-am
+check: check-am
+installcheck-am:
+installcheck: installcheck-am
+install-exec-am:
+install-exec: install-exec-am
+
+install-data-am:
+install-data: install-data-am
+
+install-am: all-am
+	@$(MAKE) $(AM_MAKEFLAGS) install-exec-am install-data-am
+install: install-am
+uninstall-am:
+uninstall: uninstall-am
+all-am: Makefile $(LIBRARIES)
+all-redirect: all-am
+install-strip:
+	$(MAKE) $(AM_MAKEFLAGS) AM_INSTALL_PROGRAM_FLAGS=-s install
+installdirs:
+
+
+mostlyclean-generic:
+
+clean-generic:
+
+distclean-generic:
+	-rm -f Makefile $(CONFIG_CLEAN_FILES)
+	-rm -f config.cache config.log stamp-h stamp-h[0-9]*
+
+maintainer-clean-generic:
+mostlyclean-am:  mostlyclean-noinstLIBRARIES mostlyclean-compile \
+		mostlyclean-tags mostlyclean-generic
+
+mostlyclean: mostlyclean-am
+
+clean-am:  clean-noinstLIBRARIES clean-compile clean-tags clean-generic \
+		mostlyclean-am
+
+clean: clean-am
+
+distclean-am:  distclean-noinstLIBRARIES distclean-compile \
+		distclean-tags distclean-generic clean-am
+
+distclean: distclean-am
+
+maintainer-clean-am:  maintainer-clean-noinstLIBRARIES \
+		maintainer-clean-compile maintainer-clean-tags \
+		maintainer-clean-generic distclean-am
+	@echo "This command is intended for maintainers to use;"
+	@echo "it deletes files that may require special tools to rebuild."
+
+maintainer-clean: maintainer-clean-am
+
+.PHONY: mostlyclean-noinstLIBRARIES distclean-noinstLIBRARIES \
+clean-noinstLIBRARIES maintainer-clean-noinstLIBRARIES \
+mostlyclean-compile distclean-compile clean-compile \
+maintainer-clean-compile tags mostlyclean-tags distclean-tags \
+clean-tags maintainer-clean-tags distdir info-am info dvi-am dvi check \
+check-am installcheck-am installcheck install-exec-am install-exec \
+install-data-am install-data install-am install uninstall-am uninstall \
+all-redirect all-am all installdirs mostlyclean-generic \
+distclean-generic clean-generic maintainer-clean-generic clean \
+mostlyclean distclean maintainer-clean
+
+
+# Tell versions [3.59,3.63) of GNU make to not export all variables.
+# Otherwise a system limit (for SysV at least) may be exceeded.
+.NOEXPORT:

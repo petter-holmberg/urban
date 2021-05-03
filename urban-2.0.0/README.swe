@@ -1,0 +1,113 @@
+URBAN - THE CYBORG PROJECT
+http://urban.home.dhs.org
+--------------------------
+README.swe
+
+1.0 Starta spelet
+	DOS:
+	  Kör filen 'Urban.exe' i 'urban'-katalogen. Spelet fungerar bäst när
+	  det körs i MSDOS-läge.
+
+	Unix:
+	  Skriv 'urban' i en terminal.
+	
+2.0 Story
+
+	Under slutet av 1990 talet började den amerikanska allmänheten få
+	nog av att deras söner och döttrar kom hem i säckar från krig i
+	europa och fjärran östern. För att kunna fortsätta kampen för 
+	politisk stabilitet och ett säkert ekonomiskt flöde, utan 
+	inblanding från en alltmer irriterande befolking skulle det behövas
+	nya, oövervinnliga soldater. Man satte de bästa forskarna som fanns
+	tillgängliga på att skapa en sådan soldat. Långt nere under jorden,
+	i en militärbas i Nevadaöknen startades ett projekt att bygga en
+	krigare, hälften människa, hälften robot - en cyborg. Efter ett
+	intensivt arbete under några månader var projektet i det närmsta
+	färdigställt. Det enda som nu behövdes var en människa, som skulle
+	vara beredd att byggas om för att kunna tjäna sitt land bättre.
+
+	Men det visade sig svårare att få tag i en frivillig än vad man
+	hade förväntat sig. Efter att ha provat alla de vanliga kanalerna
+	insåg man att det inte skulle gå att få tag i frivilliga inom det
+	militära. Politikerna krävde att få se resultat, och eftersom man
+	inte kunnat färdigställa en prototyp än, började finansieringen
+	att komma i farozonen. För att förhindra att projektet skulle gå om
+	intet beslutades det nu att man skulle överge planen att få tag i
+	en frivillig. Istället bestämdes det att man bland de civila
+	nollorna skulle välja "frivilliga", som ändå ingen skulle sakna,
+	och använda dem.
+		
+	Ledaren för forskningsavdelningen anordnade i största hemlighet ett
+	möte med CIA och baschefen, där man beslutade vilka som skulle bli
+	utvalda till projektet. Den förste som blev utvald, och inom några
+	dagar kidnappad från sitt eget sovrum, var en outbildad
+	tvåbarnspappa från Nevada, Urban Gutter. Efter att blivit nedsövd
+	fördes han till Nevada, där man äntligen kunde slutföra projektet.
+	Efter att blivit utsatt för en grundlig hjärntvättning, påbörjades
+	det tidskrävande arbetet att ersätta ömtåliga biologiska organ med
+	metallekvivalenter.
+
+	Projektet var nästan helt färdigställt, när olyckan plötsligt var
+	framme. Mitt under det sista steget i styrkods-uppladdningen
+	vaknade Urban Gutter plötsligt upp ur sitt nedsövda tillstånd. Utan
+	säkerhetsdrivrutinerna uppladdade vände han sig omedelbart mot sina
+	skapare, och började på ett fullständigt omänskligt sätt att
+	kallblodigt massakrera allt och alla i operationssalen, varefter han 
+	började plöja sig upp mot ytan.
+
+	Du är det som är kvar av Urban Gutter, en totalt känslokall cyborg,
+	vars enda uppdrag är att ta sig ut ur militärbasen, och skapa det
+	värsta blodbadet som är möjligt på vägen.
+	
+3.0 Kontroller
+
+	Standard Styrning:
+		Höger  : Pil Höger 
+		Vänster: Pil Vänster
+		Neråt  : Pil Neråt
+		Uppåt  : Pil Uppåt
+		Hoppa  : Mellanslag
+		Skjuta : Vänster Ctrl
+		Vänster-shift : Föregående vapen
+		Höger-shift : Nästa vapen
+
+	Vapen:
+		1. Hagelgevär
+		2. Eldkastare
+		3. Iskastare
+		4. Raketgevär
+		5. Plasma vapen
+		6. Minigun
+		7. Elvapen
+
+	Övrigt:
+		Avsluta  : Esc
+		Skärmdump: F12
+		Pause    : F9
+
+	3.1     Ställa in egna kontroller:
+
+			Starta 'Urban' och välj "Config"-"Controls" på menyn, där
+			kan man ställa in sina egna tangenter för
+			styrning, hoppning och skjutning.
+
+4.0 Varför fungerar inte ljudet?
+
+
+	DOS-versionen av Urban stödjer följande kort: SoundBlaster, Gravis
+	Ultrasound och ESS. För att Urban ska hitta ett SoundBlaster kort
+	måste BLASTER variabeln vara satt.
+	
+	Linux-versionen stöder alla ljudkort som stöds av Linux.
+
+
+Jonas Borgström jonas_b@bitsmart.com
+Thomas Nyberg   thomas.nyberg@linux.nu
+Markus Boman    markus@boman.pp.se
+Petter Holmberg petter.holmberg@2.sbbs.se
+Dick Adolfsson  dickadolfsson@hotmail.com
+Emil Eriksson   emil.eriksson@technologist.com
+
+
+
+

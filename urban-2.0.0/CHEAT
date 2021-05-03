@@ -1,0 +1,37 @@
+Cheat codes!
+------------
+
+Start the game and type them in! 
+NOTE: They might cause the game to crash so use at your own risk!
+
+What do I type?               What happens?
+-----------------------------------------------------------------
+LINUSISGOD                    The player becomes immortal for a while
+LINUXRULES                    The player receives full health
+VOLATILE                      You get the flamethrower
+ILIKETOSKATE                  You get the Ice-weapon, brrr...
+KABLAM                        Ahh...the grenade-launcher
+STARTREKFOREVER               Plasma and Startrek goes hand in hand
+LETSROCK                      The minigun!
+SITINTHECHAIR                 The electric-gun
+FIREAWAY                      You get 1000 rounds for your current weapon
+TALKINGTODEATH                All weapons gets 1000 rounds of ammo
+THENIDIE                      Max-ammo for all weapons
+NVTRULES                      You get all the weapons availible
+LETMEIN                       All keycards - no more looking!
+THERECANBEONLYONE             Clear the current level
+TIMETODIE                     hmm...player can kill by touch
+MICROSOFT                     Player dies a horrible death 
+RETURNOFMRA                   Issues an airstrike at the current location!
+                              NOTE: The airstrike can't be issued
+                              everywhere... and it might also hit the roof
+			      above you. Use with care! 
+
+More cheatcodes!
+
+If you have enabled cheat codes (./configure --enable-cheat-codes):
+
+F3-F8 :Enables weapons
+F9    :Makes you immortal for a while
+A     :Increases the ammo
+Q     :Decreases the ammo
