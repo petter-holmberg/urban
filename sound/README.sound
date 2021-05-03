@@ -1,0 +1,30 @@
+This is the URBAN sound files...
+
+DOS users should unzip it in the same directory as the file urban.dat is
+located. The directory contents should be like this:
+
+cd <where you have urban.dat>
+pkunzip -d sound.zip
+
+  urban\urban.exe
+  urban\urban.dat
+  urban\levels.dat
+  urban\intro.dat
+  urban\snd\samples\*.wav
+  urban\snd\modules\*.xm
+  
+Linux users should untar it in the same directory as the file urban.dat is
+located (default is /usr/local/share/urban). The directory contents should
+be like this:
+
+  urban/urban.dat
+  urban/levels.dat
+  urban/intro.dat
+  urban/snd/samples/*.wav
+  urban/snd/modules/*.xm
+
+Use the following command:
+
+  tar -xvzf sound.tar.gz -C /usr/local/share/urban
+  
+/ Jonas Borgström <jonas_b@bitsmart.com>

@@ -1,0 +1,47 @@
+URBAN
+
+Installation:
+
+Program som behövs:
+* C++ kompilator
+* libggi (version 2.0 beta2.1 eller bättre) http://www.ggi-project.org
+* libmikmod (version 3.1.5 eller bättre) http://www.multimania.com/miodrag/mikmod
+
+Konfigurera:
+
+    ./configure
+
+  eller om du vill ha mera optimeringar:
+
+    CXXFLAGS="-O6 -mpentium -fomit-frame-pointer" ./configure
+
+  eller om du vill ha med fuskkoder:
+
+    ./configure --enable-cheat-codes
+
+  eller om du vill ha en global highscore fil:
+  
+    ./configure --with-global-highscore='/var/lib/urban/hs.dat'
+    
+  Men då måste du även skriva (efter instalaltionen):
+  
+    touch /var/lib/urban/hs.dat
+    chgrp games /var/lib/urban/hs.dat
+    chmod 664 /var/lib/urban/hs.dat
+    
+    chgrp games /usr/local/bin/urban
+    chmod 2755 /usr/local/bin/urban
+
+
+Installera:
+
+  Skriv detta (som root):
+
+    make install
+
+Ljudeffekter och musik:
+
+  Om du vill ha ljudeffekter och musik i urban måste du ladda hem det från
+  hemsidan. http://urban.home.dhs.org
+
+/ Jonas Borgström jonas_b@bitsmart.com

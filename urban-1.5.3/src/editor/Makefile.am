@@ -1,0 +1,1 @@
+EXTRA_DIST = editor.cc started.cc

@@ -1,0 +1,47 @@
+URBAN
+
+Instatallation:
+
+Requirements:
+* C++ compiler
+* libggi (version 2.0 beta2.1 or higher) http://www.ggi-project.org
+* libmikmod (version 3.1.5 or higher) http://www.multimania.com/miodrag/mikmod
+
+configuration:
+
+    ./configure
+
+  or if you want more optimations:
+
+    CXXFLAGS="-O6 -mpentium -fomit-frame-pointer" ./configure
+
+  or if you want cheat codes:
+
+    ./configure --enable-cheat-codes
+
+  or if you want a global highscore:
+  
+    ./configure --with-global-highscore='/var/lib/urban/hs.dat'
+    
+  But then you have to do this (after the installation):
+  
+    touch /var/lib/urban/hs.dat
+    chgrp games /var/lib/urban/hs.dat
+    chmod 664 /var/lib/urban/hs.dat
+    
+    chgrp games /usr/local/bin/urban
+    chmod 2755 /usr/local/bin/urban
+
+
+Install:
+
+  Type this (as root):
+  
+    make install
+
+Sound and music:
+
+  If you want sound and music in U.R.B.A.N, then you have to download them
+  from the homepage: http://urban.home.dhs.org
+
+/ Jonas Borgström jonas_b@bitsmart.com
