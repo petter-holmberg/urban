@@ -22,16 +22,16 @@ struct KeyConf {
 class Config {
 public:
     Config();
-    ~Config();
     void Start();
-    struct KeyConf keyconf;
+    struct KeyConf keyconf {
+    };
 
 private:
     void StartControls();
     void ChangeGFXQuality();
     void ChangeMusicVol();
     void ChangeSFXVol();
-    int GetKey(const char* Label);
+    static int GetKey(const char* Label);
     int GetButton(const char* Label);
     void ConfigureKeyboard();
     void ConfigureGamepad();
