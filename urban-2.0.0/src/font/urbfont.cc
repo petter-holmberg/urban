@@ -197,7 +197,7 @@ UrbanFont::~UrbanFont() {
 	UnloadFontPcx();
 }
 
-int UrbanFont::LoadFontPcx(char *filename) {
+int UrbanFont::LoadFontPcx(const char *filename) {
 	font_image = icache.GetImage(filename, pal);
 
         return 0;
@@ -207,7 +207,7 @@ int UrbanFont::UnloadFontPcx() {
 	return 0;
 }
 
-void UrbanFont::print(char *text, int x, int y, BITMAP *dest) {
+void UrbanFont::print(const char *text, int x, int y, BITMAP *dest) {
 	if (!font_image)
         	return;
 
@@ -218,7 +218,7 @@ void UrbanFont::print(char *text, int x, int y, BITMAP *dest) {
         destroy_bitmap (bmp);
 }
 
-void UrbanFont::print_centre(char *text, int x, int y, BITMAP *dest) {
+void UrbanFont::print_centre(const char *text, int x, int y, BITMAP *dest) {
 	if (!font_image)
         	return;
 
@@ -229,7 +229,7 @@ void UrbanFont::print_centre(char *text, int x, int y, BITMAP *dest) {
         destroy_bitmap (bmp);
 }
 
-BITMAP *UrbanFont::print(char *text) {
+BITMAP *UrbanFont::print(const char *text) {
 	int i;
         int dest_x = 0, dest_y = 0;
 
@@ -296,7 +296,7 @@ BITMAP *UrbanFont::print(char *text) {
 }
 
 
-BITMAP *UrbanFont::create_textbitmap(char *text) {
+BITMAP *UrbanFont::create_textbitmap(const char *text) {
 //        int w = 0, h = UrbFontInfo[font_nr].space_y;
         int w = 0, h = space_y;
         int max_w = 0;

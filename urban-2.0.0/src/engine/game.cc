@@ -59,7 +59,7 @@ extern char lock_frame_count_to_60hz;
 
 struct SaveGameData SavedGames[5];
 
-char *maps[] = {	"gamemaps/level11.map",
+const char *maps[] = {	"gamemaps/level11.map",
 			"gamemaps/level12.map",
 			"gamemaps/level13.map",
 			"gamemaps/level21.map",
@@ -78,7 +78,7 @@ char *maps[] = {	"gamemaps/level11.map",
 			"gamemaps/level62.map",
 			"gamemaps/level63.map", NULL};
 
-char *extra_maps[] = {	"",
+const char *extra_maps[] = {	"",
 			"",
                         "",
                         "",
@@ -248,7 +248,7 @@ int GetLevelName(char *text) {
 int NewGame(int slot) {
 	int quit = 0;
 	HighScore *hs;
-	char *map_name = NULL;
+	const char *map_name = NULL;
         char name[80];
         char filename[1024];
 	struct PlayerData pdat;
@@ -280,10 +280,10 @@ int NewGame(int slot) {
 
 		sprintf(filename, "%s/.urban/savegame.dat", getenv("HOME"));
 #endif
-                if((fs = fopen(filename, "wb")) == NULL)
+                if((fs = fopen(filename, "wb")) != NULL)
 	        	fwrite(SavedGames, 1, 5 * sizeof(struct SaveGameData), fs);
         } else
-	        fread(SavedGames, 1, 5 * sizeof(struct SaveGameData), fs);
+	        auto err = fread(SavedGames, 1, 5 * sizeof(struct SaveGameData), fs);
 
 	if(fs)
 	        fclose(fs);
@@ -344,7 +344,7 @@ int NewGame(int slot) {
 						sprintf(filename, "%s/.urban/savegame.dat", getenv("HOME"));
 #endif
 					        if ((fs = fopen(filename, "wb")) != NULL) {
-					        	fwrite(SavedGames, 1, 5 * sizeof(struct SaveGameData), fs);
+					        	auto err = fwrite(SavedGames, 1, 5 * sizeof(struct SaveGameData), fs);
                                                         fclose(fs);
 						}
 					}

@@ -35,7 +35,7 @@
 #include "object2.h"
 
 
-Dekor_o::Dekor_o(int X, int Y, int Z, char *filename) : Object(X, Y, Z) {
+Dekor_o::Dekor_o(int X, int Y, int Z, const char *filename) : Object(X, Y, Z) {
 	RGB pal[256];
 
         images = new BITMAP *;

@@ -30,8 +30,8 @@ class Config {
 		void ChangeGFXQuality();
 		void ChangeMusicVol();
 		void ChangeSFXVol();
-		int GetKey(char *Label);
-		int GetButton(char *Label);
+		int GetKey(const char *Label);
+		int GetButton(const char *Label);
 		void ConfigureKeyboard();
 		void ConfigureGamepad();
         	void Load();

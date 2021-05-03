@@ -81,7 +81,7 @@ ImageCache::~ImageCache() {
         }*/
 }
 /***************************************************************************/
-CacheEntry *ImageCache::FindEntry(char *filename) {
+CacheEntry *ImageCache::FindEntry(const char *filename) {
 	for(int i=0;i<num_images;i++) {
 
         	if(!strcmp(filename, cache[i].filename))
@@ -90,7 +90,7 @@ CacheEntry *ImageCache::FindEntry(char *filename) {
         return NULL;
 }
 /***************************************************************************/
-BITMAP *ImageCache::GetImage(char *filename, RGB *pal) {
+BITMAP *ImageCache::GetImage(const char *filename, RGB *pal) {
 	char pathname[512];
         CacheEntry *entry;
 	// Allready in cache

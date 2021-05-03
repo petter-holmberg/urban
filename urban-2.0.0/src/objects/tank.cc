@@ -30,6 +30,7 @@
 *****************************************************************************/
 #include <string.h>
 #include <stdlib.h>
+#include <algorithm>
 #include <allegro.h>
 #include "game.h"
 #include "engine.h"
@@ -45,7 +46,7 @@
 #	error MAX_ENERGY must be a multiple of NUM_SKADA!
 #endif
 
-char *comments[] = {
+const char *comments[] = {
 "samples/oldare.wav",
 "samples/olneverd.wav",
 "samples/olskills.wav",
@@ -53,9 +54,9 @@ char *comments[] = {
 "samples/olvictor.wav"};
 
 
-#define __URK ((NUM_SKADA - 1) - (energy <? (MAX_ENERGY - 1)) / (MAX_ENERGY / NUM_SKADA))
+#define __URK ((NUM_SKADA - 1) - (std::min(energy, (MAX_ENERGY - 1)) / (MAX_ENERGY / NUM_SKADA)))
 
-#define IMAGE(x) ((x) + 3 * (__URK <? 3))
+#define IMAGE(x) ((x) + 3 * (std::min(__URK, 3)))
 #define FROMIMAGE(x) ((x) % 3)
 
 #define STATE_NONE		0
@@ -278,7 +279,7 @@ int Tank_o::update() {
 			ENGINE.EnableEarthquake();
 			ENGINE.EnableEarthquake();
 		}
-		
+
                 return 0;
         }
 

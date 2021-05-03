@@ -15,7 +15,7 @@ class ComputerScreen_o:public Object {
 
 class Dekor_o:public Object {
 	public:
-        	Dekor_o(int X, int Y, int Z, char *filename);
+        	Dekor_o(int X, int Y, int Z, const char *filename);
                 int update();
                 void Collision(Object *);
                 virtual ~Dekor_o();

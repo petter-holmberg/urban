@@ -46,7 +46,7 @@
 extern int NewGame(int slot = 0);
 extern void PlayDemo();
 extern void PlayCredits();
-extern int Do_Menu(char *text, int num_items, int pos = 1);
+extern int Do_Menu(const char *text, int num_items, int pos = 1);
 
 extern char *level_pw[];
 extern char *demo_filename;

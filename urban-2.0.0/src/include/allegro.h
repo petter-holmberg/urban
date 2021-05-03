@@ -27,18 +27,17 @@
     or email:
 
     jonas_b@bitsmart.com
- * 
+ *
 *****************************************************************************/
 #ifndef __GFX_H__
 #define __GFX_H__
 
-#include <ggi/ggi.h>
+#include <SFML/Window.hpp>
+#include <SFML/Graphics.hpp>
 #include <stdlib.h>
 
 #define LOCK_FUNCTION(x)
 #define LOCK_VARIABLE(x)
-
-extern ggi_visual_t vis;
 
 typedef struct RGB
 {
@@ -53,15 +52,16 @@ typedef RGB PALLETE[PAL_SIZE];
 extern PALETTE black_palette;
 
 /* a bitmap structure */
-typedef struct BITMAP            
+typedef struct BITMAP
 {
 	int w, h;
 	int stride;
 	char *dat;
 	char **line;
-	
-	ggi_visual_t vis;
-	
+
+  sf::Texture texture;
+	sf::Sprite* vis{};
+  sf::Color pal[256];
 } BITMAP;
 
 #define FONT_SIZE    224            /* number of characters in a font */
@@ -80,7 +80,7 @@ typedef struct FONT_8x16            /* a simple 8x16 font */
 
 typedef struct FONT_PROP            /* a proportional font */
 {
-   BITMAP *dat[FONT_SIZE]; 
+   BITMAP *dat[FONT_SIZE];
    void (*render)(BITMAP *bmp, BITMAP *sprite, int x, int y, int color);
 } FONT_PROP;
 
@@ -128,7 +128,7 @@ int set_color(int, RGB *rgb);
 int install_int_ex(void (*proc)(), long speed);
 int install_int(void (*proc)(), long speed);
 void remove_int(void (*proc)());
-void textprintf(BITMAP *bmp, FONT *f, int x, int y, int color, char *format, ...) __attribute__ ((format (printf, 6, 7)));
+void textprintf(BITMAP *bmp, FONT *f, int x, int y, int color, const char *format, ...) __attribute__ ((format (printf, 6, 7)));
 void fade_in(PALLETE p, int speed);
 void fade_out(int speed);
 void fade_from_range(PALLETE source, PALLETE dest, int speed, int from, int to);
@@ -137,6 +137,7 @@ void get_palette(PALLETE p);
 void fade_interpolate(PALLETE src, PALETTE dest, PALETTE out, int pos, int start, int end);
 int keypressed();
 
+extern sf::RenderWindow *window;
 extern BITMAP *screen;
 extern FONT *font;
 extern unsigned char key[128];
@@ -167,8 +168,8 @@ extern unsigned char key[128];
 #define KB_EXTENDED           2
 
 #define KEY_ESC               1     /* keyboard scan codes  */
-#define KEY_1                 2 
-#define KEY_2                 3 
+#define KEY_1                 2
+#define KEY_2                 3
 #define KEY_3                 4
 #define KEY_4                 5
 #define KEY_5                 6
@@ -180,7 +181,7 @@ extern unsigned char key[128];
 #define KEY_MINUS             12
 #define KEY_EQUALS            13
 #define KEY_BACKSPACE         14
-#define KEY_TAB               15 
+#define KEY_TAB               15
 #define KEY_Q                 16
 #define KEY_W                 17
 #define KEY_E                 18

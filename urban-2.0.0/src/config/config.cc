@@ -30,7 +30,7 @@ void Config::Load() {
         if(!(fd = fopen(filename, "rb")))
         	return;
 
-	fread(&keyconf, sizeof(struct KeyConf), 1, fd);
+	auto err = fread(&keyconf, sizeof(struct KeyConf), 1, fd);
 
         fclose(fd);
 }
@@ -91,10 +91,7 @@ void Config::ConfigureGamepad() {
 	/* Ask for the number of buttons */
 
         fnt.print_centre("Gamepad type:", 160, 100);
-	fnt.print_centre("  1. 2 buttons
-  2. 4 buttons
-  3. 6 buttons
-  4. 8 buttons", 160, 140);
+	fnt.print_centre("  1. 2 buttons\n  2. 4 buttons\n  3. 6 buttons\n  4. 8 buttons", 160, 140);
 	int running = 1;
 
 	while(running) {
@@ -441,7 +438,7 @@ void Config::StartControls() {
 }
 /**************************************************************************************/
 #ifdef DJGPP
-int Config::GetButton(char *Label) {
+int Config::GetButton(const char *Label) {
         char buffer[128];
         UrbanFont fnt(SMALL_FONT2);
 
@@ -549,7 +546,7 @@ int Config::GetButton(char *Label) {
 }
 #endif
 /**************************************************************************************/
-int Config::GetKey(char *Label) {
+int Config::GetKey(const char *Label) {
         int i;
 	int temp = 0;
         char buffer[128];

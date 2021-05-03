@@ -98,7 +98,7 @@ class Engine {
         	Engine();
                 ~Engine();
                 void NewGame();
-                int play_level(char *map_name, struct PlayerData *p_dat = NULL, int controls = 0x02); //OBS!! <- HACK
+                int play_level(const char *map_name, struct PlayerData *p_dat = NULL, int controls = 0x02); //OBS!! <- HACK
 		void create_objects();
 
 		void ClearLevel() {level_complete = 1;}
@@ -124,7 +124,7 @@ class Engine {
                 void create_shell(Object *obj);
                 char *GetLevelName() {return level_name;};
 
-                void PushMessage(char *msg, int prior = LOW_PRIORITY);
+                void PushMessage(const char *msg, int prior = LOW_PRIORITY);
                 Object *player;
                 Sound sound;
 		BITMAP *buffer;

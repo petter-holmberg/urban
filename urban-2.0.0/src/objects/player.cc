@@ -30,6 +30,7 @@
 *****************************************************************************/
 #include <stdlib.h>
 #include <allegro.h>
+#include <cstring>
 #include "object.h"
 #include "object2.h"
 #include "ctrls.h"
@@ -603,30 +604,30 @@ int player_o::update() {
 	if (cheat_codes_active & CHEAT_MK_PLAYER_IMMORTAL) {
 		state |= STATE_IMMORTAL;
        		counter4 = 5000;
-	        SOUND.PlaySFX_Critical("samples/pathetic.wav");	
-	}		
+	        SOUND.PlaySFX_Critical("samples/pathetic.wav");
+	}
 	if (cheat_codes_active & CHEAT_GIVE_PLAYER_1K_OF_AMMO)
 		CURRENT_WEAPON.ammo += 1000;
 	if (cheat_codes_active & CHEAT_GIVE_PLAYER_CARDS)
-		card = (red | green | blue);				
+		card = (red | green | blue);
 	if (cheat_codes_active & CHEAT_GIVE_PLAYER_1K_AMMO_2_ALL) {
 		weapon[PLASMA_GUN].ammo += 1000;
 		weapon[FLAME_THROWER].ammo += 1000;
 		weapon[ICEMAKER].ammo += 1000;
 		weapon[GRENADE_LAUNCHER].ammo += 1000;
 		weapon[MINIGUN].ammo += 1000;
-		weapon[ELECTRIC].ammo += 1000;		
-	}		
+		weapon[ELECTRIC].ammo += 1000;
+	}
 	if (cheat_codes_active & CHEAT_GIVE_PLAYER_MAX_AMMO) {
 		weapon[PLASMA_GUN].ammo = weapon[PLASMA_GUN].max_ammo;
 		weapon[FLAME_THROWER].ammo = weapon[FLAME_THROWER].max_ammo;
 		weapon[ICEMAKER].ammo = weapon[ICEMAKER].max_ammo;
 		weapon[GRENADE_LAUNCHER].ammo = weapon[GRENADE_LAUNCHER].max_ammo;
 		weapon[MINIGUN].ammo = weapon[MINIGUN].max_ammo;
-		weapon[ELECTRIC].ammo = weapon[ELECTRIC].max_ammo;		
-	}			
+		weapon[ELECTRIC].ammo = weapon[ELECTRIC].max_ammo;
+	}
 	if (cheat_codes_active & CHEAT_GIVE_PLAYER_HEALTH) {
-	        energy = MAX_ENERGY;	
+	        energy = MAX_ENERGY;
 	}
 	if (cheat_codes_active & CHEAT_GIVE_PLAYER_ALL_WEAPONS) {
 		weapon[PLASMA_GUN].availible = 1;
@@ -637,16 +638,16 @@ int player_o::update() {
 		weapon[ELECTRIC].availible = 1;
 	}
 	if (cheat_codes_active & CHEAT_SET_PLAYER_DEADLY)
-		strength = 10;		
+		strength = 10;
 	if (cheat_codes_active & CHEAT_KILL_PLAYER) {
         	energy = 0;
                 PerformDeath(DEATH_EXPLOSION);
 		if (lives < 1)
 			return -1;
-		else			
+		else
 			return 0;
-	}	
-			
+	}
+
 #ifdef ALLOW_Fx_CHEATING
 	if (key[KEY_F2])
         	weapon[PLASMA_GUN].availible = 1;

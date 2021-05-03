@@ -45,11 +45,11 @@ struct CacheEntry {
 class ImageCache {
 	public:
         	ImageCache();
-                BITMAP *GetImage(char *filename, RGB *pal);
+                BITMAP *GetImage(const char *filename, RGB *pal);
                 void FreeImage(BITMAP *bitmap);
                 ~ImageCache();
         private:
-        	CacheEntry *FindEntry(char *filename);
+        	CacheEntry *FindEntry(const char *filename);
         	int num_images;
                 int max_images;
                 CacheEntry *cache;

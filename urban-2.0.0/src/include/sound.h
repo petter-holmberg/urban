@@ -47,9 +47,9 @@ class Sound {
                 void SetMusicVolume(int vol) {md_musicvolume = vol / 2;}
                 int GetMusicVolume() {return md_musicvolume * 2;}
 #endif
-                void PlaySFX_Critical(char *);
-                void PlaySFX(char *);
-                void LoadSFX(char *);
+                void PlaySFX_Critical(const char *);
+                void PlaySFX(const char *);
+                void LoadSFX(const char *);
 
 	private:
 #ifdef DJGPP

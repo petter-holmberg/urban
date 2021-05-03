@@ -25,7 +25,7 @@ struct Letter {
 #define CHEAT_AIRSTRIKE				0x10000
 
 struct CheatCode {
-	char *code;
+	const char *code;
 	unsigned long cheat;
 };
 

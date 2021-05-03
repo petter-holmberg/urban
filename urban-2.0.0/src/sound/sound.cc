@@ -36,6 +36,7 @@
   #include <pthread.h>
 #endif
 #include <stdio.h>
+#include <unistd.h>
 #include "sound.h"
 #include "config.h"
 #include "scache.h"
@@ -62,7 +63,7 @@ extern "C" {
 
 Sound::Sound() {
         current_mod = NULL;
-	
+
 #ifdef DJGPP
        	soundcard = 1;
 	reserve_voices(NUM_VOICES, -1);
@@ -78,35 +79,35 @@ Sound::Sound() {
 #else
        	soundcard = 1;
 	/* register all the drivers */
-	/*MikMod_RegisterAllDrivers();*/
-	MikMod_RegisterDriver(&drv_oss);
-     
+	MikMod_RegisterAllDrivers();
+	/*MikMod_RegisterDriver(&drv_oss);*/
+
 	setenv("MM_FRAGSIZE", "10", 1);
-   
+
 	/* register all the module loaders */
 	MikMod_RegisterAllLoaders();
-     
+
 	/* initialize the library */
 	md_mode = DMODE_SOFT_SNDFX | DMODE_SOFT_MUSIC | DMODE_16BITS;
 	md_mixfreq = 22050;
-        
+
 	if(MikMod_Init("")) {
         	fprintf(stderr,"Could not initialize sound, reason: %s\n",
                 	MikMod_strerror(MikMod_errno));
-			
+
 		soundcard = 0;
 		return;
 	}
         MikMod_SetNumVoices(12, 4);
    	MikMod_EnableOutput();
-   
+
 	pthread_create(&playthread, NULL, module_thread, NULL);
 #endif
 }
 
 Sound::~Sound() {
 	if(current_mod)
-#ifdef DJGPP	
+#ifdef DJGPP
         	destroy_mod(current_mod);
 #else
         	Player_Free(current_mod);
@@ -115,7 +116,7 @@ Sound::~Sound() {
 
 int Sound::PlayMusic(char *filename) {
 	if(soundcard) {
-#ifdef DJGPP	
+#ifdef DJGPP
 		if (current_mod)
 	        	destroy_mod(current_mod);
 
@@ -148,7 +149,7 @@ void Sound::StopMusic() {
 	}
 }
 
-void Sound::LoadSFX(char *filename) {
+void Sound::LoadSFX(const char *filename) {
 	SAMPLE *s;
 
 	if(soundcard) {
@@ -159,14 +160,14 @@ void Sound::LoadSFX(char *filename) {
         }
 }
 
-void Sound::PlaySFX_Critical(char *filename) {
+void Sound::PlaySFX_Critical(const char *filename) {
 	SAMPLE *s;
 
 	if(soundcard) {
 
 	        s = scache.GetSample(filename);
                 if(s) {
-#ifdef DJGPP		
+#ifdef DJGPP
 		        play_sample(s, config->keyconf.sfx_vol, 128, 1000, 0);
 #else
 			md_sndfxvolume = config->keyconf.sfx_vol;
@@ -175,14 +176,14 @@ void Sound::PlaySFX_Critical(char *filename) {
 		}
 	}
 }
-void Sound::PlaySFX(char *filename) {
+void Sound::PlaySFX(const char *filename) {
 	SAMPLE *s;
 
 	if(soundcard) {
 
 	        s = scache.GetSample(filename);
                 if(s) {
-#ifdef DJGPP		
+#ifdef DJGPP
 		        play_sample(s, config->keyconf.sfx_vol, 128, 1000, 0);
 #else
 			md_sndfxvolume = config->keyconf.sfx_vol;

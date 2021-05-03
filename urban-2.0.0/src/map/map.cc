@@ -42,7 +42,7 @@
 
 struct TileLoadInfo {
 	long tile_info;
-	char *filename;
+	const char *filename;
 } tiles_to_load[] = {
 {0x0001, "tiles/bricks.pcx"},
 {0x0002, "tiles/bricks2.pcx"},
@@ -257,7 +257,7 @@ struct TileLoadInfo {
 /***************************************************************************/
 struct BGLoadInfo {
 	long tile_info;
-	char *filename;
+	const char *filename;
 } bg_to_load[] = {
 {0x0001, "bakg/1.pcx"},
 {0x0002, "bakg/2.pcx"},
@@ -401,7 +401,7 @@ Map::~Map() {
 	/* OBS!!!!!!!!!!!! Fria allt minne, bitte! */
 }
 /***************************************************************************/
-int Map::SaveMap (char *filename) {
+int Map::SaveMap (const char *filename) {
 	FILE *fd;
 	int x =	0, y = 0, z = 0;
 
@@ -492,7 +492,7 @@ int Map::SaveMap (char *filename) {
 	return 1;
 }
 /***************************************************************************/
-int Map::LoadMap (char *filename) {
+int Map::LoadMap (const char *filename) {
 	FILE *fd;
 	char *line;
 	int i;
@@ -1127,7 +1127,7 @@ void Map::UpdatePal () {
         }
 }
 /***************************************************************************/
-char *Map::GetOption(char *name) {
+char *Map::GetOption(const char *name) {
 	int i;
         char *tok;
         char *temp;
@@ -1147,7 +1147,7 @@ char *Map::GetOption(char *name) {
         return NULL;
 }
 /***************************************************************************/
-void Map::SetOption(char *name) {
+void Map::SetOption(const char *name) {
 	int i;
 
         if (options == NULL)

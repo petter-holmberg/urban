@@ -35,7 +35,7 @@
 #define MAX_Y_SPEED	4
 #define Y_ACCEL		1
 /****************************************************************************/
-Animation_o::Animation_o(int X, int Y, int Z, char *name, int num_pics, int dek_frame, int Speed_X, int Speed_Y, int Speed_Z)
+Animation_o::Animation_o(int X, int Y, int Z, const char *name, int num_pics, int dek_frame, int Speed_X, int Speed_Y, int Speed_Z)
 :Object(X, Y, Z) {
 	int i;
         RGB pal[256];

@@ -68,7 +68,7 @@ SoundCache::~SoundCache() {
         }*/
 }
 /***************************************************************************/
-SCacheEntry *SoundCache::FindEntry(char *filename) {
+SCacheEntry *SoundCache::FindEntry(const char *filename) {
 	for(int i = 0;i < num_samples;i++) {
 
         	if(!strcmp(filename, cache[i].filename))
@@ -77,7 +77,7 @@ SCacheEntry *SoundCache::FindEntry(char *filename) {
         return NULL;
 }
 /***************************************************************************/
-SAMPLE *SoundCache::GetSample(char *filename) {
+SAMPLE *SoundCache::GetSample(const char *filename) {
 	char pathname[512];
 	// Allready in cache
         sprintf(pathname, "%s/snd/%s", DATPATH, filename);

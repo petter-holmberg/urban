@@ -103,7 +103,7 @@ int MenuChoice(int alternative){
 				SOUND.PlayMusic(buffer);
 			}
 			fade_out(5);
-		
+
 			showcredits();
 
 			if (IS_SOUND_ON) {
@@ -124,7 +124,7 @@ int MenuChoice(int alternative){
 	return 1;
 }
 /*****************************************************************************************/
-int Do_Menu(char *text, int num_items, int pos = 1) {
+int Do_Menu(const char *text, int num_items, int pos) {
 	PALETTE pal;
 	UrbanFont m(LARGE_FONT);
         m.SetScale(65);
@@ -190,10 +190,10 @@ void LoadGame() {
 	char filename[512];
         FILE *fs;
         int slot;
-	
-#ifdef DJGPP	
+
+#ifdef DJGPP
 	sprintf(filename, "savegame.dat");
-#else	
+#else
 	sprintf(filename, "%s/.urban/savegame.dat", getenv("HOME"));
 #endif
         if ((fs = fopen(filename, "rb")) == NULL) {
@@ -214,7 +214,7 @@ void LoadGame() {
 		        fclose(fs);
                 }
         } else {
-	        fread(SavedGames, 1, 5 * sizeof(struct SaveGameData), fs);
+	        auto err = fread(SavedGames, 1, 5 * sizeof(struct SaveGameData), fs);
 	        fclose(fs);
 	}
 
@@ -248,7 +248,7 @@ int main(int argc, char	**argv)	{
 //	int looping = 1;
 	int pos	= 1;
 	int c;
-        char *meny_text = "START GAME\nLOAD GAME\nHIGHSCORE\nCREDITS\nCONFIG\nQUIT";
+        const char *meny_text = "START GAME\nLOAD GAME\nHIGHSCORE\nCREDITS\nCONFIG\nQUIT";
 	config = new Config;
 
 
@@ -333,7 +333,7 @@ Möjliga växlar:
 		MenuChoice(pos);
 
 //        fade_out(6);
-	{	
+	{
 		UrbanFont L(LARGE_FONT);
 		UrbanFont S(SMALL_FONT);
 	/*	clear_to_color(screen, 200);*/
@@ -341,18 +341,18 @@ Möjliga växlar:
 	        BITMAP *backg = icache.GetImage("ibild.pcx", pal);
 		blit(backg, screen, 0, 0, 0, 0, backg->w, backg->h);
 		icache.FreeImage(backg);
-		
+
 		rest(500);
-	
+
 		L.print_centre("THE URBAN", SCREEN_WIDTH/2, SCREEN_HEIGHT/2 - 50, screen);
 		L.print_centre("HOMEPAGE", SCREEN_WIDTH/2, SCREEN_HEIGHT/2, screen);
 		S.print_centre("urban.home.dhs.org", SCREEN_WIDTH/2, SCREEN_HEIGHT/2 + 40, screen);
   		int i = 600;
-		
+
 		while(!keypressed() && i)rest(100), i--;
 	}
 	fade_out(6);
-	
+
 #ifndef DJGPP
 	close_gfx();
 #endif

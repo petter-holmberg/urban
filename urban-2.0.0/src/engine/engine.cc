@@ -880,7 +880,7 @@ void Engine::NewGame() {
 }
 
 /**************************************************************************/
-int Engine::play_level(char *map_name, struct PlayerData *p_dat, int controls) {
+int Engine::play_level(const char *map_name, struct PlayerData *p_dat, int controls) {
 	int i;
 	RGB *pal;
 
@@ -1028,7 +1028,7 @@ int Engine::display_map() {
         static UrbanFont *Ufont = NULL;
         char buff[512];
 	int draw_player;
-	
+
         if (Ufont == NULL)
                 Ufont = new UrbanFont(SMALL_FONT);
 
@@ -1294,7 +1294,7 @@ int Engine::display_map() {
 		if (key[Letters[i].key] && cheat_cl_p < 63) {
 			if (cheat_cl_p > 0 && cheat_code_letters[cheat_cl_p - 1] == Letters[i].letter)
 				break;
-				
+
 			cheat_code_letters[cheat_cl_p++] = Letters[i].letter;
 			cheat_code_letters[cheat_cl_p] = '\0'; //null-terminated
 			//compare with known cheatcodes
@@ -1304,10 +1304,10 @@ int Engine::display_map() {
 					if (!strcmp(cheat_codes[j].code, cheat_code_letters)) { // cheat code match
 						cheat_codes_active |= cheat_codes[j].cheat;
 						PushMessage("Cheat activated");
-						break;						
+						break;
 					} else {
-						clear_cc = 0;						
-					}						
+						clear_cc = 0;
+					}
 				}
 			}
 			if (clear_cc) {
@@ -1317,17 +1317,17 @@ int Engine::display_map() {
 			break;
 		}
 	}
-	
+
 	if (cheat_codes_active & CHEAT_CLEAR_LEVEL)
 		ClearLevel();
-		
+
 	if (cheat_codes_active & CHEAT_AIRSTRIKE) {
 		if (player->GetY() - 200 > 50) {
 			create_alwaysupdate(new Airstrike_o(player->GetX(), player->GetY() - 200,
 				player->GetZ()));
 		} else
-			PushMessage("Unable to issue airstrike");					
-	}				
+			PushMessage("Unable to issue airstrike");
+	}
 	return 1;
 }
 /**************************************************************************/
@@ -1408,7 +1408,7 @@ int Engine::check_collision(Object *o) {
 	int width, height;
 	int z;
 //        register int i;
-	register int j;
+	int j;
 
 	z = o->GetLayer();
 
@@ -1440,8 +1440,8 @@ void Engine::check_collision() {
 	int y_dist;
 	int width, height;
 	int z;
-	register int i;
-	register int j;
+	int i;
+	int j;
 
         // Innerlayers
         if(player->GetLayer() == 0)
@@ -1641,7 +1641,7 @@ int Engine::play_loop() {
 	}
 }
 
-void Engine::PushMessage(char *msg, int prior) {
+void Engine::PushMessage(const char *msg, int prior) {
         static UrbanFont *font = NULL;
 
         if (font == NULL)

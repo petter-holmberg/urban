@@ -42,17 +42,17 @@ class UrbanFont {
         	UrbanFont (int font = SMALL_FONT);
                 UrbanFont ();
                 ~UrbanFont ();
-                int LoadFontPcx (char *filename);
+                int LoadFontPcx (const char *filename);
                 int UnloadFontPcx ();
-                int LoadFontFile (char *filename) {return 0;}
+                int LoadFontFile (const char *filename) {return 0;}
                 int UnloadFontFile () {return 0;}
                 void SetScale (int procent);
-                void print (char *text, int x, int y, BITMAP *dest=screen);
-                void print_centre (char *text, int x, int y, BITMAP *dest=screen);
-                BITMAP *print (char *text);
+                void print (const char *text, int x, int y, BITMAP *dest=screen);
+                void print_centre (const char *text, int x, int y, BITMAP *dest=screen);
+                BITMAP *print (const char *text);
                 RGB *GetPal () { return pal;};
 	private:
-        	BITMAP *create_textbitmap(char *text);
+        	BITMAP *create_textbitmap(const char *text);
         	BITMAP **Fontimages;
         	BITMAP *font_image;
                 PALETTE pal;

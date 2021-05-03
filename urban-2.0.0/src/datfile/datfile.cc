@@ -5,32 +5,32 @@
 #include "icache.h"
 #include "game.h"
 
-#ifdef DJGPP
+//#ifdef DJGPP
 typedef unsigned char uint8;
 typedef unsigned long uint32;
 typedef signed long sint32;
-#endif
+//#endif
 
 struct pcx_header {
-	uint8 manufacturer		__attribute__((packed));
-	uint8 version			__attribute__((packed));
-	uint8 encoding			__attribute__((packed));
-	uint8 bits_per_pixel		__attribute__((packed));
-	uint8 xmin[2],ymin[2]		__attribute__((packed));
-	uint8 xmax[2],ymax[2]		__attribute__((packed));
-	uint8 hres[2]			__attribute__((packed));
-	uint8 vres[2]			__attribute__((packed));
+	uint8 manufacturer;
+	uint8 version;
+	uint8 encoding;
+	uint8 bits_per_pixel;
+	uint8 xmin[2],ymin[2];
+	uint8 xmax[2],ymax[2];
+	uint8 hres[2];
+	uint8 vres[2];
 
-	uint8 palette16[48]		__attribute__((packed));
-	uint8 reserved			__attribute__((packed));
-	uint8 color_planes		__attribute__((packed));
-	uint8 bytes_per_line[2]		__attribute__((packed));
-	uint8 palette_type[2]		__attribute__((packed));
-	uint8 filler[58]		__attribute__((packed));
-};
+	uint8 palette16[48];
+	uint8 reserved;
+	uint8 color_planes;
+	uint8 bytes_per_line[2];
+	uint8 palette_type[2];
+	uint8 filler[58];
+} __attribute__((packed));
 #define get16(x) ((x[1]<<8)|x[0])
 /***************************************************************************/
-char *datfile::load_file_to_memory (char *filename) {
+char *datfile::load_file_to_memory (const char *filename) {
 	int found = 0;
         int i;
 
@@ -59,7 +59,7 @@ char *datfile::load_file_to_memory (char *filename) {
         return buf;
 }
 /***************************************************************************/
-FILE *datfile::open_file (char *filename) {
+FILE *datfile::open_file (const char *filename) {
 	int found = 0;
 
 	for(int i = 0; i < num_entries; i++) {
@@ -77,7 +77,7 @@ FILE *datfile::open_file (char *filename) {
         return datfd;
 }
 /***************************************************************************/
-BITMAP *datfile::load_pcx (char *filename, RGB *pal) {
+BITMAP *datfile::load_pcx (const char *filename, RGB *pal) {
 	struct pcx_header header;
 	uint32 bpp;
 	sint32 i, j, c, err;
@@ -100,8 +100,8 @@ BITMAP *datfile::load_pcx (char *filename, RGB *pal) {
                 exit(2);
         }
 
-	fread ( (char*) &header, 1, sizeof (struct pcx_header), datfd);
-
+	auto err2 = fread ( (char*) &header, 1, sizeof (struct pcx_header), datfd);
+//printf("%s %d\n", err2, filename);
 	width  = get16(header.xmax) - get16(header.xmin) + 1;
 	height = get16(header.ymax) - get16(header.ymin) + 1;
 
@@ -135,7 +135,7 @@ BITMAP *datfile::load_pcx (char *filename, RGB *pal) {
 		if ( fgetc (datfd) == 12 ) {
 			for (i = 0; i < 256; i++) {
 
-				fread (palbuf, 1, 3, datfd);
+				err = fread (palbuf, 1, 3, datfd);
 				pal[i].r = palbuf[0] >> 2;
 				pal[i].g = palbuf[1] >> 2;
 				pal[i].b = palbuf[2] >> 2;
@@ -145,7 +145,7 @@ BITMAP *datfile::load_pcx (char *filename, RGB *pal) {
         return bmp;
 }
 /***************************************************************************/
-datfile::datfile(char *filename) {
+datfile::datfile(const char *filename) {
 	struct header hdr;
         char buffer[512];
 
@@ -158,7 +158,7 @@ datfile::datfile(char *filename) {
         	perror(buffer);
                 exit(6);
 	}
-        fread(&hdr, sizeof(header), 1, datfd);
+        auto err = fread(&hdr, sizeof(header), 1, datfd);
 
         if(hdr.magic != 0x5552424E) {
 
@@ -172,7 +172,7 @@ datfile::datfile(char *filename) {
 	for(int i = 0; i < hdr.num_entries; i++) {
 
 		entries[i] = new dat_entry;
-	        fread(entries[i], sizeof(dat_entry), 1, datfd);
+	        err = fread(entries[i], sizeof(dat_entry), 1, datfd);
         }
 }
 /***************************************************************************/

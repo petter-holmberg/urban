@@ -39,7 +39,7 @@
 #define STATE_NONE 0
 #define STATE_DESTROY 1
 /****************************************************************************/
-bodyparts_o::bodyparts_o(int X, int Y, int Z, char *name, int num_pics, int Speed_X, int Speed_Y, int Speed_Z)
+bodyparts_o::bodyparts_o(int X, int Y, int Z, const char *name, int num_pics, int Speed_X, int Speed_Y, int Speed_Z)
 :Object(X, Y, Z) {
 	int i;
         RGB pal[256];

@@ -541,7 +541,7 @@ class blood_o:public Object {
 
 class bodyparts_o:public Object {
 	public:
-        	bodyparts_o(int X, int Y, int Z, char *name, int num_pics, int Speed_X = 0, int Speed_Y = 0, int Speed_Z = 0);
+        	bodyparts_o(int X, int Y, int Z, const char *name, int num_pics, int Speed_X = 0, int Speed_Y = 0, int Speed_Z = 0);
                 int update();
                 virtual ~bodyparts_o();
 	private:
@@ -587,7 +587,7 @@ class Barrel_o:public Object {
 
 class Animation_o:public Object {
 	public:
-        	Animation_o(int X, int Y, int Z, char *name, int num_pics, int dek_frame = -1, int Speed_X = 0, int Speed_Y = 0, int Speed_Z = 0);
+        	Animation_o(int X, int Y, int Z, const char *name, int num_pics, int dek_frame = -1, int Speed_X = 0, int Speed_Y = 0, int Speed_Z = 0);
 		int update();
                 virtual ~Animation_o();
 	private:

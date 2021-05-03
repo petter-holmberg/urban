@@ -48,11 +48,11 @@ struct SCacheEntry {
 class SoundCache {
 	public:
         	SoundCache();
-                SAMPLE *GetSample(char *filename);
+                SAMPLE *GetSample(const char *filename);
                 void FreeSample(SAMPLE *bitmap);
                 ~SoundCache();
         private:
-        	SCacheEntry *FindEntry(char *filename);
+        	SCacheEntry *FindEntry(const char *filename);
         	int num_samples;
                 int max_samples;
                 SCacheEntry *cache;

@@ -79,7 +79,7 @@ HighScore::HighScore() {
 		else
 	        	sprintf(buffer, " %-10s%6d   0:0", "Empty", 0);
 
-			
+
 		fnt.print(buffer, 31, 50 + i * 16, textbmp);
 
         }
@@ -139,7 +139,8 @@ char *HighScore::GetName() {
                 if((key >> 8) == KEY_ESC) {
 
 		        destroy_bitmap(textbmp);
-		        return "Unknown";
+                strcpy(Name, "Unknown");
+		        return Name;
                 }
                 if((key >> 8) == KEY_BACKSPACE) {
 			if(pos == 0)
@@ -158,7 +159,8 @@ char *HighScore::GetName() {
         } while (1);
 
         destroy_bitmap(textbmp);
-        return "Unknown";
+        strcpy(Name, "Unknown");
+        return Name;
 }
 /***************************************************************************/
 HighScore::HighScore(int score, int level) {
@@ -199,7 +201,7 @@ void HighScore::Open() {
 #endif
         	return;
 
-       	fread(highscore, sizeof(Score_t), NUM_HIGHSCORES, fd);
+       	auto err = fread(highscore, sizeof(Score_t), NUM_HIGHSCORES, fd);
 
         fclose(fd);
 }

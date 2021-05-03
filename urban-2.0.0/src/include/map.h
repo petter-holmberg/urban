@@ -48,8 +48,8 @@ class Map {
 	public:
 		Map();
 		~Map();
-                int LoadMap (char *filename);
-                int SaveMap (char *filename);
+                int LoadMap (const char *filename);
+                int SaveMap (const char *filename);
                 int GetDekor(int x, int y, int z);
                 int GetEffect(int x, int y, int z);
                 int GetBackGround(int x, int y);
@@ -71,8 +71,8 @@ class Map {
                 RGB *GetPal();
                 void SetPal(int pal_mode);
                 void UpdatePal();
-                char *GetOption(char *name);
-                void SetOption(char *name);
+                char *GetOption(const char *name);
+                void SetOption(const char *name);
 		void NewLevel(int width, int height);
         private:
         	char *GetLine (FILE *fd);
