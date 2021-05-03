@@ -37,88 +37,94 @@ Controllers::Controllers()
 }
 
 Controllers::~Controllers()
-{
-}
+    = default;
 
-int Controllers::up()
-{
-    return 0;
-}
-
-int Controllers::down()
+auto Controllers::up() -> int
 {
     return 0;
 }
 
-int Controllers::left()
+auto Controllers::down() -> int
 {
     return 0;
 }
 
-int Controllers::right()
+auto Controllers::left() -> int
 {
     return 0;
 }
 
-int Controllers::jump()
+auto Controllers::right() -> int
 {
     return 0;
 }
 
-int Controllers::fire()
+auto Controllers::jump() -> int
 {
     return 0;
 }
 
-int Controllers::weapon1()
+auto Controllers::fire() -> int
 {
     return 0;
 }
 
-int Controllers::weapon2()
-{
-    return 0;
-}
-int Controllers::weapon3()
-{
-    return 0;
-}
-int Controllers::weapon4()
-{
-    return 0;
-}
-int Controllers::weapon5()
-{
-    return 0;
-}
-int Controllers::weapon6()
-{
-    return 0;
-}
-int Controllers::weapon7()
-{
-    return 0;
-}
-int Controllers::weapon8()
-{
-    return 0;
-}
-int Controllers::weapon9()
+auto Controllers::weapon1() -> int
 {
     return 0;
 }
 
-int Controllers::next_weapon()
+auto Controllers::weapon2() -> int
 {
     return 0;
 }
 
-int Controllers::prev_weapon()
+auto Controllers::weapon3() -> int
 {
     return 0;
 }
 
-int Controllers::update()
+auto Controllers::weapon4() -> int
+{
+    return 0;
+}
+
+auto Controllers::weapon5() -> int
+{
+    return 0;
+}
+
+auto Controllers::weapon6() -> int
+{
+    return 0;
+}
+
+auto Controllers::weapon7() -> int
+{
+    return 0;
+}
+
+auto Controllers::weapon8() -> int
+{
+    return 0;
+}
+
+auto Controllers::weapon9() -> int
+{
+    return 0;
+}
+
+auto Controllers::next_weapon() -> int
+{
+    return 0;
+}
+
+auto Controllers::prev_weapon() -> int
+{
+    return 0;
+}
+
+auto Controllers::update() -> int
 {
     return 0;
 }

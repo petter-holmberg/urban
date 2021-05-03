@@ -37,7 +37,6 @@ extern Config* config;
 #define __USE_CONFIG_KEYS
 
 Keyboard_ctrl::Keyboard_ctrl()
-    : Controllers()
 {
 //	controller_type = CONTROLLER_KEYBOARD;
 #ifdef __USE_CONFIG_KEYS
@@ -49,10 +48,12 @@ Keyboard_ctrl::Keyboard_ctrl()
     key_fire = config->keyconf.key_fire;
     key_next = config->keyconf.key_prevweapon;
     key_prev = config->keyconf.key_nextweapon;
-    if (!key_next)
+    if (key_next == 0) {
         key_next = KEY_INSERT;
-    if (!key_prev)
+    }
+    if (key_prev == 0) {
         key_prev = KEY_DEL;
+    }
 #else
     key_up = KEY_UP;
     key_down = KEY_DOWN;
@@ -66,67 +67,72 @@ Keyboard_ctrl::Keyboard_ctrl()
 }
 
 Keyboard_ctrl::~Keyboard_ctrl()
-{
-}
+    = default;
 
-int Keyboard_ctrl::up()
+auto Keyboard_ctrl::up() -> int
 {
     return key[key_up];
 }
 
-int Keyboard_ctrl::down()
+auto Keyboard_ctrl::down() -> int
 {
     return key[key_down];
 }
 
-int Keyboard_ctrl::left()
+auto Keyboard_ctrl::left() -> int
 {
     return key[key_left];
 }
 
-int Keyboard_ctrl::right()
+auto Keyboard_ctrl::right() -> int
 {
     return key[key_right];
 }
 
-int Keyboard_ctrl::jump()
+auto Keyboard_ctrl::jump() -> int
 {
     return key[key_jump];
 }
 
-int Keyboard_ctrl::fire()
+auto Keyboard_ctrl::fire() -> int
 {
     return key[key_fire];
 }
 
-int Keyboard_ctrl::next_weapon()
+auto Keyboard_ctrl::next_weapon() -> int
 {
     static int pressed = 0;
 
-    if (!key[key_next])
+    if (key[key_next] == 0u) {
         pressed = 0;
+    }
 
-    if (key[key_next])
-        if (pressed)
+    if (key[key_next] != 0u) {
+        if (pressed != 0) {
             return 0;
-        else
+        } else {
             pressed = 1;
+        }
+    }
 
     return key[key_next];
 }
 
-int Keyboard_ctrl::prev_weapon()
+auto Keyboard_ctrl::prev_weapon() -> int
 {
     static int pressed = 0;
 
-    if (!key[key_prev])
+    if (key[key_prev] == 0u) {
         pressed = 0;
+    }
 
-    if (key[key_prev])
-        if (pressed)
+    if (key[key_prev] != 0u) {
+        if (pressed != 0) {
             return 0;
-        else
+        } else {
             pressed = 1;
+        }
+    }
 
     return key[key_prev];
 }
