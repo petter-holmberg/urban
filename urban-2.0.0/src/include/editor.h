@@ -89,17 +89,17 @@ private:
     void DrawBackgroundSelectionMap(int start_row);
     void DrawObjectSelectionMap(int start_row);
     void ShowMapStatus();
-    int Obj2Num(int o);
+    static int Obj2Num(int o);
     Map* map;
     int map_x, map_y;
-    int x, y, z;
+    int x {}, y {}, z {};
     int cursor_x, cursor_y, cursor_z;
     BITMAP** images;
     BITMAP* buffer;
 
     char* filename;
 
-    struct Layerinfo layer_info[3];
+    struct Layerinfo layer_info[3] {};
 
     long num;
     long mode;

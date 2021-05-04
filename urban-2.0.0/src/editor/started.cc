@@ -1,14 +1,15 @@
 #include "editor.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
 Editor* editor;
 
-int main(int argc, char* argv[])
+auto main(int argc, char* argv[]) -> int
 {
-    int ret;
-    int xs = 0, ys = 0;
+    int ret = 0;
+    int xs = 0;
+    int ys = 0;
     editor = new Editor;
 
     if (argc == 1) {

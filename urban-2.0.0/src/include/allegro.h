@@ -122,6 +122,8 @@ void textout_centre(BITMAP *bmp, FONT *f, char *str, int x, int y, int color);
 void clear(BITMAP *bmp);
 void clear_to_color(BITMAP *bmp, int color);
 void putpixel(BITMAP *bmp, int x, int y, int c);
+void line(BITMAP *bmp, int x1, int y1, int x2, int y2, int color);
+void rect(BITMAP *bmp, int x1, int y1, int x2, int y2, int color);
 void rectfill(BITMAP *bmp, int x, int y, int x2, int y2, int c);
 BITMAP *load_bitmap (char *name, PALETTE palette);
 int set_color(int, RGB *rgb);
@@ -136,6 +138,8 @@ void rest(long time);
 void get_palette(PALLETE p);
 void fade_interpolate(PALLETE src, PALETTE dest, PALETTE out, int pos, int start, int end);
 int keypressed();
+void stretch_sprite(BITMAP *bmp, BITMAP *sprite, int x, int y, int w, int h);
+void xor_mode(int on);
 
 extern sf::RenderWindow *window;
 extern BITMAP *screen;

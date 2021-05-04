@@ -766,6 +766,15 @@ int drawRectangle(sf::Texture& tex, int x, int y, int w, int h, int c)
         return 0;
 }
 /**************************************************************************/
+void line(BITMAP *bmp, int x1, int y1, int x2, int y2, int color) {
+}
+/**************************************************************************/
+void rect(BITMAP *bmp, int x1, int y1, int x2, int y2, int color) {
+}
+/**************************************************************************/
+void stretch_sprite(BITMAP *bmp, BITMAP *sprite, int x, int y, int w, int h) {
+}
+/**************************************************************************/
 void rectfill(BITMAP *bmp, int x1, int y1, int x2, int y2, int c) {
 
 	if(x1 < 0)
@@ -963,4 +972,6 @@ void clear_to_color(BITMAP *bmp, int color) {
 	}
 }
 /**************************************************************************/
-
+void xor_mode(int on)
+{
+}
