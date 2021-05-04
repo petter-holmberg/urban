@@ -2,13 +2,13 @@
 #include "game.h"
 #include "icache.h"
 #include <allegro.h>
-#include <stdio.h>
-#include <string.h>
+#include <cstdio>
+#include <cstring>
 
 //#ifdef DJGPP
 typedef unsigned char uint8;
-typedef unsigned long uint32;
-typedef signed long sint32;
+using uint32 = unsigned long;
+using sint32 = long;
 //#endif
 
 struct pcx_header {
@@ -30,81 +30,90 @@ struct pcx_header {
 } __attribute__((packed));
 
 /***************************************************************************/
-char* datfile::load_file_to_memory(const char* filename)
+auto datfile::load_file_to_memory(const char* filename) -> char*
 {
     int found = 0;
-    int i;
+    int i = 0;
 
     for (i = 0; i < num_entries; i++) {
-        if (!strcmp(filename, entries[i]->filename)) {
+        if (strcmp(filename, entries[i]->filename) == 0) {
             found = 1;
             fseek(datfd, entries[i]->offset, SEEK_SET);
             break;
         }
     }
-    if (!found) {
+    if (found == 0) {
         /*        	printf("\nFile not found in dat:'%s'\n", filename);
                 exit(2);*/
-        return NULL;
+        return nullptr;
     }
     char* buf = new char[entries[i]->size];
 
-    if (buf == NULL)
-        return NULL;
+    if (buf == nullptr) {
+        return nullptr;
+    }
 
     if (fread(buf, 1, entries[i]->size, datfd) != (size_t)entries[i]->size) {
 
         delete[] buf;
-        return NULL;
+        return nullptr;
     }
     return buf;
 }
 /***************************************************************************/
-FILE* datfile::open_file(const char* filename)
+auto datfile::open_file(const char* filename) -> FILE*
 {
     int found = 0;
 
     for (int i = 0; i < num_entries; i++) {
-        if (!strcmp(filename, entries[i]->filename)) {
+        if (strcmp(filename, entries[i]->filename) == 0) {
             found = 1;
             fseek(datfd, entries[i]->offset, SEEK_SET);
             break;
         }
     }
-    if (!found) {
+    if (found == 0) {
         /*        	printf("\nFile not found in dat:'%s'\n", filename);
                 exit(2);*/
-        return NULL;
+        return nullptr;
     }
     return datfd;
 }
 /***************************************************************************/
-BITMAP* datfile::load_pcx(const char* filename, RGB* pal)
+auto datfile::load_pcx(const char* filename, RGB* pal) -> BITMAP*
 {
-    struct pcx_header header;
-    uint32 bpp;
-    sint32 i, j, c, err;
-    uint32 width, height, cpl;
-    uint8 *lptr, *nextlptr, palbuf[4];
-    BITMAP* bmp = NULL;
+    struct pcx_header header {
+    };
+    uint32 bpp = 0;
+    sint32 i = 0;
+    sint32 j = 0;
+    sint32 c = 0;
+    sint32 err = 0;
+    uint32 width = 0;
+    uint32 height = 0;
+    uint32 cpl = 0;
+    uint8* lptr = nullptr;
+    uint8* nextlptr = nullptr;
+    uint8 palbuf[4];
+    BITMAP* bmp = nullptr;
     char found = 0;
 
     err = 0;
 
     for (i = 0; i < num_entries; i++) {
-        if (!strcmp(filename, entries[i]->filename)) {
+        if (strcmp(filename, entries[i]->filename) == 0) {
             found = 1;
             fseek(datfd, entries[i]->offset, SEEK_SET);
             break;
         }
     }
-    if (!found) {
+    if (found == 0) {
         printf("\nFile not found in dat:'%s'\n", filename);
         exit(2);
     }
 
     auto err2 = fread((char*)&header, 1, sizeof(struct pcx_header), datfd);
-    //printf("%s %d\n", err2, filename);
+
     width = get16(header.xmax) - get16(header.xmin) + 1;
     height = get16(header.ymax) - get16(header.ymin) + 1;
 
@@ -112,7 +121,7 @@ BITMAP* datfile::load_pcx(const char* filename, RGB* pal)
 
     cpl = header.color_planes;
 
-    if ((!err) && (bmp = create_bitmap(width, height))) {
+    if ((err == 0) && ((bmp = create_bitmap(width, height)) != nullptr)) {
         //	if ((!err) && (fbuf = (uint8 *) malloc (width * height * bpp)) ) {
         //        	bmp = create_bitmap(width, height);
         lptr = (uint8*)bmp->dat;
@@ -126,10 +135,12 @@ BITMAP* datfile::load_pcx(const char* filename, RGB* pal)
 
                     j = c & 0x3F;
                     c = fgetc(datfd);
-                    while (j--)
+                    while ((j--) != 0) {
                         *lptr++ = c;
-                } else
+                    }
+                } else {
                     *lptr++ = c;
+                }
             } while (lptr < nextlptr);
             lptr = nextlptr;
         }
@@ -150,14 +161,15 @@ BITMAP* datfile::load_pcx(const char* filename, RGB* pal)
 /***************************************************************************/
 datfile::datfile(const char* filename)
 {
-    struct header hdr;
+    struct header hdr {
+    };
     char buffer[512];
 
     num_entries = 0;
 
     sprintf(buffer, "%s/%s", DATPATH, filename);
 
-    if ((datfd = fopen(buffer, "rb")) == NULL) {
+    if ((datfd = fopen(buffer, "rb")) == nullptr) {
 
         perror(buffer);
         exit(6);
