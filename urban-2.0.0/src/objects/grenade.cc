@@ -31,7 +31,7 @@
 #include "engine.h"
 #include "object.h"
 #include <allegro.h>
-#include <string.h>
+#include <cstring>
 
 #define EXPLOSION_SAMPLE "samples/heart_1.wav"
 #define FIRE_SAMPLE "samples/grenade.wav"
@@ -50,8 +50,9 @@ grenade_o::grenade_o(int X, int Y, int Z, int SpeedX, int SpeedY, int SpeedZ)
     SOUND.PlaySFX(FIRE_SAMPLE);
     sprintf(filename, "soldier2/kula.pcx");
     images[0] = icache.GetImage(filename, pal);
-    if (images[0])
+    if (images[0] != nullptr) {
         num_images++;
+    }
 
     height = images[0]->h;
     width = images[0]->w;
@@ -79,11 +80,10 @@ grenade_o::grenade_o(int X, int Y, int Z, int SpeedX, int SpeedY, int SpeedZ)
 }
 /****************************************************************************/
 grenade_o::~grenade_o()
-{
-}
+    = default;
 
 /****************************************************************************/
-int grenade_o::update()
+auto grenade_o::update() -> int
 {
     x += speed_x;
     y += speed_y;
@@ -97,8 +97,9 @@ int grenade_o::update()
     }
 
     counter--;
-    if (energy <= 0)
+    if (energy <= 0) {
         return -1;
+    }
 
     // Check collision with walls
     if (ENGINE.check_wall(x, y + TILE_SIDE_HEIGHT, z)
@@ -117,10 +118,12 @@ int grenade_o::update()
 
 void grenade_o::Collision(Object* o)
 {
-    if (!energy)
+    if (energy == 0) {
         return;
-    if (friends & o->GetWho())
+    }
+    if ((friends & o->GetWho()) != 0U) {
         return;
+    }
     energy = 0;
     SOUND.PlaySFX(EXPLOSION_SAMPLE);
     ENGINE.create_object(new explosion_o(x, y - TILE_SIDE_HEIGHT + 15, z));

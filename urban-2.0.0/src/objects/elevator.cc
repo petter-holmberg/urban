@@ -31,8 +31,8 @@
 #include "engine.h"
 #include "object2.h"
 #include <allegro.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cstdlib>
+#include <cstring>
 
 #define STATE_NONE 0x00
 #define STATE_MOVE 0x01
@@ -48,8 +48,9 @@ Elevator_o::Elevator_o(int X, int Y, int Z)
     images = new BITMAP*;
     sprintf(filename, "elevator.pcx");
     images[0] = icache.GetImage(filename, pal);
-    if (images[0])
+    if (images[0] != nullptr) {
         num_images++;
+    }
 
     current_image = 0;
 
@@ -81,17 +82,16 @@ Elevator_o::Elevator_o(int X, int Y, int Z)
     counter2 = 0;
     counter3 = 0;
     state = STATE_NONE;
-    passenger = NULL;
+    passenger = nullptr;
     direction = UP_DIR;
     counter = 0;
 }
 /****************************************************************************/
 Elevator_o::~Elevator_o()
-{
-}
+    = default;
 
 /****************************************************************************/
-int Elevator_o::update()
+auto Elevator_o::update() -> int
 {
 
     switch (state) {
@@ -128,10 +128,10 @@ int Elevator_o::update()
     //        if (passenger == NULL && speed_y)
     //		counter++;
 
-    if (passenger && state == STATE_MOVE) {
+    if ((passenger != nullptr) && state == STATE_MOVE) {
         passenger->SetY(passenger->GetY() + speed_y);
         passenger->SetX(passenger->GetX() + speed_x);
-    } else if (passenger == NULL && state == STATE_MOVE) {
+    } else if (passenger == nullptr && state == STATE_MOVE) {
         /*        	if (direction == UP_DIR) {
 	               	direction = DOWN_DIR;
                         state = STATE_RETURN;
@@ -143,7 +143,7 @@ int Elevator_o::update()
     y += speed_y;
     x += speed_x;
 
-    passenger = NULL;
+    passenger = nullptr;
 
     return 0;
 }
@@ -166,8 +166,9 @@ void Elevator_o::Collision(Object* o)
         //                	state = STATE_STOP;
         break;
     default:
-        if (o == PLAYER)
+        if (o == PLAYER) {
             passenger = o;
+        }
         break;
     }
 }

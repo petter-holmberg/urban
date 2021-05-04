@@ -31,7 +31,7 @@
 #include "engine.h"
 #include "object.h"
 #include <allegro.h>
-#include <string.h>
+#include <cstring>
 /***************************************************************************/
 #define HS_SPEED 7
 #define FIRE_SAMPLE "samples/gun2.wav"
@@ -57,8 +57,9 @@ HighSpeed_Bullet_o::HighSpeed_Bullet_o(int X, int Y, int Z, int Dir, int friends
 
     sprintf(filename, "hsbullet.pcx");
     images[0] = icache.GetImage(filename, pal);
-    if (images[0])
+    if (images[0] != nullptr) {
         num_images++;
+    }
 
     //	rect(images[0], 0, 0, images[0]->w - 1, images[0]->h - 1, 15);
 
@@ -71,11 +72,12 @@ HighSpeed_Bullet_o::HighSpeed_Bullet_o(int X, int Y, int Z, int Dir, int friends
     SOUND.PlaySFX(FIRE_SAMPLE);
 }
 /****************************************************************************/
-int HighSpeed_Bullet_o::update()
+auto HighSpeed_Bullet_o::update() -> int
 {
 
-    if (!energy)
+    if (energy == 0) {
         return -1;
+    }
     /*        if (direction == LEFT_DIR)
         	while (ENGINE.check_wall(x + 1, y, z) && speed_x)
                 	x++;
@@ -94,8 +96,9 @@ int HighSpeed_Bullet_o::update()
     x += speed_x;
     counter += HS_SPEED;
 
-    if (counter > 600)
+    if (counter > 600) {
         return -1;
+    }
 
     /*	if (!speed_x) {
         	ENGINE.create_effect(new gnistor_o(x, y + height, z, direction));
@@ -104,8 +107,9 @@ int HighSpeed_Bullet_o::update()
     // Check collision with walls
     if (ENGINE.check_wall((direction == LEFT_DIR) ? x : x + coll_width, y, z)) {
         ENGINE.create_effect(new gnistor_o(x, y + height, z, direction));
-        if (!(random() % 3))
+        if ((random() % 3) == 0) {
             SOUND.PlaySFX("samples/ricochet.wav");
+        }
         energy = 0;
     }
 
@@ -115,11 +119,11 @@ int HighSpeed_Bullet_o::update()
 void HighSpeed_Bullet_o::Collision(Object* o)
 {
 
-    if (o->GetWho() & enemies)
+    if ((o->GetWho() & enemies) != 0U) {
         energy = 0;
+    }
 }
 /****************************************************************************/
 HighSpeed_Bullet_o::~HighSpeed_Bullet_o()
-{
-}
+    = default;
 /****************************************************************************/

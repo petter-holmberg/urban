@@ -41,7 +41,7 @@ FireBall_o::FireBall_o(int X, int Y, int Z, int Friends, int SpeedX, int SpeedY,
 
     RGB pal[256];
     char filename[512];
-    int i;
+    int i = 0;
 
     anim.reset();
     images = new BITMAP*[16];
@@ -49,14 +49,16 @@ FireBall_o::FireBall_o(int X, int Y, int Z, int Friends, int SpeedX, int SpeedY,
     for (i = 0; i < 8; i++) {
         sprintf(filename, "flames/v/%d.pcx", i + 1);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i])
+        if (images[i] != nullptr) {
             num_images++;
+        }
     }
     for (i = 8; i < 16; i++) {
         sprintf(filename, "flames/h/%d.pcx", i - 7);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i])
+        if (images[i] != nullptr) {
             num_images++;
+        }
     }
 
     height = images[0]->h;
@@ -88,10 +90,9 @@ FireBall_o::FireBall_o(int X, int Y, int Z, int Friends, int SpeedX, int SpeedY,
 }
 
 FireBall_o::~FireBall_o()
-{
-}
+    = default;
 
-int FireBall_o::update()
+auto FireBall_o::update() -> int
 {
 
     current_image = (direction == LEFT_DIR ? 0 : 8) + anim.next_frame(8, FRAME_DELAY);
@@ -99,16 +100,19 @@ int FireBall_o::update()
     y += speed_y;
     z += speed_z;
 
-    if (current_image >= (direction == LEFT_DIR ? 0 : 8) + 8)
+    if (current_image >= (direction == LEFT_DIR ? 0 : 8) + 8) {
         return -1;
-    if (!energy)
+    }
+    if (energy == 0) {
         return -1;
+    }
     return 0;
 }
 
 void FireBall_o::Collision(Object* o)
 {
 
-    if (!(o->GetWho() & friends))
+    if ((o->GetWho() & friends) == 0U) {
         strength = 0;
+    }
 }

@@ -31,8 +31,8 @@
 #include "engine.h"
 #include "object.h"
 #include <allegro.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cstdlib>
+#include <cstring>
 
 /****************************************************************************/
 #define STATE_NONE 0x00
@@ -50,12 +50,14 @@ FloorGun_o::FloorGun_o(int X, int Y, int Z)
     images = new BITMAP*[2];
     sprintf(filename, "auto-f/shot1.pcx");
     images[0] = icache.GetImage(filename, pal);
-    if (images[0])
+    if (images[0] != nullptr) {
         num_images++;
+    }
     sprintf(filename, "auto-f/shot2.pcx");
     images[1] = icache.GetImage(filename, pal);
-    if (images[1])
+    if (images[1] != nullptr) {
         num_images++;
+    }
 
     current_image = 0;
 
@@ -68,7 +70,7 @@ FloorGun_o::FloorGun_o(int X, int Y, int Z)
     coll_y = 0;
     coll_width = width;
     coll_height = height;
-    spy = 0;
+    spy = nullptr;
     energy = 1;
     strength = 0;
     speed_x = 0;
@@ -87,26 +89,27 @@ FloorGun_o::FloorGun_o(int X, int Y, int Z)
 }
 /****************************************************************************/
 FloorGun_o::~FloorGun_o()
-{
-}
+    = default;
 
 /****************************************************************************/
-int FloorGun_o::update()
+auto FloorGun_o::update() -> int
 {
 
-    if (counter)
+    if (counter != 0) {
         counter--;
+    }
 
-    if (!counter && !counter3 && state == STATE_FIRING) {
+    if ((counter == 0) && (counter3 == 0) && state == STATE_FIRING) {
         state = STATE_NONE;
     }
 
-    if (counter3)
+    if (counter3 != 0) {
         counter3--;
+    }
 
     switch (state) {
     case STATE_NONE:
-        if (spy && spy->GetSpy() && !counter3) {
+        if ((spy != nullptr) && (spy->GetSpy() != 0) && (counter3 == 0)) {
             SOUND.PlaySFX("samples/hydraul1.wav");
             state = STATE_FIRE;
             spy->ResetSpy();
@@ -116,33 +119,37 @@ int FloorGun_o::update()
         current_image = 0;
         break;
     case STATE_FIRE:
-        if (!counter3) {
+        if (counter3 == 0) {
             state = STATE_FIRING;
             counter = 100;
             anim.reset();
             current_image = 0;
-        } else
+        } else {
             break;
+        }
     /* fallthrough */
     case STATE_FIRING:
-        if (!current_image) {
+        if (current_image == 0) {
 
-            if ((current_image = anim.next_frame(1, 3)))
+            if ((current_image = anim.next_frame(1, 3)) != 0) {
                 ENGINE.create_object(new HighSpeed_Bullet_o(x, y + 3, z, LEFT_DIR, 0, FIRE_STRENGTH));
-        } else
+            }
+        } else {
             current_image = anim.next_frame(1, 3);
+        }
         break;
     }
 
     // Fall or Stop
     if (ENGINE.check_floor(x, y + height, z) || ENGINE.check_floor(x + width, y + height, z)) {
         speed_y = 0;
-        if (!counter2) {
+        if (counter2 == 0) {
             ENGINE.create_object((spy = new Spy_o(x - 150, y, z)));
             counter2 = 1;
         }
-    } else
+    } else {
         y += speed_y;
+    }
     return 0;
 }
 void FloorGun_o::Collision(Object* o)

@@ -32,8 +32,8 @@
 #include "engine.h"
 #include "object.h"
 #include <allegro.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cstdlib>
+#include <cstring>
 
 #define PROB_WALK_START 0
 #define PROB_WALK_END 60
@@ -59,9 +59,9 @@
 
 #define MAX_X_SPEED 2 //4
 #define X_FRICTION 1
-#define MIN_X_SPEED -MAX_X_SPEED //-4
+#define MIN_X_SPEED (-MAX_X_SPEED) //-4
 #define MAX_Y_SPEED 16
-#define MIN_Y_SPEED -12
+#define MIN_Y_SPEED (-12)
 #define X_ACCEL 2 //2
 #define Y_ACCEL 1
 
@@ -74,7 +74,7 @@ Einstein_o::Einstein_o(int X, int Y, int Z)
 {
     RGB pal[256];
     char filename[512];
-    int i;
+    int i = 0;
 
     anim.reset();
     //	images = (BITMAP **)malloc(30 * sizeof(BITMAP *));
@@ -83,38 +83,44 @@ Einstein_o::Einstein_o(int X, int Y, int Z)
     for (i = 0; i < 5; i++) {
         sprintf(filename, "prof2/prof2h/%d.pcx", i + 1);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i])
+        if (images[i] != nullptr) {
             num_images++;
+        }
     }
     for (i = 5; i < 10; i++) {
         sprintf(filename, "prof2/prof2v/%d.pcx", i - 4);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i])
+        if (images[i] != nullptr) {
             num_images++;
+        }
     }
     for (i = 10; i < 17; i++) {
         sprintf(filename, "prof2/prof2h/dead%d.pcx", i - 9);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i])
+        if (images[i] != nullptr) {
             num_images++;
+        }
     }
     for (i = 17; i < 24; i++) {
         sprintf(filename, "prof2/prof2v/dead%d.pcx", i - 16);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i])
+        if (images[i] != nullptr) {
             num_images++;
+        }
     }
     for (i = 24; i < 27; i++) {
         sprintf(filename, "prof2/prof2h/write%d.pcx", i - 23);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i])
+        if (images[i] != nullptr) {
             num_images++;
+        }
     }
     for (i = 27; i < 30; i++) {
         sprintf(filename, "prof2/prof2v/write%d.pcx", i - 26);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i])
+        if (images[i] != nullptr) {
             num_images++;
+        }
     }
 
     current_image = 5;
@@ -143,30 +149,34 @@ Einstein_o::Einstein_o(int X, int Y, int Z)
     me = FRIEND_SCIENTIST;
 }
 /**************************************************************************/
-int Einstein_o::update()
+auto Einstein_o::update() -> int
 {
-    int r;
+    int r = 0;
 
     if (state == STATE_DEAD) {
         SOUND.PlaySFX("samples/scream.wav");
         return -1;
     }
 
-    if (counter)
+    if (counter != 0) {
         counter--;
-    if (speed_x < 0)
+    }
+    if (speed_x < 0) {
         speed_x += X_FRICTION;
-    if (speed_x > 0)
+    }
+    if (speed_x > 0) {
         speed_x -= X_FRICTION;
+    }
 
     if (counter == 0 && state != STATE_COLLAPS && state != STATE_WAITING && state != STATE_DYING) {
         r = random() % PROB_NUMBER;
-        if (r >= PROB_WALK_START && r <= PROB_WALK_END)
+        if (r >= PROB_WALK_START && r <= PROB_WALK_END) {
             state = STATE_WALK;
-        else if ((r >= PROB_STOP_START && r <= PROB_STOP_END) || state == STATE_STOP)
+        } else if ((r >= PROB_STOP_START && r <= PROB_STOP_END) || state == STATE_STOP) {
             state = STATE_STOP;
-        else if (r >= PROB_TURN_START && r <= PROB_TURN_END)
+        } else if (r >= PROB_TURN_START && r <= PROB_TURN_END) {
             state = STATE_TURN;
+        }
         counter = random() % MAX_NUM + 15;
     }
 
@@ -186,17 +196,21 @@ int Einstein_o::update()
     case STATE_WALK:
         switch (direction) {
         case RIGHT_DIR:
-            if (speed_x < MAX_X_SPEED)
+            if (speed_x < MAX_X_SPEED) {
                 speed_x += X_ACCEL;
-            while (ENGINE.check_wall(x + width + speed_x, y + height, z) && speed_x)
+            }
+            while (ENGINE.check_wall(x + width + speed_x, y + height, z) && (speed_x != 0)) {
                 speed_x--;
+            }
             current_image = anim.next_frame(4, 5);
             break;
         case LEFT_DIR:
-            if (speed_x > MIN_X_SPEED)
+            if (speed_x > MIN_X_SPEED) {
                 speed_x -= X_ACCEL;
-            while (ENGINE.check_wall(x + speed_x, y + height, z) && speed_x)
+            }
+            while (ENGINE.check_wall(x + speed_x, y + height, z) && (speed_x != 0)) {
                 speed_x++;
+            }
             current_image = 5 + anim.next_frame(4, 5);
             break;
         };
@@ -219,10 +233,11 @@ int Einstein_o::update()
         break;
     };
 
-    if (!speed_y)
+    if (speed_y == 0) {
         if (!ENGINE.check_floor(x + speed_x, y + height, z) || !ENGINE.check_floor(x + width + speed_x, y + height, z)) {
             speed_x = 0;
         }
+    }
 
     // Fall or Stop
     if (ENGINE.check_floor(x + 14, y + height, z) || ENGINE.check_floor(x + width - 14, y + height, z)) {
@@ -233,10 +248,11 @@ int Einstein_o::update()
 
     x += speed_x;
     y += speed_y;
-    if (x < 0)
+    if (x < 0) {
         x = 0;
+    }
 
-    if (!speed_x && state != STATE_COLLAPS && state != STATE_WAITING && state != STATE_DYING && state != STATE_WRITE && state != STATE_WRITING) {
+    if ((speed_x == 0) && state != STATE_COLLAPS && state != STATE_WAITING && state != STATE_DYING && state != STATE_WRITE && state != STATE_WRITING) {
         current_image = direction == RIGHT_DIR ? 4 : 9;
         state = STATE_WRITE;
     }
@@ -246,34 +262,38 @@ int Einstein_o::update()
 
 void Einstein_o::Collision(Object* o)
 {
-    int i;
+    int i = 0;
 
-    if (state == STATE_DEAD)
+    if (state == STATE_DEAD) {
         return;
+    }
 
     Object::Collision(o);
 
-    if ((o->GetStrength() > 0) && (!(o->GetFriends() & me)) && state != STATE_DEAD && state != STATE_DYING) {
-        if (o->GetWho() & ENEMY_EXPLOSION) {
+    if ((o->GetStrength() > 0) && ((o->GetFriends() & me) == 0U) && state != STATE_DEAD && state != STATE_DYING) {
+        if ((o->GetWho() & ENEMY_EXPLOSION) != 0) {
             state = STATE_DEAD;
             DEATH_BY_EXPLOSION;
             score += 50;
             return;
-        } else if (o->GetWho() & (ENEMY_FIREBALL | ENEMY_BEAM)) {
+        }
+        if ((o->GetWho() & (ENEMY_FIREBALL | ENEMY_BEAM)) != 0) {
             ENGINE.create_effect(new BurningBody_o(x, y + height, z));
             state = STATE_DEAD;
-        } else if (o->GetWho() & ENEMY_ICEBALL) {
+        } else if ((o->GetWho() & ENEMY_ICEBALL) != 0) {
             ENGINE.create_object(new FrosenBody_o(x, y + height, z, direction));
             state = STATE_DEAD;
-        } else if (o->GetWho() & (ENEMY_HS_BULLET | ENEMY_PLASMA)) {
+        } else if ((o->GetWho() & (ENEMY_HS_BULLET | ENEMY_PLASMA)) != 0) {
             if (direction == RIGHT_DIR) {
                 ENGINE.create_effect(new Animation_o(x, y + height, z, "prof2/prof2h/dead", 7, 6));
-                for (i = 0; i < 7; i++)
+                for (i = 0; i < 7; i++) {
                     ENGINE.create_effect(new blood_o(x + width / 2, y + random() % height, z, -2 + random() % 4));
+                }
             } else {
                 ENGINE.create_effect(new Animation_o(x, y + height, z, "prof2/prof2v/dead", 7, 6));
-                for (i = 0; i < 7; i++)
+                for (i = 0; i < 7; i++) {
                     ENGINE.create_effect(new blood_o(x + width / 2, y + random() % height, z, 2 + random() % 4));
+                }
             }
             state = STATE_DEAD;
         }
@@ -285,8 +305,7 @@ void Einstein_o::Collision(Object* o)
 
 /**************************************************************************/
 Einstein_o::~Einstein_o()
-{
-}
+    = default;
 /**************************************************************************/
 
 /**************************************************************************/
@@ -296,13 +315,13 @@ Boss_Einstein_o::Boss_Einstein_o(int X, int Y, int Z)
 }
 
 Boss_Einstein_o::~Boss_Einstein_o()
-{
-}
+    = default;
 
-int Boss_Einstein_o::update()
+auto Boss_Einstein_o::update() -> int
 {
-    int ret;
-    if ((ret = Einstein_o::update()) != 0)
+    int ret = 0;
+    if ((ret = Einstein_o::update()) != 0) {
         ENGINE.create_object(new card_o(x, y, z));
+    }
     return ret;
 }

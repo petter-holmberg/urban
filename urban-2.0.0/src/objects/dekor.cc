@@ -31,8 +31,8 @@
 #include "engine.h"
 #include "object2.h"
 #include <allegro.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cstdlib>
+#include <cstring>
 
 Dekor_o::Dekor_o(int X, int Y, int Z, const char* filename)
     : Object(X, Y, Z)
@@ -43,8 +43,9 @@ Dekor_o::Dekor_o(int X, int Y, int Z, const char* filename)
 
     images[0] = icache.GetImage(filename, pal);
 
-    if (images[0])
+    if (images[0] != nullptr) {
         num_images++;
+    }
 
     current_image = 0;
 
@@ -72,11 +73,10 @@ Dekor_o::Dekor_o(int X, int Y, int Z, const char* filename)
 }
 /****************************************************************************/
 Dekor_o::~Dekor_o()
-{
-}
+    = default;
 
 /****************************************************************************/
-int Dekor_o::update()
+auto Dekor_o::update() -> int
 {
     // Fall or Stop
     //	while (ENGINE.check_floor(x, y + height + speed_y, z) && speed_y)

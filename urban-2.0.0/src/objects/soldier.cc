@@ -32,8 +32,8 @@
 #include "engine.h"
 #include "object.h"
 #include <allegro.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cstdlib>
+#include <cstring>
 
 #define PROB_WALK_START 0
 #define PROB_WALK_END 40
@@ -58,9 +58,9 @@
 
 #define MAX_X_SPEED 2 //4
 #define X_FRICTION 1
-#define MIN_X_SPEED -MAX_X_SPEED //-4
+#define MIN_X_SPEED (-MAX_X_SPEED) //-4
 #define MAX_Y_SPEED 16
-#define MIN_Y_SPEED -12
+#define MIN_Y_SPEED (-12)
 #define X_ACCEL 2 //2
 #define Y_ACCEL 1
 
@@ -75,7 +75,7 @@ soldier_o::soldier_o(int X, int Y, int Z)
 {
     RGB pal[256];
     char filename[512];
-    int i;
+    int i = 0;
 
     anim.reset();
     images = (BITMAP**)malloc(30 * sizeof(BITMAP*));
@@ -83,28 +83,32 @@ soldier_o::soldier_o(int X, int Y, int Z)
     for (i = 0; i < 5; i++) {
         sprintf(filename, "soldier/soldh/%d.pcx", i + 1);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i])
+        if (images[i] != nullptr) {
             num_images++;
+        }
     }
     for (i = 5; i < 8; i++) {
         sprintf(filename, "soldier/soldh/shot%d.pcx", i - 4);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i])
+        if (images[i] != nullptr) {
             num_images++;
+        }
     }
 
     for (i = 8; i < 13; i++) {
         sprintf(filename, "soldier/soldv/%d.pcx", i - 7);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i])
+        if (images[i] != nullptr) {
             num_images++;
+        }
     }
 
     for (i = 13; i < 16; i++) {
         sprintf(filename, "soldier/soldv/shot%d.pcx", i - 12);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i])
+        if (images[i] != nullptr) {
             num_images++;
+        }
     }
 
     current_image = 4;
@@ -132,31 +136,35 @@ soldier_o::soldier_o(int X, int Y, int Z)
     me = FRIEND_SOLDIER;
 }
 /**************************************************************************/
-int soldier_o::update()
+auto soldier_o::update() -> int
 {
-    int r;
-    if (counter)
+    int r = 0;
+    if (counter != 0) {
         counter--;
-    if (speed_x < 0)
+    }
+    if (speed_x < 0) {
         speed_x += X_FRICTION;
-    if (speed_x > 0)
+    }
+    if (speed_x > 0) {
         speed_x -= X_FRICTION;
+    }
 
     if (counter == 0) {
 
-        if (state == STATE_FIRE || state == STATE_FIRING)
+        if (state == STATE_FIRE || state == STATE_FIRING) {
             state = STATE_ALARM;
-        else if (state == STATE_HIT) {
+        } else if (state == STATE_HIT) {
             direction = PLAYER->GetX() < x ? LEFT_DIR : RIGHT_DIR;
             state = STATE_FIRE;
         } else {
             r = random() % PROB_NUMBER;
-            if (r >= PROB_WALK_START && r <= PROB_WALK_END)
+            if (r >= PROB_WALK_START && r <= PROB_WALK_END) {
                 state = STATE_WALK;
-            else if ((r >= PROB_STOP_START && r <= PROB_STOP_END) || state == STATE_STOP)
+            } else if ((r >= PROB_STOP_START && r <= PROB_STOP_END) || state == STATE_STOP) {
                 state = STATE_STOP;
-            else if (r >= PROB_TURN_START && r <= PROB_TURN_END)
+            } else if (r >= PROB_TURN_START && r <= PROB_TURN_END) {
                 state = STATE_TURN;
+            }
             counter = random() % MAX_NUM + 15;
         }
     }
@@ -181,7 +189,7 @@ int soldier_o::update()
         /* fallthrough */
     case STATE_FIRING:
         current_image = (direction == RIGHT_DIR ? 5 : 13) + (r = anim.next_frame(2, FIRE_DELAY));
-        if (r == 1 && !counter2) {
+        if (r == 1 && (counter2 == 0)) {
 
             ENGINE.create_object(new HighSpeed_Bullet_o(x, y + 24, z, direction, ~FRIEND_PLAYER));
             counter2 = 1;
@@ -209,17 +217,21 @@ int soldier_o::update()
     case STATE_WALK:
         switch (direction) {
         case RIGHT_DIR:
-            if (speed_x < MAX_X_SPEED)
+            if (speed_x < MAX_X_SPEED) {
                 speed_x += X_ACCEL;
-            while (ENGINE.check_wall(x + width + speed_x, y + height, z) && speed_x)
+            }
+            while (ENGINE.check_wall(x + width + speed_x, y + height, z) && (speed_x != 0)) {
                 speed_x--;
+            }
             current_image = anim.next_frame(4, 5);
             break;
         case LEFT_DIR:
-            if (speed_x > MIN_X_SPEED)
+            if (speed_x > MIN_X_SPEED) {
                 speed_x -= X_ACCEL;
-            while (ENGINE.check_wall(x + speed_x, y + height, z) && speed_x)
+            }
+            while (ENGINE.check_wall(x + speed_x, y + height, z) && (speed_x != 0)) {
                 speed_x++;
+            }
             current_image = 8 + anim.next_frame(4, 5);
             break;
         };
@@ -240,10 +252,11 @@ int soldier_o::update()
         break;
     };
 
-    if (!speed_y)
+    if (speed_y == 0) {
         if (!ENGINE.check_floor(x + speed_x, y + height, z) || !ENGINE.check_floor(x + width + speed_x, y + height, z)) {
             speed_x = 0;
         }
+    }
 
     // Fall or Stop
     if (ENGINE.check_floor(x + 14, y + height, z) || ENGINE.check_floor(x + width - 14, y + height, z)) {
@@ -254,57 +267,67 @@ int soldier_o::update()
 
     x += speed_x;
     y += speed_y;
-    if (x < 0)
+    if (x < 0) {
         x = 0;
+    }
 
-    if (!speed_x && state != STATE_FIRE && state != STATE_FIRING
-        && state != STATE_ALARM)
+    if ((speed_x == 0) && state != STATE_FIRE && state != STATE_FIRING
+        && state != STATE_ALARM) {
         current_image = (direction == RIGHT_DIR ? 4 : 12);
+    }
 
-    if (energy <= 0)
+    if (energy <= 0) {
         return -1;
+    }
 
     return 0;
 }
 
 void soldier_o::Collision(Object* o)
 {
-    int i;
+    int i = 0;
 
-    if (!energy)
+    if (energy == 0) {
         return;
+    }
 
     Object::Collision(o);
 
-    if ((o->GetStrength() > 0) && (!(o->GetFriends() & me))) {
+    if ((o->GetStrength() > 0) && ((o->GetFriends() & me) == 0U)) {
         if (direction == RIGHT_DIR) {
             if (energy <= 0) {
-                if (o->GetWho() & ENEMY_EXPLOSION)
+                if ((o->GetWho() & ENEMY_EXPLOSION) != 0)
                     DEATH_BY_EXPLOSION
-                else if (o->GetWho() & (ENEMY_FIREBALL | ENEMY_BEAM))
+                else if ((o->GetWho() & (ENEMY_FIREBALL | ENEMY_BEAM)) != 0) {
                     ENGINE.create_effect(new BurningBody_o(x, y + height, z));
-                else if (o->GetWho() & ENEMY_ICEBALL)
+                } else if ((o->GetWho() & ENEMY_ICEBALL) != 0) {
                     ENGINE.create_object(new FrosenBody_o(x, y + height, z, direction));
-                else
+                } else {
                     ENGINE.create_effect(new Animation_o(x, y + height, z, "soldier/deadh/dead", 4, 3));
+                }
             }
-            if (!(o->GetWho() & (ENEMY_FIREBALL | ENEMY_ICEBALL | ENEMY_BEAM)))
-                for (i = 0; i < 3; i++)
+            if ((o->GetWho() & (ENEMY_FIREBALL | ENEMY_ICEBALL | ENEMY_BEAM)) == 0) {
+                for (i = 0; i < 3; i++) {
                     ENGINE.create_effect(new blood_o(x + width / 2, y + random() % height, z, -2 + random() % 4));
+                }
+            }
         } else {
             if (energy <= 0) {
-                if (o->GetWho() & ENEMY_EXPLOSION)
+                if ((o->GetWho() & ENEMY_EXPLOSION) != 0)
                     DEATH_BY_EXPLOSION
-                else if (o->GetWho() & (ENEMY_FIREBALL | ENEMY_BEAM))
+                else if ((o->GetWho() & (ENEMY_FIREBALL | ENEMY_BEAM)) != 0) {
                     ENGINE.create_effect(new BurningBody_o(x, y + height, z));
-                else if (o->GetWho() & ENEMY_ICEBALL)
+                } else if ((o->GetWho() & ENEMY_ICEBALL) != 0) {
                     ENGINE.create_object(new FrosenBody_o(x, y + height, z, direction));
-                else
+                } else {
                     ENGINE.create_effect(new Animation_o(x, y + height, z, "soldier/deadv/dead", 4, 3));
+                }
             }
-            if (!(o->GetWho() & (ENEMY_FIREBALL | ENEMY_ICEBALL | ENEMY_BEAM)))
-                for (i = 0; i < 3; i++)
+            if ((o->GetWho() & (ENEMY_FIREBALL | ENEMY_ICEBALL | ENEMY_BEAM)) == 0) {
+                for (i = 0; i < 3; i++) {
                     ENGINE.create_effect(new blood_o(x + width / 2, y + random() % height, z, -2 + random() % 4));
+                }
+            }
         }
         state = STATE_HIT;
         counter = 0;
@@ -313,8 +336,7 @@ void soldier_o::Collision(Object* o)
 
 /**************************************************************************/
 soldier_o::~soldier_o()
-{
-}
+    = default;
 /**************************************************************************/
 
 /**************************************************************************/
@@ -326,13 +348,13 @@ Boss_soldier_o::Boss_soldier_o(int X, int Y, int Z)
 }
 
 Boss_soldier_o::~Boss_soldier_o()
-{
-}
+    = default;
 
-int Boss_soldier_o::update()
+auto Boss_soldier_o::update() -> int
 {
-    int ret;
-    if ((ret = soldier_o::update()) == -1)
+    int ret = 0;
+    if ((ret = soldier_o::update()) == -1) {
         ENGINE.create_object(new card_o(x, y, z));
+    }
     return ret;
 }

@@ -41,7 +41,7 @@ Fire_o::Fire_o(int X, int Y, int Z, int size)
 
     RGB pal[256];
     char filename[512];
-    int i;
+    int i = 0;
 
     anim.reset();
     images = new BITMAP*[4];
@@ -49,8 +49,9 @@ Fire_o::Fire_o(int X, int Y, int Z, int size)
     for (i = 0; i < 4; i++) {
         sprintf(filename, "%s/%d.pcx", size == 1 ? "fire" : "smallfir", i + 1);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i])
+        if (images[i] != nullptr) {
             num_images++;
+        }
     }
 
     height = images[0]->h;
@@ -76,15 +77,15 @@ Fire_o::Fire_o(int X, int Y, int Z, int size)
 }
 
 Fire_o::~Fire_o()
-{
-}
+    = default;
 
-int Fire_o::update()
+auto Fire_o::update() -> int
 {
-    if (counter)
+    if (counter != 0) {
         counter--;
-    else
+    } else {
         return -1;
+    }
     current_image = anim.next_frame(3, FRAME_DELAY);
     return 0;
 }

@@ -31,8 +31,8 @@
 #include "engine.h"
 #include "object2.h"
 #include <allegro.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cstdlib>
+#include <cstring>
 
 /****************************************************************************/
 #define STATE_NONE 0x00
@@ -43,14 +43,14 @@
 #define NUM_NUKES 90
 #define NUKE_MULTI 10
 
-#define AREA_START -300
+#define AREA_START (-300)
 #define AREA_END 300
 #define AREA_WIDTH 600
 #define AREA_MUL (AREA_WIDTH / NUM_NUKES)
 
 #define STRIKE_DELAY 600
 
-#define STRIKE_START -20
+#define STRIKE_START (-20)
 #define STRIKE_END 20
 
 #define STRIKE_SAMPLE "samples/hellfire.wav"
@@ -77,8 +77,9 @@ Airstrike_o::Airstrike_o(int X, int Y, int Z)
     images = new BITMAP*;
     sprintf(filename, "mine2.pcx");
     images[0] = icache.GetImage(filename, pal);
-    if (images[0])
+    if (images[0] != nullptr) {
         num_images++;
+    }
 
     current_image = 0;
 
@@ -109,21 +110,23 @@ Airstrike_o::Airstrike_o(int X, int Y, int Z)
 }
 /****************************************************************************/
 Airstrike_o::~Airstrike_o()
-{
-}
+    = default;
 
 /****************************************************************************/
-int Airstrike_o::update()
+auto Airstrike_o::update() -> int
 {
 
-    if (counter)
+    if (counter != 0) {
         counter--;
+    }
 
-    if (counter2)
+    if (counter2 != 0) {
         counter2--;
+    }
 
-    if (state == STATE_DONE)
+    if (state == STATE_DONE) {
         return -1;
+    }
 
     switch (state) {
     case STATE_NONE:

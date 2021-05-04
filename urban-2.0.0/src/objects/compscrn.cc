@@ -31,8 +31,8 @@
 #include "engine.h"
 #include "object2.h"
 #include <allegro.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cstdlib>
+#include <cstring>
 
 ComputerScreen_o::ComputerScreen_o(int X, int Y, int Z, int Type)
     : Object(X, Y, Z)
@@ -41,13 +41,15 @@ ComputerScreen_o::ComputerScreen_o(int X, int Y, int Z, int Type)
 
     images = new BITMAP*;
 
-    if (Type == 0)
+    if (Type == 0) {
         images[0] = icache.GetImage("dekor/skarm1.pcx", pal);
-    else if (Type == 1)
+    } else if (Type == 1) {
         images[0] = icache.GetImage("dekor/skarm2.pcx", pal);
+    }
 
-    if (images[0])
+    if (images[0] != nullptr) {
         num_images++;
+    }
 
     current_image = 0;
 
@@ -76,24 +78,26 @@ ComputerScreen_o::ComputerScreen_o(int X, int Y, int Z, int Type)
 }
 /****************************************************************************/
 ComputerScreen_o::~ComputerScreen_o()
-{
-}
+    = default;
 
 /****************************************************************************/
-int ComputerScreen_o::update()
+auto ComputerScreen_o::update() -> int
 {
-    if (!energy)
+    if (energy == 0) {
         return -1;
+    }
     return 0;
 }
 
 void ComputerScreen_o::Collision(Object* o)
 {
-    if (!energy)
+    if (energy == 0) {
         return;
+    }
 
-    if (!(o->GetWho() & (FRIEND_HS_BULLET | FRIEND_EXPLOSION | FRIEND_BEAM)))
+    if ((o->GetWho() & (FRIEND_HS_BULLET | FRIEND_EXPLOSION | FRIEND_BEAM)) == 0) {
         return;
+    }
 
     energy = 0;
     //       	ENGINE.create_object(new explosion_o(x, y, z));

@@ -31,8 +31,8 @@
 #include "engine.h"
 #include "object2.h"
 #include <allegro.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cstdlib>
+#include <cstring>
 
 #define STATE_DIE 0x01
 #define STATE_NONE 0x00
@@ -58,8 +58,9 @@ Bubble_o::Bubble_o(int X, int Y, int Z)
         break;
     }
     images[0] = icache.GetImage(filename, pal);
-    if (images[0])
+    if (images[0] != nullptr) {
         num_images++;
+    }
 
     current_image = 0;
 
@@ -95,44 +96,49 @@ Bubble_o::Bubble_o(int X, int Y, int Z)
 }
 /****************************************************************************/
 Bubble_o::~Bubble_o()
-{
-}
+    = default;
 
 /****************************************************************************/
-int Bubble_o::update()
+auto Bubble_o::update() -> int
 {
 
-    if (state == STATE_DIE)
+    if (state == STATE_DIE) {
         return -1;
+    }
 
-    if (counter4)
+    if (counter4 != 0) {
         counter4--;
-    else
+    } else {
         state = STATE_DIE;
+    }
 
-    if (counter)
+    if (counter != 0) {
         counter--;
+    }
 
-    if (counter2)
+    if (counter2 != 0) {
         counter2--;
+    }
 
-    if (!counter) {
+    if (counter == 0) {
         y--;
         counter = 2;
     }
-    if (!counter2) {
+    if (counter2 == 0) {
         x += (-1 + random() % 3);
         counter2 = 8;
     }
 
-    if (ENGINE.check_floor(x, y, z))
+    if (ENGINE.check_floor(x, y, z)) {
         return -1;
+    }
 
     return 0;
 }
 
 void Bubble_o::Collision(Object* o)
 {
-    if (o->GetWho() == FRIEND_WATER)
+    if (o->GetWho() == FRIEND_WATER) {
         state = STATE_DIE;
+    }
 }

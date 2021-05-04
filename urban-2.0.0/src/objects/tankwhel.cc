@@ -31,21 +31,21 @@
 #include "engine.h"
 #include "object2.h"
 #include <allegro.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cstdlib>
+#include <cstring>
 
 #define STATE_NONE 0
 
 #define MAX_X_SPEED 2 //4
 #define X_FRICTION 1
-#define MIN_X_SPEED -MAX_X_SPEED //-4
+#define MIN_X_SPEED (-MAX_X_SPEED) //-4
 #define MAX_Y_SPEED 16
-#define MIN_Y_SPEED -12
+#define MIN_Y_SPEED (-12)
 #define X_ACCEL 2 //2
 #define Y_ACCEL 1
 #define Z_ACCEL 2
 #define MAX_Z_SPEED 2
-#define MIN_Z_SPEED -MAX_Z_SPEED
+#define MIN_Z_SPEED (-MAX_Z_SPEED)
 #define Z_FRICTION 1
 
 #define COLL_X (coll_x + coll_width)
@@ -57,7 +57,7 @@ TankWheel_o::TankWheel_o(int X, int Y, int Z)
 {
     RGB pal[256];
     char filename[512];
-    int i;
+    int i = 0;
 
     anim.reset();
 
@@ -66,14 +66,16 @@ TankWheel_o::TankWheel_o(int X, int Y, int Z)
     for (i = 0; i < 3; i++) {
         sprintf(filename, "boss/v/band%d.pcx", i + 1);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i])
+        if (images[i] != nullptr) {
             num_images++;
+        }
     }
     for (i = 3; i < 6; i++) {
         sprintf(filename, "boss/h/band%d.pcx", i - 2);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i])
+        if (images[i] != nullptr) {
             num_images++;
+        }
     }
     current_image = 0;
 
@@ -102,17 +104,19 @@ TankWheel_o::TankWheel_o(int X, int Y, int Z)
     me = 0;
 }
 
-int TankWheel_o::update()
+auto TankWheel_o::update() -> int
 {
     //	int r;
 
-    if (energy <= 0)
+    if (energy <= 0) {
         return -1;
+    }
 
-    if (counter)
+    if (counter != 0) {
         counter--;
+    }
 
-    if (!counter) {
+    if (counter == 0) {
     }
 
     // Fall or Stop
@@ -127,8 +131,9 @@ int TankWheel_o::update()
     y += speed_y;
     z += speed_z;
 
-    if (x < 0)
+    if (x < 0) {
         x = 0;
+    }
 
     if (z > MIN_Z) {
         z = MIN_Z;
@@ -212,6 +217,5 @@ void TankWheel_o::Collision(Object* o)
 
 /**************************************************************************/
 TankWheel_o::~TankWheel_o()
-{
-}
+    = default;
 /**************************************************************************/

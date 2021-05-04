@@ -31,8 +31,8 @@
 #include "engine.h"
 #include "object.h"
 #include <allegro.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cstdlib>
+#include <cstring>
 
 #define PROB_WALK_START 0
 #define PROB_WALK_END 80
@@ -43,9 +43,9 @@
 
 #define MAX_X_SPEED 1 //4
 #define X_FRICTION 1
-#define MIN_X_SPEED -MAX_X_SPEED //-4
+#define MIN_X_SPEED (-MAX_X_SPEED) //-4
 #define MAX_Y_SPEED 16
-#define MIN_Y_SPEED -12
+#define MIN_Y_SPEED (-12)
 #define X_ACCEL 2 //2
 #define Y_ACCEL 1
 
@@ -65,7 +65,7 @@ BurningBody_o::BurningBody_o(int X, int Y, int Z, int Move)
 {
     RGB pal[256];
     char filename[512];
-    int i;
+    int i = 0;
 
     anim.reset();
     images = new BITMAP*[12];
@@ -73,23 +73,26 @@ BurningBody_o::BurningBody_o(int X, int Y, int Z, int Move)
     for (i = 0; i < 4; i++) {
         sprintf(filename, "burning/burnh/%d.pcx", i + 1);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i])
+        if (images[i] != nullptr) {
             num_images++;
+        }
     }
     for (i = 4; i < 8; i++) {
         sprintf(filename, "burning/burnv/%d.pcx", i - 3);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i])
+        if (images[i] != nullptr) {
             num_images++;
+        }
     }
     for (i = 8; i < 11; i++) {
         sprintf(filename, "burning/%d.pcx", i - 7);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i])
+        if (images[i] != nullptr) {
             num_images++;
+        }
     }
 
-    current_image = Move ? 0 : 10;
+    current_image = Move != 0 ? 0 : 10;
 
     coll_x = 0;
     coll_y = 0;
@@ -111,36 +114,41 @@ BurningBody_o::BurningBody_o(int X, int Y, int Z, int Move)
     counter3 = 0;
 }
 /**************************************************************************/
-int BurningBody_o::update()
+auto BurningBody_o::update() -> int
 {
-    int r;
+    int r = 0;
 
-    if (counter)
+    if (counter != 0) {
         counter--;
+    }
 
-    if (counter2)
+    if (counter2 != 0) {
         counter2--;
+    }
 
-    if (speed_x < 0)
+    if (speed_x < 0) {
         speed_x += X_FRICTION;
+    }
 
-    if (speed_x > 0)
+    if (speed_x > 0) {
         speed_x -= X_FRICTION;
+    }
 
     if (counter == 0) {
-        if (state == STATE_BURNING)
+        if (state == STATE_BURNING) {
             state = STATE_DEAD;
-        else {
+        } else {
             r = random() % PROB_NUMBER;
-            if (r >= PROB_WALK_START && r <= PROB_WALK_END)
+            if (r >= PROB_WALK_START && r <= PROB_WALK_END) {
                 state = STATE_WALK;
-            else if (r >= PROB_TURN_START && r <= PROB_TURN_END)
+            } else if (r >= PROB_TURN_START && r <= PROB_TURN_END) {
                 state = STATE_TURN;
+            }
             counter = random() % MAX_NUM + 15;
         }
     }
 
-    if (!counter2 && state != STATE_DEAD && state != STATE_BURNING) {
+    if ((counter2 == 0) && state != STATE_DEAD && state != STATE_BURNING) {
         state = STATE_BURN;
     }
 
@@ -153,17 +161,21 @@ int BurningBody_o::update()
     case STATE_WALK:
         switch (direction) {
         case RIGHT_DIR:
-            if (speed_x < MAX_X_SPEED)
+            if (speed_x < MAX_X_SPEED) {
                 speed_x += X_ACCEL;
-            while (ENGINE.check_wall(x + width + speed_x, y + height, z) && speed_x)
+            }
+            while (ENGINE.check_wall(x + width + speed_x, y + height, z) && (speed_x != 0)) {
                 speed_x--;
+            }
             current_image = anim.next_frame(3, 5);
             break;
         case LEFT_DIR:
-            if (speed_x > MIN_X_SPEED)
+            if (speed_x > MIN_X_SPEED) {
                 speed_x -= X_ACCEL;
-            while (ENGINE.check_wall(x + speed_x, y + height, z) && speed_x)
+            }
+            while (ENGINE.check_wall(x + speed_x, y + height, z) && (speed_x != 0)) {
                 speed_x++;
+            }
             current_image = 4 + anim.next_frame(3, 5);
             break;
         };
@@ -191,10 +203,11 @@ int BurningBody_o::update()
         break;
     };
 
-    if (!speed_y)
+    if (speed_y == 0) {
         if (!ENGINE.check_floor(x + speed_x, y + height, z) || !ENGINE.check_floor(x + width + speed_x, y + height, z)) {
             speed_x = 0;
         }
+    }
 
     // Fall or Stop
     if (ENGINE.check_floor(x + 14, y + height, z) || ENGINE.check_floor(x + width - 14, y + height, z)) {
@@ -205,20 +218,22 @@ int BurningBody_o::update()
 
     x += speed_x;
     y += speed_y;
-    if (x < 0)
+    if (x < 0) {
         x = 0;
+    }
 
-    if (!speed_x && state != STATE_BURNING)
+    if ((speed_x == 0) && state != STATE_BURNING) {
         state = STATE_TURN;
+    }
 
-    if (energy <= 0)
+    if (energy <= 0) {
         return -1;
+    }
 
     return 0;
 }
 
 /**************************************************************************/
 BurningBody_o::~BurningBody_o()
-{
-}
+    = default;
 /**************************************************************************/

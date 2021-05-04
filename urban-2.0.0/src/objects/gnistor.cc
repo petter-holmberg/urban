@@ -32,12 +32,12 @@
 #include "object.h"
 #include <allegro.h>
 
-gnistor_o::gnistor_o(int X, int Y, int Z, int Speed_X, int Speed_Y, int Speed_Z, int Direction)
+gnistor_o::gnistor_o(int X, int Y, int Z, int /*Speed_X*/, int /*Speed_Y*/, int /*Speed_Z*/, int Direction)
     : Object(X, Y, Z)
 {
     RGB pal[256];
     char filename[512];
-    int i;
+    int i = 0;
 
     anim.reset();
     images = new BITMAP*[3];
@@ -45,8 +45,9 @@ gnistor_o::gnistor_o(int X, int Y, int Z, int Speed_X, int Speed_Y, int Speed_Z,
     for (i = 0; i < 3; i++) {
         sprintf(filename, "gnist/%s/%d.pcx", Direction == LEFT_DIR ? "v" : "h", i + 1);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i])
+        if (images[i] != nullptr) {
             num_images++;
+        }
     }
     height = images[0]->h;
     width = images[0]->w;
@@ -73,19 +74,19 @@ gnistor_o::gnistor_o(int X, int Y, int Z, int Speed_X, int Speed_Y, int Speed_Z,
 }
 
 gnistor_o::~gnistor_o()
-{
-}
+    = default;
 
-int gnistor_o::update()
+auto gnistor_o::update() -> int
 {
     counter++;
     current_image = anim.next_frame(3, 3);
 
-    if (current_image >= 3)
+    if (current_image >= 3) {
         return -1;
+    }
     return 0;
 }
 
-void gnistor_o::Collision(Object*)
+void gnistor_o::Collision(Object* /*unused*/)
 {
 }

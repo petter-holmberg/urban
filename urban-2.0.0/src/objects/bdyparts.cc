@@ -33,7 +33,7 @@
 #include <allegro.h>
 /****************************************************************************/
 #define MAX_Y_SPEED 4
-#define MIN_Y_SPEED -4
+#define MIN_Y_SPEED (-4)
 #define Y_ACCEL 1
 /****************************************************************************/
 #define STATE_NONE 0
@@ -42,7 +42,7 @@
 bodyparts_o::bodyparts_o(int X, int Y, int Z, const char* name, int num_pics, int Speed_X, int Speed_Y, int Speed_Z)
     : Object(X, Y, Z)
 {
-    int i;
+    int i = 0;
     RGB pal[256];
     char filename[512];
 
@@ -51,8 +51,9 @@ bodyparts_o::bodyparts_o(int X, int Y, int Z, const char* name, int num_pics, in
     for (i = 0; i < num_pics; i++) {
         sprintf(filename, "%s%d.pcx", name, i + 1);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i])
+        if (images[i] != nullptr) {
             num_images++;
+        }
     }
     coll_x = 0;
     coll_y = 0;
@@ -65,39 +66,42 @@ bodyparts_o::bodyparts_o(int X, int Y, int Z, const char* name, int num_pics, in
     speed_x = Speed_X;
     speed_y = Speed_Y;
     speed_z = Speed_Z;
-    if (Speed_X)
+    if (Speed_X != 0) {
         current_image = 0;
-    else
+    } else {
         current_image = 0;
+    }
     direction = Speed_X > 0 ? RIGHT_DIR : LEFT_DIR;
     energy = 0;
     strength = 0;
     anim.reset();
 
-    if (ENGINE.check_floor(x, y + height, z) || ENGINE.check_floor(x + width, y + height, z) || ENGINE.check_wall(x, y + height, z) || ENGINE.check_wall(x + width, y + height, z))
+    if (ENGINE.check_floor(x, y + height, z) || ENGINE.check_floor(x + width, y + height, z) || ENGINE.check_wall(x, y + height, z) || ENGINE.check_wall(x + width, y + height, z)) {
 
         state = STATE_DESTROY;
-    else
+    } else {
         state = STATE_NONE;
+    }
 }
 /****************************************************************************/
 bodyparts_o::~bodyparts_o()
-{
-}
+    = default;
 /****************************************************************************/
-int bodyparts_o::update()
+auto bodyparts_o::update() -> int
 {
-    if (state == STATE_DESTROY)
+    if (state == STATE_DESTROY) {
         return REMOVE_ME;
+    }
 
-    if (ENGINE.check_wall(x + speed_x, y + height, z) || ENGINE.check_wall(x + width + speed_x, y + height, z))
+    if (ENGINE.check_wall(x + speed_x, y + height, z) || ENGINE.check_wall(x + width + speed_x, y + height, z)) {
         speed_x = -(speed_x / 2);
+    }
 
     if (ENGINE.check_floor(x, y + height + speed_y, z)
         || ENGINE.check_floor(x + width, y + height + speed_y, z)) {
         speed_y = -(speed_y / 2);
 
-        if (!speed_y) {
+        if (speed_y == 0) {
 
             ENGINE.create_dekoration(this);
             return REMOVE_ME;
@@ -105,12 +109,14 @@ int bodyparts_o::update()
         //current_image = 0;
         //ENGINE.create_dekoration(new head_o(x, y, z, 0, 0, 0, "urban\\huvud"));
     }
-    if (speed_y < MAX_Y_SPEED)
+    if (speed_y < MAX_Y_SPEED) {
         speed_y += Y_ACCEL;
+    }
 
     current_image = anim.next_frame(num_images - 1, 4);
-    if (speed_y)
+    if (speed_y != 0) {
         x += speed_x;
+    }
 
     y += speed_y;
 

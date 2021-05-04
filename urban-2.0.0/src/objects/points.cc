@@ -31,8 +31,8 @@
 #include "engine.h"
 #include "object2.h"
 #include <allegro.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cstdlib>
+#include <cstring>
 
 #define EXIST_DELAY 100
 #define MOVE_DELAY 2
@@ -42,22 +42,25 @@ Points_o::Points_o(int X, int Y, int Z, int score)
 {
     RGB pal[256];
     char filename[512];
-    int i;
+    int i = 0;
 
     images = new BITMAP*[10];
     //        sprintf(filename, "xbarrel.pcx");
     for (i = 0; i < 10; i++) {
         sprintf(filename, "points/%d00.pcx", i + 1);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i])
+        if (images[i] != nullptr) {
             num_images++;
+        }
     }
 
     current_image = (score / 100) - 1;
-    if (current_image < 0)
+    if (current_image < 0) {
         current_image = 0;
-    if (current_image > 9)
+    }
+    if (current_image > 9) {
         current_image = 9;
+    }
 
     height = images[0]->h;
     width = images[0]->w;
@@ -85,19 +88,20 @@ Points_o::Points_o(int X, int Y, int Z, int score)
 }
 /****************************************************************************/
 Points_o::~Points_o()
-{
-}
+    = default;
 
 /****************************************************************************/
-int Points_o::update()
+auto Points_o::update() -> int
 {
-    if (counter)
+    if (counter != 0) {
         counter--;
+    }
 
-    if (!counter)
+    if (counter == 0) {
         return -1;
+    }
 
-    if (!(counter % MOVE_DELAY)) {
+    if ((counter % MOVE_DELAY) == 0) {
         y--;
     }
     return 0;

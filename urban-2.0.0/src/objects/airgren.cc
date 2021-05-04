@@ -31,7 +31,7 @@
 #include "engine.h"
 #include "object2.h"
 #include <allegro.h>
-#include <string.h>
+#include <cstring>
 
 /****************************************************************************/
 #define GRENADE_SPEED 4
@@ -48,8 +48,9 @@ AirGrenade_o::AirGrenade_o(int X, int Y, int Z, int SpeedX, int SpeedY, int Spee
     //        sprintf(filename, "soldier2/kula.pcx");
     sprintf(filename, "airgren.pcx");
     images[0] = icache.GetImage(filename, pal);
-    if (images[0])
+    if (images[0] != nullptr) {
         num_images++;
+    }
 
     height = images[0]->h;
     width = images[0]->w;
@@ -77,20 +78,21 @@ AirGrenade_o::AirGrenade_o(int X, int Y, int Z, int SpeedX, int SpeedY, int Spee
 }
 /****************************************************************************/
 AirGrenade_o::~AirGrenade_o()
-{
-}
+    = default;
 
 /****************************************************************************/
-int AirGrenade_o::update()
+auto AirGrenade_o::update() -> int
 {
     x += speed_x;
     y += speed_y;
     z += speed_z;
 
-    if (z > MIN_Z)
+    if (z > MIN_Z) {
         z = MIN_Z;
-    if (z < MAX_Z)
+    }
+    if (z < MAX_Z) {
         z = MAX_Z;
+    }
     layer = z / TILE_TOP_HEIGHT;
 
     if (counter < 0) {
@@ -101,8 +103,9 @@ int AirGrenade_o::update()
     }
 
     counter--;
-    if (energy <= 0)
+    if (energy <= 0) {
         return -1;
+    }
 
     // Check collision with walls
     if (ENGINE.check_wall(x, y + TILE_SIDE_HEIGHT, z)
@@ -119,10 +122,12 @@ int AirGrenade_o::update()
 
 void AirGrenade_o::Collision(Object* o)
 {
-    if (!energy)
+    if (energy == 0) {
         return;
-    if (friends & o->GetWho())
+    }
+    if ((friends & o->GetWho()) != 0U) {
         return;
+    }
     energy = 0;
     //        SOUND.PlaySFX(EXPLOSION_SAMPLE);
     ENGINE.create_alwaysupdate(new AirExplosion_o(x, y - TILE_SIDE_HEIGHT + 15, z));

@@ -34,8 +34,8 @@
 #include "object2.h"
 #include <algorithm>
 #include <allegro.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cstdlib>
+#include <cstring>
 
 #define WARNING_SAMPLE "samples/airnuke.wav"
 #define MAX_CLUSTER_COUNTER 5
@@ -74,14 +74,14 @@ const char* comments[] = {
 
 #define MAX_X_SPEED 2 //4
 #define X_FRICTION 1
-#define MIN_X_SPEED -MAX_X_SPEED //-4
+#define MIN_X_SPEED (-MAX_X_SPEED) //-4
 #define MAX_Y_SPEED 16
-#define MIN_Y_SPEED -12
+#define MIN_Y_SPEED (-12)
 #define X_ACCEL 2 //2
 #define Y_ACCEL 1
 #define Z_ACCEL 2
 #define MAX_Z_SPEED 2
-#define MIN_Z_SPEED -MAX_Z_SPEED
+#define MIN_Z_SPEED (-MAX_Z_SPEED)
 #define Z_FRICTION 1
 
 #define COLL_X (coll_x + coll_width)
@@ -128,7 +128,7 @@ Tank_o::Tank_o(int X, int Y, int Z)
 {
     RGB pal[256];
     char filename[512];
-    int i;
+    int i = 0;
 
     anim.reset();
 
@@ -137,59 +137,69 @@ Tank_o::Tank_o(int X, int Y, int Z)
     for (i = 0; i < 3; i++) {
         sprintf(filename, "boss/v/skada0/%d.pcx", i + 1);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i])
+        if (images[i] != nullptr) {
             num_images++;
+        }
     }
     for (i = 3; i < 6; i++) {
         sprintf(filename, "boss/v/skada1/%d.pcx", i - 2);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i])
+        if (images[i] != nullptr) {
             num_images++;
+        }
     }
     for (i = 6; i < 9; i++) {
         sprintf(filename, "boss/v/skada2/%d.pcx", i - 5);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i])
+        if (images[i] != nullptr) {
             num_images++;
+        }
     }
     for (i = 9; i < 12; i++) {
         sprintf(filename, "boss/v/skada3/%d.pcx", i - 8);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i])
+        if (images[i] != nullptr) {
             num_images++;
+        }
     }
     for (i = 12; i < 15; i++) {
         sprintf(filename, "boss/h/skada0/%d.pcx", i - 11);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i])
+        if (images[i] != nullptr) {
             num_images++;
+        }
     }
     for (i = 15; i < 18; i++) {
         sprintf(filename, "boss/h/skada1/%d.pcx", i - 14);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i])
+        if (images[i] != nullptr) {
             num_images++;
+        }
     }
     for (i = 18; i < 21; i++) {
         sprintf(filename, "boss/h/skada2/%d.pcx", i - 17);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i])
+        if (images[i] != nullptr) {
             num_images++;
+        }
     }
     for (i = 21; i < 24; i++) {
         sprintf(filename, "boss/h/skada3/%d.pcx", i - 20);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i])
+        if (images[i] != nullptr) {
             num_images++;
+        }
     }
     sprintf(filename, "boss/v/dead.pcx");
     images[24] = icache.GetImage(filename, pal);
-    if (images[24])
+    if (images[24] != nullptr) {
         num_images++;
+    }
     sprintf(filename, "boss/h/dead.pcx");
     images[25] = icache.GetImage(filename, pal);
-    if (images[25])
+    if (images[25] != nullptr) {
         num_images++;
+    }
 
     current_image = 0;
 
@@ -228,14 +238,14 @@ Tank_o::Tank_o(int X, int Y, int Z)
     //k * TILE_TOP_HEIGHT + (TILE_TOP_HEIGHT >> 1)
 }
 
-int Tank_o::update()
+auto Tank_o::update() -> int
 {
     static int aim = 0;
     static int aif = 0;
     static int cluster_counter = 0;
     //	int r;
 
-    if (!counter5) {
+    if (counter5 == 0) {
         char buf2[2048];
         ENGINE.score.InitBossHealth(MAX_ENERGY);
         ENGINE.score.SetBossHealth(MAX_ENERGY);
@@ -247,13 +257,16 @@ int Tank_o::update()
         SOUND.PlayMusic(buf2);
         SOUND.PlaySFX_Critical(comments[0]);
         return REMOVE_ME;
-    } else
+    }
+    {
         score = 50000;
+    }
 
-    if (counter)
+    if (counter != 0) {
         counter--;
+    }
 
-    if (!counter && state & STATE_DEAD) {
+    if ((counter == 0) && ((state & STATE_DEAD) != 0)) {
         wheel1->DestroyTank();
         wheel2->DestroyTank();
         // Hide HealthMeter
@@ -263,7 +276,7 @@ int Tank_o::update()
         return REMOVE_ME;
     }
 
-    if (state & STATE_DEAD) {
+    if ((state & STATE_DEAD) != 0) {
         ENGINE.create_effect(new SmallExplosion_o(x + random() % width, y + random() % height, z));
 
         if ((random() % 14) == 0) {
@@ -291,14 +304,17 @@ int Tank_o::update()
         return 0;
     }
 
-    if (counter2)
+    if (counter2 != 0) {
         counter2--;
-    if (counter3)
+    }
+    if (counter3 != 0) {
         counter3--;
-    if (counter4)
+    }
+    if (counter4 != 0) {
         counter4--;
+    }
 
-    if (!counter3) {
+    if (counter3 == 0) {
         state &= ~(STATE_MOVE_LEFT | STATE_MOVE_RIGHT);
 
         switch (aimove[aim].what) {
@@ -315,10 +331,11 @@ int Tank_o::update()
         }
         counter3 = aimove[aim].num;
         aim++;
-        if (aim >= NUM_AIMOVE)
+        if (aim >= NUM_AIMOVE) {
             aim = 0;
+        }
     }
-    if (!counter4) {
+    if (counter4 == 0) {
         state &= ~(STATE_FIRE_MINIGUN | STATE_FIRE_CLUSTER);
         current_image = IMAGE(0);
         switch (aifire[aif].what) {
@@ -335,11 +352,12 @@ int Tank_o::update()
         }
         counter4 = aifire[aif].num;
         aif++;
-        if (aif >= NUM_AIFIRE)
+        if (aif >= NUM_AIFIRE) {
             aif = 0;
+        }
     }
 
-    if (state & STATE_MOVE_RIGHT) {
+    if ((state & STATE_MOVE_RIGHT) != 0) {
         current_image = IMAGE(0);
         switch (direction) {
         case LEFT_DIR:
@@ -351,7 +369,7 @@ int Tank_o::update()
         default:
             break;
         };
-    } else if (state & STATE_MOVE_LEFT) {
+    } else if ((state & STATE_MOVE_LEFT) != 0) {
         current_image = IMAGE(0);
         switch (direction) {
         case LEFT_DIR:
@@ -365,7 +383,7 @@ int Tank_o::update()
         };
     }
 
-    if (state & STATE_FIRE_MINIGUN) {
+    if ((state & STATE_FIRE_MINIGUN) != 0) {
         switch (direction) {
         case LEFT_DIR:
             if (counter2 == 0 && current_image == IMAGE(0)) {
@@ -382,7 +400,7 @@ int Tank_o::update()
         default:
             break;
         }
-    } else if (state & STATE_FIRE_CLUSTER) {
+    } else if ((state & STATE_FIRE_CLUSTER) != 0) {
         switch (direction) {
         case LEFT_DIR:
             if (counter2 == 0 && current_image == IMAGE(0)) {
@@ -390,8 +408,9 @@ int Tank_o::update()
                 counter2 = CLUSTER_REP;
                 ENGINE.create_alwaysupdate(new Cluster_o(x + 67, y + 5, z, -(3 + cluster_counter), -(3 + cluster_counter), 0, me));
                 cluster_counter++;
-                if (cluster_counter > MAX_CLUSTER_COUNTER)
+                if (cluster_counter > MAX_CLUSTER_COUNTER) {
                     cluster_counter = 0;
+                }
             } else if (counter2 == 0 && current_image == IMAGE(1)) {
                 current_image = IMAGE(0);
                 counter2 = CLUSTER_DELAY;
@@ -415,8 +434,9 @@ int Tank_o::update()
     y += speed_y;
     z += speed_z;
 
-    if (x < 0)
+    if (x < 0) {
         x = 0;
+    }
 
     if (z > MIN_Z) {
         z = MIN_Z;
@@ -438,21 +458,25 @@ void Tank_o::Collision(Object* o)
 {
     static int cmc = 1;
 
-    if (!energy)
+    if (energy == 0) {
         return;
-
-    if (o->GetWho() & (ENEMY_FIREBALL | ENEMY_BEAM | ENEMY_ICEBALL | ENEMY_PLASMA))
-        return;
-
-    if (o->GetEnemies() & me) {
-        if (o->GetWho() & ENEMY_EXPLOSION)
-            energy -= (o->GetStrength() / 2);
-        else
-            energy -= o->GetStrength();
     }
 
-    if (energy < 0)
+    if ((o->GetWho() & (ENEMY_FIREBALL | ENEMY_BEAM | ENEMY_ICEBALL | ENEMY_PLASMA)) != 0) {
+        return;
+    }
+
+    if ((o->GetEnemies() & me) != 0U) {
+        if ((o->GetWho() & ENEMY_EXPLOSION) != 0) {
+            energy -= (o->GetStrength() / 2);
+        } else {
+            energy -= o->GetStrength();
+        }
+    }
+
+    if (energy < 0) {
         energy = 0;
+    }
 
     ENGINE.score.SetBossHealth(energy);
 
@@ -464,6 +488,5 @@ void Tank_o::Collision(Object* o)
 
 /**************************************************************************/
 Tank_o::~Tank_o()
-{
-}
+    = default;
 /**************************************************************************/

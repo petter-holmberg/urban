@@ -31,18 +31,18 @@
 #include "engine.h"
 #include "object.h"
 #include <allegro.h>
-#include <string.h>
+#include <cstring>
 
 #define FRAME_DELAY 5
 /****************************************************************************/
 //#define POWERUP_STRENGTH 1000
 /****************************************************************************/
-Door_o::Door_o(int X, int Y, int Z, Cardtype Card)
+Door_o::Door_o(int X, int Y, int /*Z*/, Cardtype Card)
     : Object(X, Y, 0)
 {
     RGB pal[256];
     char filename[512];
-    int i;
+    int i = 0;
 
     images = new BITMAP*[5];
     card = Card;
@@ -50,8 +50,9 @@ Door_o::Door_o(int X, int Y, int Z, Cardtype Card)
     for (i = 0; i < 5; i++) {
         sprintf(filename, "new-door/%d.pcx", i + 1);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i])
+        if (images[i] != nullptr) {
             num_images++;
+        }
     }
 
     current_image = 0;
@@ -83,11 +84,10 @@ Door_o::Door_o(int X, int Y, int Z, Cardtype Card)
 }
 /****************************************************************************/
 Door_o::~Door_o()
-{
-}
+    = default;
 
 /****************************************************************************/
-int Door_o::update()
+auto Door_o::update() -> int
 {
 
     /*	if (counter3)
@@ -100,44 +100,51 @@ int Door_o::update()
                 counter = 10;
 	}*/
     // Fall or Stop
-    if (ENGINE.check_floor(x, y + height, z) || ENGINE.check_floor(x + width, y + height, z))
+    if (ENGINE.check_floor(x, y + height, z) || ENGINE.check_floor(x + width, y + height, z)) {
         speed_y = 0;
-    else
+    } else {
         y += speed_y;
+    }
 
-    while (ENGINE.check_floor(x + width / 2, y + height - 2, z))
+    while (ENGINE.check_floor(x + width / 2, y + height - 2, z)) {
         y--;
+    }
 
-    if (counter2 == 0 || counter2 == 2)
+    if (counter2 == 0 || counter2 == 2) {
         return 0;
+    }
 
     current_image = anim.next_frame(5, FRAME_DELAY);
 
     if (current_image == 5) {
         current_image = 4;
         counter2 = 2;
-        if (card == extra_level)
+        if (card == extra_level) {
             ENGINE.PlayExtraLevel();
-        else
+        } else {
             ENGINE.ClearLevel();
+        }
     }
 
     // Delete if already used
-    if (!energy)
+    if (energy == 0) {
         return -1;
+    }
     return 0;
 }
 
 void Door_o::Collision(Object* o)
 {
     char msg[512];
-    if (!energy)
+    if (energy == 0) {
         return;
+    }
 
-    if (!(friends & o->GetWho()))
+    if ((friends & o->GetWho()) == 0U) {
         return;
+    }
 
-    if (((player_o*)o)->HaveCard(card) && !counter2) {
+    if (((dynamic_cast<player_o*>(o))->HaveCard(card) != 0) && (counter2 == 0)) {
         ENGINE.PushMessage("Level Clear");
         SOUND.PlaySFX("samples/fire4.wav");
         counter2 = 1;

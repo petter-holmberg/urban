@@ -31,8 +31,8 @@
 #include "engine.h"
 #include "object.h"
 #include <allegro.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cstdlib>
+#include <cstring>
 
 #define PROB_WALK_START 0
 #define PROB_WALK_END 80
@@ -48,9 +48,9 @@
 
 #define MAX_X_SPEED 1 //4
 #define X_FRICTION 1
-#define MIN_X_SPEED -MAX_X_SPEED //-4
+#define MIN_X_SPEED (-MAX_X_SPEED) //-4
 #define MAX_Y_SPEED 16
-#define MIN_Y_SPEED -12
+#define MIN_Y_SPEED (-12)
 #define X_ACCEL 2 //2
 #define Y_ACCEL 1
 
@@ -62,7 +62,7 @@ Vaktm_o::Vaktm_o(int X, int Y, int Z)
 {
     RGB pal[256];
     char filename[512];
-    int i;
+    int i = 0;
 
     anim.reset();
     images = new BITMAP*[8];
@@ -70,14 +70,16 @@ Vaktm_o::Vaktm_o(int X, int Y, int Z)
     for (i = 0; i < 4; i++) {
         sprintf(filename, "vaktm/v/%d.pcx", i + 1);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i])
+        if (images[i] != nullptr) {
             num_images++;
+        }
     }
     for (i = 4; i < 8; i++) {
         sprintf(filename, "vaktm/h/%d.pcx", i - 3);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i])
+        if (images[i] != nullptr) {
             num_images++;
+        }
     }
 
     current_image = 0;
@@ -104,22 +106,26 @@ Vaktm_o::Vaktm_o(int X, int Y, int Z)
     me = FRIEND_VAKTM;
 }
 /**************************************************************************/
-int Vaktm_o::update()
+auto Vaktm_o::update() -> int
 {
-    int r;
-    if (counter)
+    int r = 0;
+    if (counter != 0) {
         counter--;
-    if (speed_x < 0)
+    }
+    if (speed_x < 0) {
         speed_x += X_FRICTION;
-    if (speed_x > 0)
+    }
+    if (speed_x > 0) {
         speed_x -= X_FRICTION;
+    }
 
     if (counter == 0) {
         r = random() % PROB_NUMBER;
-        if (r >= PROB_WALK_START && r <= PROB_WALK_END)
+        if (r >= PROB_WALK_START && r <= PROB_WALK_END) {
             state = STATE_WALK;
-        else if (r >= PROB_TURN_START && r <= PROB_TURN_END)
+        } else if (r >= PROB_TURN_START && r <= PROB_TURN_END) {
             state = STATE_TURN;
+        }
         counter = random() % MAX_NUM + 15;
     }
 
@@ -132,17 +138,21 @@ int Vaktm_o::update()
     case STATE_WALK:
         switch (direction) {
         case RIGHT_DIR:
-            if (speed_x < MAX_X_SPEED)
+            if (speed_x < MAX_X_SPEED) {
                 speed_x += X_ACCEL;
-            while (ENGINE.check_wall(x + width + speed_x, y + height, z) && speed_x)
+            }
+            while (ENGINE.check_wall(x + width + speed_x, y + height, z) && (speed_x != 0)) {
                 speed_x--;
+            }
             current_image = 4 + anim.next_frame(3, 5);
             break;
         case LEFT_DIR:
-            if (speed_x > MIN_X_SPEED)
+            if (speed_x > MIN_X_SPEED) {
                 speed_x -= X_ACCEL;
-            while (ENGINE.check_wall(x + speed_x, y + height, z) && speed_x)
+            }
+            while (ENGINE.check_wall(x + speed_x, y + height, z) && (speed_x != 0)) {
                 speed_x++;
+            }
             current_image = anim.next_frame(3, 5);
             break;
         };
@@ -157,10 +167,11 @@ int Vaktm_o::update()
         break;
     };
 
-    if (!speed_y)
+    if (speed_y == 0) {
         if (!ENGINE.check_floor(x + speed_x, y + height, z) || !ENGINE.check_floor(x + width + speed_x, y + height, z)) {
             speed_x = 0;
         }
+    }
 
     // Fall or Stop
     if (ENGINE.check_floor(x + 14, y + height, z) || ENGINE.check_floor(x + width - 14, y + height, z)) {
@@ -171,23 +182,26 @@ int Vaktm_o::update()
 
     x += speed_x;
     y += speed_y;
-    if (x < 0)
+    if (x < 0) {
         x = 0;
+    }
 
-    if (energy <= 0)
+    if (energy <= 0) {
         return -1;
+    }
 
     return 0;
 }
 
 void Vaktm_o::Collision(Object* o)
 {
-    if (!energy)
+    if (energy == 0) {
         return;
+    }
 
     Object::Collision(o);
 
-    if ((o->GetStrength() > 0) && (!(o->GetFriends() & me))) {
+    if ((o->GetStrength() > 0) && ((o->GetFriends() & me) == 0U)) {
         ENGINE.create_object(new explosion_o(x, y + height - 75, z));
         ENGINE.create_object(new explosion_o(x + 15, y + height - 50, z));
         ENGINE.create_object(new explosion_o(x - 15, y + height - 50, z));
@@ -199,6 +213,5 @@ void Vaktm_o::Collision(Object* o)
 
 /**************************************************************************/
 Vaktm_o::~Vaktm_o()
-{
-}
+    = default;
 /**************************************************************************/

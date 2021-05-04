@@ -31,7 +31,7 @@
 #include "engine.h"
 #include "object.h"
 #include <allegro.h>
-#include <string.h>
+#include <cstring>
 
 /****************************************************************************/
 checkpoint_o::checkpoint_o(int X, int Y, int Z)
@@ -43,8 +43,9 @@ checkpoint_o::checkpoint_o(int X, int Y, int Z)
     images = new BITMAP*[2];
     strcpy(filename, "items/check.pcx");
     images[0] = icache.GetImage(filename, pal);
-    if (images[0])
+    if (images[0] != nullptr) {
         num_images++;
+    }
     /*        strcpy(filename, "items/check2.pcx");
         images[1] = icache.GetImage(filename, pal);
         if (images[1])
@@ -76,10 +77,9 @@ checkpoint_o::checkpoint_o(int X, int Y, int Z)
 }
 /****************************************************************************/
 checkpoint_o::~checkpoint_o()
-{
-}
+    = default;
 /****************************************************************************/
-int checkpoint_o::update()
+auto checkpoint_o::update() -> int
 {
     /*	if (counter)
         	counter--;
@@ -88,24 +88,28 @@ int checkpoint_o::update()
                 counter = 10;
 	}*/
     // Fall or Stop
-    if (ENGINE.check_floor(x, y + height, z) || ENGINE.check_floor(x + width, y + height, z))
+    if (ENGINE.check_floor(x, y + height, z) || ENGINE.check_floor(x + width, y + height, z)) {
         speed_y = 0;
-    else
+    } else {
         y += speed_y;
+    }
 
     // Delete if already used
-    if (!energy)
+    if (energy == 0) {
         return -1;
+    }
     return 0;
 }
 /****************************************************************************/
 void checkpoint_o::Collision(Object* o)
 {
-    if (!energy)
+    if (energy == 0) {
         return;
+    }
 
-    if (!(friends & o->GetWho()))
+    if ((friends & o->GetWho()) == 0U) {
         return;
+    }
     energy = 0;
     ENGINE.PushMessage("Checkpoint");
     //        ENGINE.ClearLevel();

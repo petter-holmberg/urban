@@ -33,8 +33,8 @@
 #include "engine.h"
 #include "object.h"
 #include <allegro.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cstdlib>
+#include <cstring>
 
 #define PROB_WALK_START 0
 #define PROB_WALK_END 50
@@ -65,14 +65,14 @@
 #define FIRE_STRENGTH 20
 #define MAX_X_SPEED 2 //4
 #define X_FRICTION 1
-#define MIN_X_SPEED -MAX_X_SPEED //-4
+#define MIN_X_SPEED (-MAX_X_SPEED) //-4
 #define MAX_Y_SPEED 16
-#define MIN_Y_SPEED -12
+#define MIN_Y_SPEED (-12)
 #define X_ACCEL 2 //2
 #define Y_ACCEL 1
 #define Z_ACCEL 2
 #define MAX_Z_SPEED 2
-#define MIN_Z_SPEED -MAX_Z_SPEED
+#define MIN_Z_SPEED (-MAX_Z_SPEED)
 #define Z_FRICTION 1
 //#define FRAME_DELAY 2
 //#define FIRE_DELAY 30
@@ -104,7 +104,7 @@ Crycheck_o::Crycheck_o(int X, int Y, int Z)
 {
     RGB pal[256];
     char filename[512];
-    int i;
+    int i = 0;
 
     anim.reset();
     images = new BITMAP*[42];
@@ -112,38 +112,44 @@ Crycheck_o::Crycheck_o(int X, int Y, int Z)
     for (i = 0; i < 5; i++) {
         sprintf(filename, "inspecto/inspv/%d.pcx", i + 1);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i])
+        if (images[i] != nullptr) {
             num_images++;
+        }
     }
     for (i = 5; i < 10; i++) {
         sprintf(filename, "inspecto/insph/%d.pcx", i + 1 - 5);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i])
+        if (images[i] != nullptr) {
             num_images++;
+        }
     }
     for (i = 10; i < 14; i++) {
         sprintf(filename, "inspecto/inspv/shot%d.pcx", i + 1 - 10);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i])
+        if (images[i] != nullptr) {
             num_images++;
+        }
     }
     for (i = 14; i < 18; i++) {
         sprintf(filename, "inspecto/insph/shot%d.pcx", i + 1 - 14);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i])
+        if (images[i] != nullptr) {
             num_images++;
+        }
     }
     for (i = 18; i < 30; i++) {
         sprintf(filename, "inspecto/insph/dead%d.pcx", i + 1 - 18);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i])
+        if (images[i] != nullptr) {
             num_images++;
+        }
     }
     for (i = 30; i < 42; i++) {
         sprintf(filename, "inspecto/inspv/dead%d.pcx", i + 1 - 30);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i])
+        if (images[i] != nullptr) {
             num_images++;
+        }
     }
 
     current_image = 1;
@@ -171,53 +177,59 @@ Crycheck_o::Crycheck_o(int X, int Y, int Z)
     me = FRIEND_AGENT;
 }
 
-int Crycheck_o::update()
+auto Crycheck_o::update() -> int
 {
-    int r;
+    int r = 0;
 
-    if (state == STATE_DEAD)
+    if (state == STATE_DEAD) {
         return -1;
+    }
 
-    if (counter)
+    if (counter != 0) {
         counter--;
+    }
 
-    if (!counter && state != STATE_COLLAPS && state != STATE_WAITING && state != STATE_DYING && state != STATE_FIRING) {
+    if ((counter == 0) && state != STATE_COLLAPS && state != STATE_WAITING && state != STATE_DYING && state != STATE_FIRING) {
         r = random() % PROB_NUMBER;
         if (r >= PROB_WALK_START && r <= PROB_WALK_END) {
             state = STATE_WALK;
             direction = random() % 4; //lotta en riktning
-        } else if ((r >= PROB_STOP_START && r <= PROB_STOP_END) || state == STATE_STOP || state == STATE_TURN)
+        } else if ((r >= PROB_STOP_START && r <= PROB_STOP_END) || state == STATE_STOP || state == STATE_TURN) {
             state = STATE_STOP;
-        else if (r >= PROB_TURN_START && r <= PROB_TURN_END)
+        } else if (r >= PROB_TURN_START && r <= PROB_TURN_END) {
             state = STATE_TURN;
+        }
         counter = random() % MAX_NUM + 15;
     }
 
-    if ((state != STATE_FIRE && state != STATE_FIRING && state != STATE_TURN && state != STATE_COLLAPS && state != STATE_DYING && state != STATE_WAITING))
+    if ((state != STATE_FIRE && state != STATE_FIRING && state != STATE_TURN && state != STATE_COLLAPS && state != STATE_DYING && state != STATE_WAITING)) {
         if (PLAYER->GetX() < x && PLAYER->GetX() > x - FIRE_RANGE && (direction == LEFT_DIR || direction == UP_DIR || direction == DOWN_DIR) && PLAYER->GetLayer() == layer) {
             state = STATE_FIRE;
         } else if (PLAYER->GetX() > x && PLAYER->GetX() < x + FIRE_RANGE && (direction == RIGHT_DIR || direction == UP_DIR || direction == DOWN_DIR) && PLAYER->GetLayer() == layer) {
             state = STATE_FIRE;
         }
+    }
 
-    if (!speed_y)
+    if (speed_y == 0) {
         switch (state) {
         case STATE_COLLAPS:
             direction = (PLAYER->GetX() > x) ? RIGHT_DIR : LEFT_DIR;
             speed_x = speed_z = 0;
             current_image = (direction == RIGHT_DIR ? 18 : 30) + (r = anim.next_frame(4, 5));
-            if (r == 4)
+            if (r == 4) {
                 state = STATE_WAITING;
-            else
+            } else {
                 break;
+            }
             anim.reset();
         case STATE_WAITING:
             speed_x = speed_z = 0;
             current_image = (direction == RIGHT_DIR ? 22 : 34) + anim.next_frame(1, 10);
             break;
         case STATE_DYING:
-            if (direction == -100)
+            if (direction == -100) {
                 direction = (PLAYER->GetX() > x) ? RIGHT_DIR : LEFT_DIR;
+            }
             current_image = (direction == RIGHT_DIR ? 23 : 35) + (r = anim.next_frame(6, 5));
             if (r == 6) {
                 ENGINE.create_dekoration(this);
@@ -227,21 +239,25 @@ int Crycheck_o::update()
         case STATE_WALK:
             switch (direction) {
             case RIGHT_DIR:
-                if (speed_x < MAX_X_SPEED)
+                if (speed_x < MAX_X_SPEED) {
                     speed_x += X_ACCEL;
+                }
 
-                while (ENGINE.check_wall(x + COLL_X + speed_x, y + COLL_Y, z) && speed_x)
+                while (ENGINE.check_wall(x + COLL_X + speed_x, y + COLL_Y, z) && (speed_x != 0)) {
                     speed_x--;
+                }
 
                 current_image = 5 + anim.next_frame(4, 5);
                 speed_z = 0;
                 break;
             case LEFT_DIR:
-                if (speed_x > MIN_X_SPEED)
+                if (speed_x > MIN_X_SPEED) {
                     speed_x -= X_ACCEL;
+                }
 
-                while (ENGINE.check_wall(x + coll_x + speed_x, y + COLL_Y, z) && speed_x)
+                while (ENGINE.check_wall(x + coll_x + speed_x, y + COLL_Y, z) && (speed_x != 0)) {
                     speed_x++;
+                }
                 current_image = anim.next_frame(4, 5);
                 speed_z = 0;
                 break;
@@ -263,16 +279,18 @@ int Crycheck_o::update()
             }
             break;
         case STATE_NONE:
-            if (direction == RIGHT_DIR || direction == LEFT_DIR)
+            if (direction == RIGHT_DIR || direction == LEFT_DIR) {
                 current_image = (direction == RIGHT_DIR ? 4 : 9);
+            }
             counter = 0;
             anim.reset();
             break;
         case STATE_FIRE:
-            if (PLAYER->GetX() < x)
+            if (PLAYER->GetX() < x) {
                 direction = LEFT_DIR;
-            else
+            } else {
                 direction = RIGHT_DIR;
+            }
             counter = 2 * FIRE_DELAY;
             state = STATE_FIRING;
             anim.reset();
@@ -284,8 +302,9 @@ int Crycheck_o::update()
             switch (counter2) {
             case 0:
                 current_image = (direction == RIGHT_DIR ? 14 : 10) + (r = anim.next_frame(2, 20));
-                if (r < 2)
+                if (r < 2) {
                     break;
+                }
                 counter2 = 1;
                 anim.reset();
             case 1:
@@ -294,20 +313,23 @@ int Crycheck_o::update()
                 if (r == 1 && counter2 == 1) {
                     counter2 = 2;
                     ENGINE.create_object(new HighSpeed_Bullet_o(x + (direction == RIGHT_DIR ? 100 : 12), y + 13, z, direction, ~FRIEND_PLAYER, FIRE_STRENGTH));
-                    if (direction == RIGHT_DIR)
+                    if (direction == RIGHT_DIR) {
                         ENGINE.create_effect(new shells_o(x + 90, y + 22, z, "soldier/hylsa", 1, -(random() % 5), -(random() % 8), 0));
-                    else
+                    } else {
                         ENGINE.create_effect(new shells_o(x + 23, y + 22, z, "soldier/hylsa", 1, random() % 5, -(random() % 8), 0));
+                    }
                 } else if (r == 2) {
                     counter2 = 1;
-                    if (direction == LEFT_DIR && PLAYER->GetX() < x && PLAYER->GetX() > x - FIRE_RANGE && PLAYER->GetLayer() == layer)
+                    if (direction == LEFT_DIR && PLAYER->GetX() < x && PLAYER->GetX() > x - FIRE_RANGE && PLAYER->GetLayer() == layer) {
                         r = 0;
-                    else if (direction == RIGHT_DIR && PLAYER->GetX() > x && PLAYER->GetX() < x + FIRE_RANGE && PLAYER->GetLayer() == layer)
+                    } else if (direction == RIGHT_DIR && PLAYER->GetX() > x && PLAYER->GetX() < x + FIRE_RANGE && PLAYER->GetLayer() == layer) {
                         r = 0;
+                    }
                 }
                 current_image = (direction == RIGHT_DIR ? 16 : 12) + r;
-                if (r < 2)
+                if (r < 2) {
                     break;
+                }
                 counter2 = 3;
                 anim.reset();
             case 3:
@@ -334,8 +356,9 @@ int Crycheck_o::update()
         default:
             break;
         }
+    }
 
-    if (!speed_y)
+    if (speed_y == 0) {
         switch (direction) {
         case LEFT_DIR:
             if (!ENGINE.check_floor(x + FOOT_LEFT + speed_x, y + height, z) && !ENGINE.check_floor(x + FOOT_LEFT + speed_x, y + height + TILE_SIDE_HEIGHT, z)) {
@@ -352,6 +375,7 @@ int Crycheck_o::update()
         default:
             break;
         }
+    }
 
     // Fall or Stop
     if (ENGINE.check_floor(x + FOOT_LEFT, y + height, z) || ENGINE.check_floor(x + FOOT_RIGHT, y + height, z)) {
@@ -365,8 +389,9 @@ int Crycheck_o::update()
     y += speed_y;
     z += speed_z;
 
-    if (x < 0)
+    if (x < 0) {
         x = 0;
+    }
 
     if (z > MIN_Z) {
         z = MIN_Z;
@@ -383,52 +408,59 @@ int Crycheck_o::update()
 
     layer = z / TILE_TOP_HEIGHT;
 
-    if (!speed_x && !speed_z && state != STATE_FIRING && state != STATE_COLLAPS && state != STATE_WAITING && state != STATE_DYING) {
-        if (direction == LEFT_DIR || direction == RIGHT_DIR)
+    if ((speed_x == 0) && (speed_z == 0) && state != STATE_FIRING && state != STATE_COLLAPS && state != STATE_WAITING && state != STATE_DYING) {
+        if (direction == LEFT_DIR || direction == RIGHT_DIR) {
             current_image = (direction == RIGHT_DIR ? 4 : 9);
+        }
     }
     return 0;
 }
 
 void Crycheck_o::Collision(Object* o)
 {
-    int i;
+    int i = 0;
 
-    if (state == STATE_DEAD)
+    if (state == STATE_DEAD) {
         return;
+    }
 
     Object::Collision(o);
 
-    if ((o->GetStrength() > 0) && (!(o->GetFriends() & me)) && state != STATE_DEAD && state != STATE_DYING) {
-        if (o->GetWho() & ENEMY_EXPLOSION) {
+    if ((o->GetStrength() > 0) && ((o->GetFriends() & me) == 0U) && state != STATE_DEAD && state != STATE_DYING) {
+        if ((o->GetWho() & ENEMY_EXPLOSION) != 0) {
             state = STATE_DEAD;
             DEATH_BY_EXPLOSION;
             return;
-        } else if (o->GetWho() & (ENEMY_FIREBALL | ENEMY_BEAM)) {
+        }
+        if ((o->GetWho() & (ENEMY_FIREBALL | ENEMY_BEAM)) != 0U) {
             ENGINE.create_effect(new BurningBody_o(x, y + height, z));
             state = STATE_DEAD;
-        } else if (o->GetWho() & ENEMY_ICEBALL) {
+        } else if ((o->GetWho() & ENEMY_ICEBALL) != 0U) {
             ENGINE.create_object(new FrosenBody_o(x, y + height, z, direction));
             state = STATE_DEAD;
-        } else if (o->GetWho() & (ENEMY_HS_BULLET | ENEMY_PLASMA)) {
+        } else if ((o->GetWho() & (ENEMY_HS_BULLET | ENEMY_PLASMA)) != 0U) {
             if (state == STATE_COLLAPS) {
                 state = STATE_DEAD;
                 DEATH_BY_EXPLOSION;
                 return;
-            } else if (state == STATE_WAITING) {
+            }
+            if (state == STATE_WAITING) {
                 direction = -100;
                 state = STATE_DYING;
                 anim.reset();
                 return;
             }
-            if (direction == RIGHT_DIR)
-                for (i = 0; i < 7; i++)
+            if (
+                direction == RIGHT_DIR) {
+                for (i = 0; i < 7; i++) {
                     ENGINE.create_effect(new blood_o(x + width / 2, y + random() % height, z, -2 + random() % 4));
-            else
-                for (i = 0; i < 7; i++)
+                }
+            } else {
+                for (i = 0; i < 7; i++) {
                     ENGINE.create_effect(new blood_o(x + width / 2, y + random() % height, z, 2 + random() % 4));
-
-            if (state != STATE_COLLAPS && !energy) {
+                }
+            }
+            if (state != STATE_COLLAPS && (energy == 0)) {
                 state = STATE_COLLAPS;
                 score += 50;
                 anim.reset();
@@ -440,8 +472,7 @@ void Crycheck_o::Collision(Object* o)
 
 /**************************************************************************/
 Crycheck_o::~Crycheck_o()
-{
-}
+    = default;
 /**************************************************************************/
 
 /**************************************************************************/
@@ -453,13 +484,13 @@ Boss_Crycheck_o::Boss_Crycheck_o(int X, int Y, int Z)
 }
 
 Boss_Crycheck_o::~Boss_Crycheck_o()
-{
-}
+    = default;
 
-int Boss_Crycheck_o::update()
+auto Boss_Crycheck_o::update() -> int
 {
-    int ret;
-    if ((ret = Crycheck_o::update()) != 0)
+    int ret = 0;
+    if ((ret = Crycheck_o::update()) != 0) {
         ENGINE.create_object(new card_o(x, y, z));
+    }
     return ret;
 }

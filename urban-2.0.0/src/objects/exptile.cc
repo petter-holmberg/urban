@@ -31,8 +31,8 @@
 #include "engine.h"
 #include "object2.h"
 #include <allegro.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cstdlib>
+#include <cstring>
 
 ExplosiveTile_o::ExplosiveTile_o(int X, int Y, int Z, int Type)
     : Object(X, Y, Z)
@@ -43,8 +43,9 @@ ExplosiveTile_o::ExplosiveTile_o(int X, int Y, int Z, int Type)
     images = new BITMAP*[2];
     sprintf(filename, "xbarrel.pcx");
     images[0] = icache.GetImage(filename, pal);
-    if (images[0])
+    if (images[0] != nullptr) {
         num_images++;
+    }
 
     current_image = 0;
 
@@ -74,24 +75,26 @@ ExplosiveTile_o::ExplosiveTile_o(int X, int Y, int Z, int Type)
 }
 /****************************************************************************/
 ExplosiveTile_o::~ExplosiveTile_o()
-{
-}
+    = default;
 
 /****************************************************************************/
-int ExplosiveTile_o::update()
+auto ExplosiveTile_o::update() -> int
 {
-    if (!energy)
+    if (energy == 0) {
         return -1;
+    }
     return 0;
 }
 
 void ExplosiveTile_o::Collision(Object* o)
 {
-    if (!energy)
+    if (energy == 0) {
         return;
+    }
 
-    if (!(o->GetWho() & FRIEND_EXPLOSION))
+    if ((o->GetWho() & FRIEND_EXPLOSION) == 0) {
         return;
+    }
 
     energy = 0;
     ENGINE.ClearTile(x + (width / 2), y + (height / 2), z);

@@ -31,8 +31,8 @@
 #include "engine.h"
 #include "object2.h"
 #include <allegro.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cstdlib>
+#include <cstring>
 
 #define STATE_NONE 0x00
 #define STATE_ACTIVATE 0x01
@@ -58,8 +58,9 @@ ElevatorStation_o::ElevatorStation_o(int X, int Y, int Z, int dir, Cardtype Card
     for (int i = 0; i < 10; i++) {
         sprintf(filename, "elepan%d.pcx", i);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i])
+        if (images[i] != nullptr) {
             num_images++;
+        }
     }
     /*
         switch (dir) {
@@ -109,66 +110,71 @@ ElevatorStation_o::ElevatorStation_o(int X, int Y, int Z, int dir, Cardtype Card
     state = STATE_LOCATESTATION;
     direction = dir;
     card = Card;
-    elevator = NULL;
-    wire_up = wire_down = NULL;
-    elev_stat = NULL;
+    elevator = nullptr;
+    wire_up = wire_down = nullptr;
+    elev_stat = nullptr;
 }
 /****************************************************************************/
 ElevatorStation_o::~ElevatorStation_o()
-{
-}
+    = default;
 
 /****************************************************************************/
-int ElevatorStation_o::update()
+auto ElevatorStation_o::update() -> int
 {
 
-    if (counter)
+    if (counter != 0) {
         counter--;
+    }
 
     switch (state) {
     case STATE_LOCATESTATION:
         if (direction == DOWN_DIR) {
-            if (wire_down) {
-                ((ElevatorWire_o*)wire_down)->FindElevatorStation(this, this);
+            if (wire_down != nullptr) {
+                (dynamic_cast<ElevatorWire_o*>(wire_down))->FindElevatorStation(this, this);
                 state = STATE_NONE;
             }
-        } else
+        } else {
             state = STATE_NONE;
+        }
         break;
     case STATE_SEND:
-        if (elevator) {
-            ((Elevator_o*)elevator)->Activate(direction_to_send);
+        if (elevator != nullptr) {
+            (dynamic_cast<Elevator_o*>(elevator))->Activate(direction_to_send);
             state = STATE_NONE;
             ENGINE.PushMessage("Elevator on its way");
         }
         break;
     case STATE_ACTIVATE:
-        if (elevator) {
-            ((Elevator_o*)elevator)->Activate(direction);
+        if (elevator != nullptr) {
+            (dynamic_cast<Elevator_o*>(elevator))->Activate(direction);
             state = STATE_ACTIVATED;
         } else {
-            if (elev_stat)
-                ((ElevatorStation_o*)elev_stat)->SendElevator(direction == UP_DIR ? DOWN_DIR : UP_DIR);
+            if (elev_stat != nullptr) {
+                (dynamic_cast<ElevatorStation_o*>(elev_stat))->SendElevator(direction == UP_DIR ? DOWN_DIR : UP_DIR);
+            }
             state = STATE_STOP;
         }
         break;
     case STATE_ACTIVATED:
-        if (elevator == NULL)
+        if (elevator == nullptr) {
             state = STATE_NONE;
+        }
         break;
     case STATE_NONE:
-        if (elevator == NULL)
+        if (elevator == nullptr) {
             state = STATE_STOP;
+        }
         break;
     case STATE_STOP:
-        if (elevator)
+        if (elevator != nullptr) {
             if (direction == UP_DIR && elevator->GetY() > (y + height - 9)) {
                 state = STATE_NONE;
-                ((Elevator_o*)elevator)->DeActivate();
+                (dynamic_cast<Elevator_o*>(elevator))->DeActivate();
             } else if (direction == DOWN_DIR && elevator->GetY() < (y + height - 7)) {
                 state = STATE_NONE;
-                ((Elevator_o*)elevator)->DeActivate();
+                (dynamic_cast<Elevator_o*>(elevator))->DeActivate();
             }
+        }
         /*                	if (elevator && elevator->GetY() > (y + height - 8)) {
                         	state = STATE_NONE;
                                 ((Elevator_o *)elevator)->DeActivate();
@@ -178,24 +184,25 @@ int ElevatorStation_o::update()
         break;
     }
 
-    elevator = NULL;
+    elevator = nullptr;
 
     current_image = anim.next_frame(num_images - 1, FRAME_DELAY);
 
     return 0;
 }
 
-int ElevatorStation_o::StartElevator()
+auto ElevatorStation_o::StartElevator() -> int
 {
-    if (counter)
+    if (counter != 0) {
         return 0;
+    }
 
     counter = SEND_DELAY;
 
-    if (state == STATE_NONE || state == STATE_STOP)
-        if (card == none || ((player_o*)PLAYER)->HaveCard(card))
+    if (state == STATE_NONE || state == STATE_STOP) {
+        if (card == none || ((dynamic_cast<player_o*>(PLAYER))->HaveCard(card) != 0)) {
             state = STATE_ACTIVATE;
-        else if (card != none) {
+        } else if (card != none) {
             char msg[80];
 
             switch (card) {
@@ -217,14 +224,15 @@ int ElevatorStation_o::StartElevator()
             }
             ENGINE.PushMessage(msg);
         }
+    }
     return state == STATE_ACTIVATE ? 1 : 0;
 }
 
 void ElevatorStation_o::SetElevatorStation(Object* w)
 {
-    if (elev_stat == NULL) {
+    if (elev_stat == nullptr) {
         elev_stat = w;
-        ((ElevatorStation_o*)elev_stat)->SetElevatorStation(this);
+        (dynamic_cast<ElevatorStation_o*>(elev_stat))->SetElevatorStation(this);
     }
 }
 
@@ -249,13 +257,15 @@ void ElevatorStation_o::SendElevator(int dir)
 
 void ElevatorStation_o::Collision(Object* o)
 {
-    if (o->GetWho() == FRIEND_ELEVATOR)
+    if (o->GetWho() == FRIEND_ELEVATOR) {
         elevator = o;
+    }
 
     if (o->GetWho() == FRIEND_ELEVWIRE) {
-        if (direction == DOWN_DIR)
+        if (direction == DOWN_DIR) {
             wire_down = o;
-        else
+        } else {
             wire_up = o;
+        }
     }
 }

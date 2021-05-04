@@ -31,7 +31,7 @@
 #include "engine.h"
 #include "object.h"
 #include <allegro.h>
-#include <string.h>
+#include <cstring>
 
 /****************************************************************************/
 //#define POWERUP_STRENGTH 1000
@@ -60,12 +60,14 @@ card_o::card_o(int X, int Y, int Z, Cardtype Card)
         exit(1);
     }
     images[0] = icache.GetImage(filename, pal);
-    if (images[0])
+    if (images[0] != nullptr) {
         num_images++;
+    }
     sprintf(filename, "mine2.pcx");
     images[1] = icache.GetImage(filename, pal);
-    if (images[1])
+    if (images[1] != nullptr) {
         num_images++;
+    }
 
     current_image = 0;
 
@@ -93,40 +95,44 @@ card_o::card_o(int X, int Y, int Z, Cardtype Card)
 }
 /****************************************************************************/
 card_o::~card_o()
-{
-}
+    = default;
 
 /****************************************************************************/
-int card_o::update()
+auto card_o::update() -> int
 {
-    if (counter)
+    if (counter != 0) {
         counter--;
-    if (!counter) {
+    }
+    if (counter == 0) {
         current_image = current_image == 0 ? 1 : 0;
         counter = 10;
     }
     // Fall or Stop
-    if (ENGINE.check_floor(x, y + height, z) || ENGINE.check_floor(x + width, y + height, z))
+    if (ENGINE.check_floor(x, y + height, z) || ENGINE.check_floor(x + width, y + height, z)) {
         speed_y = 0;
-    else
+    } else {
         y += speed_y;
+    }
 
     // Delete if already used
-    if (!energy)
+    if (energy == 0) {
         return -1;
+    }
     return 0;
 }
 
 void card_o::Collision(Object* o)
 {
-    if (!energy)
+    if (energy == 0) {
         return;
+    }
 
-    if (!(friends & o->GetWho()))
+    if ((friends & o->GetWho()) == 0U) {
         return;
+    }
     energy = 0;
 
-    ((player_o*)o)->GiveCard(card);
+    (dynamic_cast<player_o*>(o))->GiveCard(card);
     switch (card) {
     case green:
         ENGINE.PushMessage("Green access granted");

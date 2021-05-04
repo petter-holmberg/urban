@@ -183,23 +183,23 @@ protected:
     int speed_x, speed_y, speed_z;
     int current_image;
     int num_images;
-    int width, height;
+    int width {}, height {};
     int mode;
 
-    int coll_x, coll_y;
-    int coll_width, coll_height;
+    int coll_x {}, coll_y {};
+    int coll_width {}, coll_height {};
 
     int direction;
-    int state;
-    int counter, counter2, counter3, counter4, counter5;
-    float fcounter, fcounter2, fcounter3;
-    int grav_counter;
+    int state {};
+    int counter {}, counter2 {}, counter3 {}, counter4 {}, counter5 {};
+    float fcounter {}, fcounter2 {}, fcounter3 {};
+    int grav_counter {};
 
     int score;
-    unsigned long friends, enemies, me;
+    unsigned long friends {}, enemies {}, me {};
 
-    int energy; //mängden liv gubben har
-    int strength; //hur mycket man ska bli skadad av gubben
+    int energy {}; //mängden liv gubben har
+    int strength {}; //hur mycket man ska bli skadad av gubben
 };
 
 class player_o : public Object {
@@ -236,11 +236,11 @@ public:
 
 private:
     void PerformDeath(int typ);
-    Anim anim;
+    Anim anim {};
     Controllers* ctrl;
     Weapon* weapon;
     Object* elevator;
-    Object* elev_station;
+    Object* elev_station {};
     int current_weapon;
     int lives;
     int save_x, save_y, save_z;
@@ -256,7 +256,7 @@ public:
     void Collision(Object*);
 
 private:
-    Anim anim;
+    Anim anim {};
 };
 
 class Einstein_o : public Object {
@@ -267,7 +267,7 @@ public:
     void Collision(Object*);
 
 private:
-    Anim anim;
+    Anim anim {};
 };
 
 class Vaktm_o : public Object {
@@ -278,7 +278,7 @@ public:
     void Collision(Object*);
 
 private:
-    Anim anim;
+    Anim anim {};
 };
 
 class Boss_scientist_o : public scientist_o {
@@ -304,7 +304,7 @@ public:
     void Collision(Object*);
 
 private:
-    Anim anim;
+    Anim anim {};
 };
 
 class soldier2_o : public Object {
@@ -316,7 +316,7 @@ public:
     void Collision(Object*);
 
 private:
-    Anim anim;
+    Anim anim {};
 };
 
 class Rambo_o : public Object {
@@ -327,7 +327,7 @@ public:
     void Collision(Object*);
 
 private:
-    Anim anim;
+    Anim anim {};
 };
 
 class Boss_Rambo_o : public Rambo_o {
@@ -345,7 +345,7 @@ public:
     void Collision(Object*);
 
 private:
-    Anim anim;
+    Anim anim {};
 };
 
 class Boss_Arnold_o : public Arnold_o {
@@ -363,7 +363,7 @@ public:
     void Collision(Object*);
 
 private:
-    Anim anim;
+    Anim anim {};
 };
 
 class Boss_Dolph_o : public Dolph_o {
@@ -381,7 +381,7 @@ public:
     void Collision(Object*);
 
 private:
-    Anim anim;
+    Anim anim {};
 };
 
 class Boss_Crycheck_o : public Crycheck_o {
@@ -402,7 +402,7 @@ public:
     int GetSpy() { return victim; }
 
 private:
-    int victim;
+    int victim {};
 };
 
 class FloorGun_o : public Object {
@@ -413,7 +413,7 @@ public:
     void Collision(Object*);
 
 private:
-    Anim anim;
+    Anim anim {};
     Spy_o* spy;
 };
 
@@ -475,7 +475,7 @@ public:
 
 private:
     int type;
-    char msg[128];
+    char msg[128] {};
 };
 
 class card_o : public Object {
@@ -498,7 +498,7 @@ public:
 
 private:
     Cardtype card;
-    Anim anim;
+    Anim anim {};
 };
 
 class checkpoint_o : public Object {
@@ -521,7 +521,7 @@ private:
 
 class HighSpeed_Bullet_o : public Object {
 public:
-    HighSpeed_Bullet_o(int X, int Y, int Z, int Dir, int Evilness = EVIL_ENEMY, int Damage = 1);
+    HighSpeed_Bullet_o(int X, int Y, int Z, int Dir, int friendship = EVIL_ENEMY, int Damage = 1);
     int update();
     void Collision(Object*);
     virtual ~HighSpeed_Bullet_o();
@@ -536,7 +536,7 @@ public:
     virtual ~FireBall_o();
 
 private:
-    Anim anim;
+    Anim anim {};
 };
 
 class IceBall_o : public Object {
@@ -547,7 +547,7 @@ public:
     virtual ~IceBall_o();
 
 private:
-    Anim anim;
+    Anim anim {};
 };
 
 class blood_o : public Object {
@@ -564,7 +564,7 @@ public:
     virtual ~bodyparts_o();
 
 private:
-    Anim anim;
+    Anim anim {};
 };
 
 class BurningBody_o : public Object {
@@ -574,7 +574,7 @@ public:
     virtual ~BurningBody_o();
 
 private:
-    Anim anim;
+    Anim anim {};
 };
 
 class FrosenBody_o : public Object {
@@ -592,7 +592,7 @@ public:
     virtual ~Fire_o();
 
 private:
-    Anim anim;
+    Anim anim {};
 };
 
 class Barrel_o : public Object {
@@ -613,7 +613,7 @@ public:
     virtual ~Animation_o();
 
 private:
-    Anim anim;
+    Anim anim {};
     int DekorationFrame;
 };
 
@@ -625,7 +625,7 @@ public:
     void Collision(Object*);
 
 private:
-    Anim anim;
+    Anim anim {};
 };
 
 class gnistor_o : public Object {
@@ -636,7 +636,7 @@ public:
     void Collision(Object*);
 
 private:
-    Anim anim;
+    Anim anim {};
 };
 
 #endif

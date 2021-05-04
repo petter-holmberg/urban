@@ -31,14 +31,14 @@
 #include "engine.h"
 #include "object2.h"
 #include <allegro.h>
-#include <stdio.h>
+#include <cstdio>
 
 SmallExplosion_o::SmallExplosion_o(int X, int Y, int Z)
     : Object(X, Y, Z)
 {
     RGB pal[256];
     char filename[512];
-    int i;
+    int i = 0;
 
     anim.reset();
     images = new BITMAP*[10];
@@ -46,8 +46,9 @@ SmallExplosion_o::SmallExplosion_o(int X, int Y, int Z)
     for (i = 0; i < 10; i++) {
         sprintf(filename, "smallexp/%d.pcx", i + 1);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i])
+        if (images[i] != nullptr) {
             num_images++;
+        }
     }
     height = images[0]->h;
     width = images[0]->w;
@@ -74,10 +75,9 @@ SmallExplosion_o::SmallExplosion_o(int X, int Y, int Z)
 }
 
 SmallExplosion_o::~SmallExplosion_o()
-{
-}
+    = default;
 
-int SmallExplosion_o::update()
+auto SmallExplosion_o::update() -> int
 {
     //        enemies = 0;
     counter++;
@@ -93,10 +93,12 @@ int SmallExplosion_o::update()
     }
     current_image = anim.next_frame(10, 3);
 
-    if (current_image > 5)
+    if (current_image > 5) {
         strength = 0;
-    if (current_image >= 10)
+    }
+    if (current_image >= 10) {
         return -1;
+    }
     return 0;
 }
 

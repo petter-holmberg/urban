@@ -31,8 +31,8 @@
 #include "engine.h"
 #include "object.h"
 #include <allegro.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cstdlib>
+#include <cstring>
 
 //#define X_FRICTION	1
 //#define Z_FRICTION	X_FRICTION
@@ -49,7 +49,7 @@
 blood_o::blood_o(int X, int Y, int Z, int Speed_X, int Speed_Y, int Speed_Z)
     : Object(X, Y, Z)
 {
-    int i;
+    int i = 0;
     RGB pal[256];
     char filename[512];
 
@@ -58,8 +58,9 @@ blood_o::blood_o(int X, int Y, int Z, int Speed_X, int Speed_Y, int Speed_Z)
     for (i = 0; i < 3; i++) {
         sprintf(filename, "dead/blod%d.pcx", i + 1);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i])
+        if (images[i] != nullptr) {
             num_images++;
+        }
     }
 
     coll_x = 0;
@@ -73,10 +74,11 @@ blood_o::blood_o(int X, int Y, int Z, int Speed_X, int Speed_Y, int Speed_Z)
     speed_y = Speed_Y;
     speed_z = Speed_Z;
 
-    if (Speed_X)
+    if (Speed_X != 0) {
         current_image = 0;
-    else
+    } else {
         current_image = random() % 2 + 1;
+    }
     direction = Speed_X > 0 ? RIGHT_DIR : LEFT_DIR;
     energy = 0;
     strength = 0;
@@ -84,19 +86,19 @@ blood_o::blood_o(int X, int Y, int Z, int Speed_X, int Speed_Y, int Speed_Z)
 }
 
 blood_o::~blood_o()
-{
-}
+    = default;
 
-int blood_o::update()
+auto blood_o::update() -> int
 {
 
     //	x += speed_x;
 
     if (ENGINE.check_floor(x, y + height, z)
-        || ENGINE.check_floor(x + width, y + height, z))
+        || ENGINE.check_floor(x + width, y + height, z)) {
         speed_y = 0;
-    else if (speed_y < MAX_Y_SPEED)
+    } else if (speed_y < MAX_Y_SPEED) {
         speed_y += Y_ACCEL;
+    }
 
     //	if (speed_y)
     x += speed_x;

@@ -31,8 +31,8 @@
 #include "engine.h"
 #include "object2.h"
 #include <allegro.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cstdlib>
+#include <cstring>
 
 /****************************************************************************/
 Water_o::Water_o(int X, int Y, int Z)
@@ -45,8 +45,9 @@ Water_o::Water_o(int X, int Y, int Z)
     for (int i = 0; i < 2; i++) {
         sprintf(filename, "water%d.pcx", i + 1);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i])
+        if (images[i] != nullptr) {
             num_images++;
+        }
     }
     current_image = 0;
 
@@ -81,11 +82,10 @@ Water_o::Water_o(int X, int Y, int Z)
 }
 /****************************************************************************/
 Water_o::~Water_o()
-{
-}
+    = default;
 
 /****************************************************************************/
-int Water_o::update()
+auto Water_o::update() -> int
 {
     current_image = anim.next_frame(1, 60);
     return 0;

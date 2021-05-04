@@ -38,7 +38,7 @@
 Animation_o::Animation_o(int X, int Y, int Z, const char* name, int num_pics, int dek_frame, int Speed_X, int Speed_Y, int Speed_Z)
     : Object(X, Y, Z)
 {
-    int i;
+    int i = 0;
     RGB pal[256];
     char filename[512];
 
@@ -47,8 +47,9 @@ Animation_o::Animation_o(int X, int Y, int Z, const char* name, int num_pics, in
     for (i = 0; i < num_pics; i++) {
         sprintf(filename, "%s%d.pcx", name, i + 1);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i])
+        if (images[i] != nullptr) {
             num_images++;
+        }
     }
 
     coll_x = 0;
@@ -72,23 +73,24 @@ Animation_o::Animation_o(int X, int Y, int Z, const char* name, int num_pics, in
 }
 /****************************************************************************/
 Animation_o::~Animation_o()
-{
-}
+    = default;
 /****************************************************************************/
-int Animation_o::update()
+auto Animation_o::update() -> int
 {
 
-    if (state)
+    if (state != 0) {
         return REMOVE_ME;
+    }
     // Fall or stop
-    if (ENGINE.check_floor(x, y + height, z) || ENGINE.check_floor(x + width, y + height, z))
+    if (ENGINE.check_floor(x, y + height, z) || ENGINE.check_floor(x + width, y + height, z)) {
         speed_y = 0;
-    else {
+    } else {
 
         y += speed_y;
         speed_y += Y_ACCEL;
-        if (speed_y > MAX_Y_SPEED)
+        if (speed_y > MAX_Y_SPEED) {
             speed_y = MAX_Y_SPEED;
+        }
     }
 
     current_image = anim.next_frame(num_images, 8);
@@ -97,8 +99,9 @@ int Animation_o::update()
             current_image = DekorationFrame;
             ENGINE.create_dekoration(this);
             state = 1; /* avoid a blip - if I return REMOVE_ME one frame wont be drawn*/
-        } else
+        } else {
             return REMOVE_ME;
+        }
     }
     return 0;
 }

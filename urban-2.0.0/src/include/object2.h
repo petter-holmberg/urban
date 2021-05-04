@@ -31,7 +31,7 @@ public:
     void Collision(Object*);
 
 private:
-    Anim anim;
+    Anim anim {};
 };
 
 class DrGreen_o : public Object {
@@ -42,7 +42,7 @@ public:
     void Collision(Object*);
 
 private:
-    Anim anim;
+    Anim anim {};
 };
 
 class Boss_DrGreen_o : public DrGreen_o {
@@ -64,7 +64,7 @@ private:
 
 class Plasma_o : public Object {
 public:
-    Plasma_o(int X, int Y, int Z, int Dir, int Evilness = EVIL_ENEMY, int Damage = 1);
+    Plasma_o(int X, int Y, int Z, int Dir, int friendship = EVIL_ENEMY, int Damage = 1);
     int update();
     void Collision(Object*);
     virtual ~Plasma_o();
@@ -78,7 +78,7 @@ public:
     void Collision(Object*);
 
 private:
-    Anim anim;
+    Anim anim {};
 };
 
 class Boss_Seagal_o : public Seagal_o {
@@ -96,7 +96,7 @@ public:
     virtual ~Missile_o();
 
 private:
-    Anim anim;
+    Anim anim {};
 };
 
 class ElevatorStation_o : public Object {
@@ -118,8 +118,8 @@ private:
     Object* wire_up;
     Object* wire_down;
     Cardtype card;
-    Anim anim;
-    int direction_to_send;
+    Anim anim {};
+    int direction_to_send {};
 };
 
 class Elevator_o : public Object {
@@ -136,8 +136,8 @@ public:
 
 private:
     Object* passenger;
-    Object* elev_controller;
-    Anim anim;
+    Object* elev_controller {};
+    Anim anim {};
 };
 
 class ElevatorWire_o : public Object {
@@ -154,7 +154,7 @@ private:
     Object* elev_controller;
     Object *wire_up, *wire_down;
 
-    Anim anim;
+    Anim anim {};
 };
 
 class Cluster_o : public Object {
@@ -182,7 +182,7 @@ public:
     void Collision(Object*);
 
 private:
-    Anim anim;
+    Anim anim {};
 };
 
 class soldier3_o : public Object {
@@ -194,7 +194,7 @@ public:
     void Collision(Object*);
 
 private:
-    Anim anim;
+    Anim anim {};
 };
 
 class ExplosiveTile_o : public Object {
@@ -216,7 +216,7 @@ public:
     virtual ~Water_o();
 
 private:
-    Anim anim;
+    Anim anim {};
 };
 
 class BubbleMaker_o : public Object {
@@ -237,7 +237,7 @@ public:
     virtual ~Bubble_o();
 
 private:
-    Anim anim;
+    Anim anim {};
 };
 
 class Airstrike_o : public Object {
@@ -256,7 +256,7 @@ public:
     void Collision(Object*);
 
 private:
-    Anim anim;
+    Anim anim {};
 };
 
 class AirGrenade_o : public Object {
@@ -275,7 +275,7 @@ public:
     virtual ~Beam_o();
 
 private:
-    Anim anim;
+    Anim anim {};
 };
 
 class TankWheel_o : public Object {
@@ -291,7 +291,7 @@ public:
     void DestroyTank();
 
 private:
-    Anim anim;
+    Anim anim {};
 };
 
 class Tank_o : public Object {
@@ -302,7 +302,7 @@ public:
     virtual ~Tank_o();
 
 private:
-    Anim anim;
+    Anim anim {};
     TankWheel_o *wheel1, *wheel2;
 };
 

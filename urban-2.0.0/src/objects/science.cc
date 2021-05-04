@@ -32,8 +32,8 @@
 #include "engine.h"
 #include "object.h"
 #include <allegro.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cstdlib>
+#include <cstring>
 
 #define PROB_WALK_START 0
 #define PROB_WALK_END 40
@@ -59,9 +59,9 @@
 
 #define MAX_X_SPEED 2 //4
 #define X_FRICTION 1
-#define MIN_X_SPEED -MAX_X_SPEED //-4
+#define MIN_X_SPEED (-MAX_X_SPEED) //-4
 #define MAX_Y_SPEED 16
-#define MIN_Y_SPEED -12
+#define MIN_Y_SPEED (-12)
 #define X_ACCEL 2 //2
 #define Y_ACCEL 1
 
@@ -124,7 +124,7 @@ scientist_o::scientist_o(int X, int Y, int Z)
 {
     RGB pal[256];
     char filename[512];
-    int i;
+    int i = 0;
 
     anim.reset();
     //	images = (BITMAP **)malloc(30 * sizeof(BITMAP *));
@@ -133,38 +133,44 @@ scientist_o::scientist_o(int X, int Y, int Z)
     for (i = 0; i < 5; i++) {
         sprintf(filename, "profh/%d.pcx", i + 1);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i])
+        if (images[i] != nullptr) {
             num_images++;
+        }
     }
     for (i = 5; i < 10; i++) {
         sprintf(filename, "profv/%d.pcx", i - 4);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i])
+        if (images[i] != nullptr) {
             num_images++;
+        }
     }
     for (i = 10; i < 22; i++) {
         sprintf(filename, "profh/dead%d.pcx", i - 9);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i])
+        if (images[i] != nullptr) {
             num_images++;
+        }
     }
     for (i = 22; i < 34; i++) {
         sprintf(filename, "profv/dead%d.pcx", i - 21);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i])
+        if (images[i] != nullptr) {
             num_images++;
+        }
     }
     for (i = 34; i < 37; i++) {
         sprintf(filename, "profh/write%d.pcx", i - 33);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i])
+        if (images[i] != nullptr) {
             num_images++;
+        }
     }
     for (i = 37; i < 40; i++) {
         sprintf(filename, "profv/write%d.pcx", i - 36);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i])
+        if (images[i] != nullptr) {
             num_images++;
+        }
     }
 
     current_image = 5;
@@ -193,30 +199,34 @@ scientist_o::scientist_o(int X, int Y, int Z)
     me = FRIEND_SCIENTIST;
 }
 /**************************************************************************/
-int scientist_o::update()
+auto scientist_o::update() -> int
 {
-    int r;
+    int r = 0;
 
     if (state == STATE_DEAD) {
         SOUND.PlaySFX("samples/scream.wav");
         return -1;
     }
 
-    if (counter)
+    if (counter != 0) {
         counter--;
-    if (speed_x < 0)
+    }
+    if (speed_x < 0) {
         speed_x += X_FRICTION;
-    if (speed_x > 0)
+    }
+    if (speed_x > 0) {
         speed_x -= X_FRICTION;
+    }
 
     if (counter == 0 && state != STATE_COLLAPS && state != STATE_WAITING && state != STATE_DYING) {
         r = random() % PROB_NUMBER;
-        if (r >= PROB_WALK_START && r <= PROB_WALK_END)
+        if (r >= PROB_WALK_START && r <= PROB_WALK_END) {
             state = STATE_WALK;
-        else if ((r >= PROB_STOP_START && r <= PROB_STOP_END) || state == STATE_STOP)
+        } else if ((r >= PROB_STOP_START && r <= PROB_STOP_END) || state == STATE_STOP) {
             state = STATE_STOP;
-        else if (r >= PROB_TURN_START && r <= PROB_TURN_END)
+        } else if (r >= PROB_TURN_START && r <= PROB_TURN_END) {
             state = STATE_TURN;
+        }
         counter = random() % MAX_NUM + 15;
     }
 
@@ -233,18 +243,20 @@ int scientist_o::update()
         direction = (PLAYER->GetX() > x) ? RIGHT_DIR : LEFT_DIR;
         current_image = (direction == RIGHT_DIR ? 10 : 22) + (r = anim.next_frame(4, 5));
         //                	current_image = ((PLAYER->GetX() > x) ? 10 : 22) + (r = anim.next_frame(4, 5));
-        if (r == 4)
+        if (r == 4) {
             state = STATE_WAITING;
-        else
+        } else {
             break;
+        }
         anim.reset();
     case STATE_WAITING:
         speed_x = speed_z = 0;
         current_image = (direction == RIGHT_DIR ? 14 : 26) + anim.next_frame(1, 10);
         break;
     case STATE_DYING:
-        if (direction == -100)
+        if (direction == -100) {
             direction = (PLAYER->GetX() > x) ? RIGHT_DIR : LEFT_DIR;
+        }
         //                	current_image = ((PLAYER->GetX() > x) ? 15 : 27) + (r = anim.next_frame(6, 5));
         current_image = (direction == RIGHT_DIR ? 15 : 27) + (r = anim.next_frame(6, 5));
         if (r == 6) {
@@ -260,17 +272,21 @@ int scientist_o::update()
     case STATE_WALK:
         switch (direction) {
         case RIGHT_DIR:
-            if (speed_x < MAX_X_SPEED)
+            if (speed_x < MAX_X_SPEED) {
                 speed_x += X_ACCEL;
-            while (ENGINE.check_wall(x + width + speed_x, y + height, z) && speed_x)
+            }
+            while (ENGINE.check_wall(x + width + speed_x, y + height, z) && (speed_x != 0)) {
                 speed_x--;
+            }
             current_image = anim.next_frame(4, 5);
             break;
         case LEFT_DIR:
-            if (speed_x > MIN_X_SPEED)
+            if (speed_x > MIN_X_SPEED) {
                 speed_x -= X_ACCEL;
-            while (ENGINE.check_wall(x + speed_x, y + height, z) && speed_x)
+            }
+            while (ENGINE.check_wall(x + speed_x, y + height, z) && (speed_x != 0)) {
                 speed_x++;
+            }
             current_image = 5 + anim.next_frame(4, 5);
             break;
         };
@@ -293,10 +309,11 @@ int scientist_o::update()
         break;
     };
 
-    if (!speed_y)
+    if (speed_y == 0) {
         if (!ENGINE.check_floor(x + speed_x, y + height, z) || !ENGINE.check_floor(x + width + speed_x, y + height, z)) {
             speed_x = 0;
         }
+    }
 
     // Fall or Stop
     if (ENGINE.check_floor(x + 14, y + height, z) || ENGINE.check_floor(x + width - 14, y + height, z)) {
@@ -307,10 +324,11 @@ int scientist_o::update()
 
     x += speed_x;
     y += speed_y;
-    if (x < 0)
+    if (x < 0) {
         x = 0;
+    }
 
-    if (!speed_x && state != STATE_COLLAPS && state != STATE_WAITING && state != STATE_DYING && state != STATE_WRITE && state != STATE_WRITING) {
+    if ((speed_x == 0) && state != STATE_COLLAPS && state != STATE_WAITING && state != STATE_DYING && state != STATE_WRITE && state != STATE_WRITING) {
         current_image = direction == RIGHT_DIR ? 4 : 9;
         state = STATE_WRITE;
     }
@@ -320,47 +338,52 @@ int scientist_o::update()
 
 void scientist_o::Collision(Object* o)
 {
-    int i;
+    int i = 0;
 
     //        if (!energy)
     //        	return;
-    if (state == STATE_DEAD)
+    if (state == STATE_DEAD) {
         return;
+    }
 
     Object::Collision(o);
 
-    if ((o->GetStrength() > 0) && (!(o->GetFriends() & me)) && state != STATE_DEAD && state != STATE_DYING) {
-        if (o->GetWho() & ENEMY_EXPLOSION) {
+    if ((o->GetStrength() > 0) && ((o->GetFriends() & me) == 0U) && state != STATE_DEAD && state != STATE_DYING) {
+        if ((o->GetWho() & ENEMY_EXPLOSION) != 0) {
             state = STATE_DEAD;
             //                        DEATH_BY_EXPLOSION;
             DEATH_BY_EXPLOSION;
             score += 50;
             return;
-        } else if (o->GetWho() & (ENEMY_FIREBALL | ENEMY_BEAM)) {
+        }
+        if ((o->GetWho() & (ENEMY_FIREBALL | ENEMY_BEAM)) != 0) {
             ENGINE.create_effect(new BurningBody_o(x, y + height, z));
             state = STATE_DEAD;
-        } else if (o->GetWho() & ENEMY_ICEBALL) {
+        } else if ((o->GetWho() & ENEMY_ICEBALL) != 0) {
             ENGINE.create_object(new FrosenBody_o(x, y + height, z, direction));
             state = STATE_DEAD;
-        } else if (o->GetWho() & (ENEMY_HS_BULLET | ENEMY_PLASMA)) {
+        } else if ((o->GetWho() & (ENEMY_HS_BULLET | ENEMY_PLASMA)) != 0) {
             if (state == STATE_COLLAPS) {
                 state = STATE_DEAD;
                 DEATH_BY_EXPLOSION2
                 return;
-            } else if (state == STATE_WAITING) {
+            }
+            if (state == STATE_WAITING) {
                 direction = -100;
                 state = STATE_DYING;
                 anim.reset();
                 score += 100;
                 return;
             }
-            if (direction == RIGHT_DIR)
-                for (i = 0; i < 7; i++)
+            if (direction == RIGHT_DIR) {
+                for (i = 0; i < 7; i++) {
                     ENGINE.create_effect(new blood_o(x + width / 2, y + random() % height, z, -2 + random() % 4));
-            else
-                for (i = 0; i < 7; i++)
+                }
+            } else {
+                for (i = 0; i < 7; i++) {
                     ENGINE.create_effect(new blood_o(x + width / 2, y + random() % height, z, 2 + random() % 4));
-
+                }
+            }
             if (state != STATE_COLLAPS) {
                 state = STATE_COLLAPS;
                 score += 50;
@@ -375,8 +398,7 @@ void scientist_o::Collision(Object* o)
 
 /**************************************************************************/
 scientist_o::~scientist_o()
-{
-}
+    = default;
 /**************************************************************************/
 
 /**************************************************************************/
@@ -386,13 +408,13 @@ Boss_scientist_o::Boss_scientist_o(int X, int Y, int Z)
 }
 
 Boss_scientist_o::~Boss_scientist_o()
-{
-}
+    = default;
 
-int Boss_scientist_o::update()
+auto Boss_scientist_o::update() -> int
 {
-    int ret;
-    if ((ret = scientist_o::update()) != 0)
+    int ret = 0;
+    if ((ret = scientist_o::update()) != 0) {
         ENGINE.create_object(new card_o(x, y, z));
+    }
     return ret;
 }

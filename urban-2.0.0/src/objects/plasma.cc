@@ -31,7 +31,7 @@
 #include "engine.h"
 #include "object2.h"
 #include <allegro.h>
-#include <string.h>
+#include <cstring>
 /***************************************************************************/
 #define PLASMA_SPEED 10
 
@@ -65,8 +65,9 @@ Plasma_o::Plasma_o(int X, int Y, int Z, int Dir, int friendship, int Damage)
         break;
     }
     images[0] = icache.GetImage(filename, pal);
-    if (images[0])
+    if (images[0] != nullptr) {
         num_images++;
+    }
 
     //	rect(images[0], 0, 0, images[0]->w - 1, images[0]->h - 1, 15);
 
@@ -79,11 +80,12 @@ Plasma_o::Plasma_o(int X, int Y, int Z, int Dir, int friendship, int Damage)
     //        SOUND.PlaySFX(FIRE_SAMPLE);
 }
 /****************************************************************************/
-int Plasma_o::update()
+auto Plasma_o::update() -> int
 {
 
-    if (!energy)
+    if (energy == 0) {
         return -1;
+    }
     /*        if (direction == LEFT_DIR)
         	while (ENGINE.check_wall(x + 1, y, z) && speed_x)
                 	x++;
@@ -102,8 +104,9 @@ int Plasma_o::update()
     x += speed_x;
     counter += PLASMA_SPEED;
 
-    if (counter > 600)
+    if (counter > 600) {
         return -1;
+    }
 
     /*	if (!speed_x) {
         	ENGINE.create_effect(new gnistor_o(x, y + height, z, direction));
@@ -121,11 +124,11 @@ int Plasma_o::update()
 void Plasma_o::Collision(Object* o)
 {
 
-    if (o->GetWho() & enemies)
+    if ((o->GetWho() & enemies) != 0U) {
         energy = 0;
+    }
 }
 /****************************************************************************/
 Plasma_o::~Plasma_o()
-{
-}
+    = default;
 /****************************************************************************/

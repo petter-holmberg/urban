@@ -42,7 +42,7 @@ Beam_o::Beam_o(int X, int Y, int Z, int Friends, int SpeedX, int SpeedY)
 {
     RGB pal[256];
     char filename[512];
-    int i;
+    int i = 0;
 
     anim.reset();
     images = new BITMAP*[5];
@@ -50,8 +50,9 @@ Beam_o::Beam_o(int X, int Y, int Z, int Friends, int SpeedX, int SpeedY)
     for (i = 0; i < 5; i++) {
         sprintf(filename, "beam/%d.pcx", i + 1);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i])
+        if (images[i] != nullptr) {
             num_images++;
+        }
     }
 
     height = images[0]->h;
@@ -81,17 +82,18 @@ Beam_o::Beam_o(int X, int Y, int Z, int Friends, int SpeedX, int SpeedY)
 }
 
 Beam_o::~Beam_o()
-{
-}
+    = default;
 
-int Beam_o::update()
+auto Beam_o::update() -> int
 {
 
-    if (counter)
+    if (counter != 0) {
         counter--;
+    }
 
-    if (counter == 0)
+    if (counter == 0) {
         return -1;
+    }
 
     current_image = anim.next_frame(4, FRAME_DELAY);
 
@@ -99,8 +101,9 @@ int Beam_o::update()
     y += speed_y;
     z += speed_z;
 
-    if (!energy)
+    if (energy == 0) {
         return -1;
+    }
 
     return 0;
 }
@@ -108,6 +111,7 @@ int Beam_o::update()
 void Beam_o::Collision(Object* o)
 {
 
-    if (!(o->GetWho() & friends))
+    if ((o->GetWho() & friends) == 0U) {
         strength = 0;
+    }
 }

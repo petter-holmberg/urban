@@ -31,8 +31,8 @@
 #include "engine.h"
 #include "object2.h"
 #include <allegro.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cstdlib>
+#include <cstring>
 
 /****************************************************************************/
 BubbleMaker_o::BubbleMaker_o(int X, int Y, int Z)
@@ -44,8 +44,9 @@ BubbleMaker_o::BubbleMaker_o(int X, int Y, int Z)
     images = new BITMAP*;
     sprintf(filename, "mine2.pcx");
     images[0] = icache.GetImage(filename, pal);
-    if (images[0])
+    if (images[0] != nullptr) {
         num_images++;
+    }
 
     current_image = 0;
 
@@ -77,16 +78,16 @@ BubbleMaker_o::BubbleMaker_o(int X, int Y, int Z)
 }
 /****************************************************************************/
 BubbleMaker_o::~BubbleMaker_o()
-{
-}
+    = default;
 
 /****************************************************************************/
-int BubbleMaker_o::update()
+auto BubbleMaker_o::update() -> int
 {
-    if (counter)
+    if (counter != 0) {
         counter--;
+    }
 
-    if (!counter) {
+    if (counter == 0) {
         counter = 30 + random() % 100;
         ENGINE.create_object(new Bubble_o(x, y, z));
     }

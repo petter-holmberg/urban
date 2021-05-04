@@ -31,8 +31,8 @@
 #include "engine.h"
 #include "object.h"
 #include <allegro.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cstdlib>
+#include <cstring>
 /****************************************************************************/
 #define STRENGTH_MINE 100
 #define STATE_NONE 0x00
@@ -47,12 +47,14 @@ mine_o::mine_o(int X, int Y, int Z)
     images = new BITMAP*[2];
     sprintf(filename, "mine1.pcx");
     images[0] = icache.GetImage(filename, pal);
-    if (images[0])
+    if (images[0] != nullptr) {
         num_images++;
+    }
     sprintf(filename, "mine2.pcx");
     images[1] = icache.GetImage(filename, pal);
-    if (images[1])
+    if (images[1] != nullptr) {
         num_images++;
+    }
 
     current_image = 0;
 
@@ -83,30 +85,32 @@ mine_o::mine_o(int X, int Y, int Z)
 }
 /****************************************************************************/
 mine_o::~mine_o()
-{
-}
+    = default;
 
 /****************************************************************************/
-int mine_o::update()
+auto mine_o::update() -> int
 {
-    if (counter)
+    if (counter != 0) {
         counter--;
+    }
 
-    if (!counter) {
+    if (counter == 0) {
         switch (state) {
         case STATE_NONE:
             current_image = current_image == 0 ? 1 : 0;
-            if (current_image)
+            if (current_image != 0) {
                 counter = 100;
-            else
+            } else {
                 counter = 10;
+            }
             break;
         case STATE_EXPLODE:
             strength = 0;
             counter = 10;
             counter2++;
-            if (counter2 >= 3)
+            if (counter2 >= 3) {
                 energy = 0;
+            }
             switch (counter2) {
             case 1:
                 ENGINE.create_object(new explosion_o(x, y - TILE_SIDE_HEIGHT, z));
@@ -122,24 +126,28 @@ int mine_o::update()
     }
 
     // Fall or Stop
-    if (ENGINE.check_floor(x, y + height, z) || ENGINE.check_floor(x + width, y + height, z))
+    if (ENGINE.check_floor(x, y + height, z) || ENGINE.check_floor(x + width, y + height, z)) {
         speed_y = speed_y;
-    else
+    } else {
         y += speed_y;
+    }
 
     // Delete if already used
-    if (!energy)
+    if (energy == 0) {
         return -1;
+    }
     return 0;
 }
 
 void mine_o::Collision(Object* o)
 {
-    if (!energy)
+    if (energy == 0) {
         return;
+    }
 
-    if (o->GetWho() == 0 || (friends & o->GetWho()))
+    if (o->GetWho() == 0 || ((friends & o->GetWho()) != 0U)) {
         return;
+    }
 
     if (state != STATE_EXPLODE) {
         state = STATE_EXPLODE;

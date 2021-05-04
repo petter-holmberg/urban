@@ -35,7 +35,7 @@
 
 Object::Object(int X, int Y, int Z, int Mode)
 {
-    images = 0;
+    images = nullptr;
     num_images = current_image = 0;
     speed_z = speed_x = speed_y = 0;
     direction = 0;
@@ -49,21 +49,25 @@ Object::Object(int X, int Y, int Z, int Mode)
 
 Object::~Object()
 {
-    int i;
-    for (i = 0; i < num_images; i++)
-        if (images[i])
+    int i = 0;
+    for (i = 0; i < num_images; i++) {
+        if (images[i] != nullptr) {
             icache.FreeImage(images[i]);
+        }
+    }
 }
 
-BITMAP* Object::GetImage()
+auto Object::GetImage() -> BITMAP*
 {
-    if (current_image < num_images)
+    if (current_image < num_images) {
         return images[current_image];
-    else
+    }
+    {
         return images[0];
+    }
 }
 
-int Object::update()
+auto Object::update() -> int
 {
     return 0;
 }
@@ -71,9 +75,11 @@ int Object::update()
 void Object::Collision(Object* o)
 {
 
-    if (o->GetEnemies() & me)
+    if ((o->GetEnemies() & me) != 0U) {
         energy -= o->GetStrength();
+    }
 
-    if (energy < 0)
+    if (energy < 0) {
         energy = 0;
+    }
 }

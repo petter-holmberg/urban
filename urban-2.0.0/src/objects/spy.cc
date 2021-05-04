@@ -31,8 +31,8 @@
 #include "engine.h"
 #include "object.h"
 #include <allegro.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cstdlib>
+#include <cstring>
 /****************************************************************************/
 #define STRENGTH_MINE 100
 #define STATE_NONE 0x00
@@ -47,8 +47,9 @@ Spy_o::Spy_o(int X, int Y, int Z)
 
     sprintf(filename, "mine2.pcx");
     images[0] = icache.GetImage(filename, pal);
-    if (images[0])
+    if (images[0] != nullptr) {
         num_images++;
+    }
 
     current_image = 0;
 
@@ -74,16 +75,15 @@ Spy_o::Spy_o(int X, int Y, int Z)
 }
 /****************************************************************************/
 Spy_o::~Spy_o()
-{
-}
+    = default;
 
 /****************************************************************************/
-int Spy_o::update()
+auto Spy_o::update() -> int
 {
     return 0;
 }
 
-void Spy_o::Collision(Object* o)
+void Spy_o::Collision(Object* /*o*/)
 {
     victim = 1;
 }

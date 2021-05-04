@@ -31,7 +31,7 @@
 #include "engine.h"
 #include "object.h"
 #include <allegro.h>
-#include <string.h>
+#include <cstring>
 
 /****************************************************************************/
 #define POWERUP_STRENGTH 100
@@ -141,8 +141,9 @@ powerup_o::powerup_o(int X, int Y, int Z, int Type)
         break;
     }
     images[0] = icache.GetImage(filename, pal);
-    if (images[0])
+    if (images[0] != nullptr) {
         num_images++;
+    }
 
     current_image = 0;
 
@@ -169,30 +170,33 @@ powerup_o::powerup_o(int X, int Y, int Z, int Type)
 }
 /****************************************************************************/
 powerup_o::~powerup_o()
-{
-}
+    = default;
 
 /****************************************************************************/
-int powerup_o::update()
+auto powerup_o::update() -> int
 {
     // Fall or Stop
-    if (ENGINE.check_floor(x, y + height, z) || ENGINE.check_floor(x + width, y + height, z))
+    if (ENGINE.check_floor(x, y + height, z) || ENGINE.check_floor(x + width, y + height, z)) {
         speed_y = 0;
-    else
+    } else {
         y += speed_y;
+    }
     // Delete if already used
-    if (!energy)
+    if (energy == 0) {
         return -1;
+    }
     return 0;
 }
 
 void powerup_o::Collision(Object* o)
 {
-    if (!energy)
+    if (energy == 0) {
         return;
+    }
 
-    if (friends & o->GetWho())
+    if ((friends & o->GetWho()) != 0U) {
         return;
+    }
     ENGINE.PushMessage(msg);
 
     if (o->GetWho() == FRIEND_PLAYER) {
@@ -201,88 +205,88 @@ void powerup_o::Collision(Object* o)
 
         switch (type) {
         case POWERUP_EXTRA_LIFE:
-            ((player_o*)PLAYER)->AddLife();
+            (dynamic_cast<player_o*>(PLAYER))->AddLife();
             break;
         case POWERUP_WEAPON_FLAME_THROWER:
-            if (((player_o*)PLAYER)->HaveWeapon(FLAME_THROWER)) {
+            if ((dynamic_cast<player_o*>(PLAYER))->HaveWeapon(FLAME_THROWER) != 0) {
                 energy = 1;
                 break;
             }
-            ((player_o*)PLAYER)->EnableWeapon(FLAME_THROWER);
+            (dynamic_cast<player_o*>(PLAYER))->EnableWeapon(FLAME_THROWER);
             break;
         case POWERUP_WEAPON_ICEMAKER:
-            if (((player_o*)PLAYER)->HaveWeapon(ICEMAKER)) {
+            if ((dynamic_cast<player_o*>(PLAYER))->HaveWeapon(ICEMAKER) != 0) {
                 energy = 1;
                 break;
             }
-            ((player_o*)PLAYER)->EnableWeapon(ICEMAKER);
+            (dynamic_cast<player_o*>(PLAYER))->EnableWeapon(ICEMAKER);
             break;
 
         case POWERUP_WEAPON_GRENADE_LAUNCHER:
-            if (((player_o*)PLAYER)->HaveWeapon(GRENADE_LAUNCHER)) {
+            if ((dynamic_cast<player_o*>(PLAYER))->HaveWeapon(GRENADE_LAUNCHER) != 0) {
                 energy = 1;
                 break;
             }
-            ((player_o*)PLAYER)->EnableWeapon(GRENADE_LAUNCHER);
+            (dynamic_cast<player_o*>(PLAYER))->EnableWeapon(GRENADE_LAUNCHER);
             break;
 
         case POWERUP_WEAPON_PLASMA:
-            if (((player_o*)PLAYER)->HaveWeapon(PLASMA_GUN)) {
+            if ((dynamic_cast<player_o*>(PLAYER))->HaveWeapon(PLASMA_GUN) != 0) {
                 energy = 1;
                 break;
             }
-            ((player_o*)PLAYER)->EnableWeapon(PLASMA_GUN);
+            (dynamic_cast<player_o*>(PLAYER))->EnableWeapon(PLASMA_GUN);
             break;
 
         case POWERUP_WEAPON_ELECTRIC:
-            if (((player_o*)PLAYER)->HaveWeapon(ELECTRIC)) {
+            if ((dynamic_cast<player_o*>(PLAYER))->HaveWeapon(ELECTRIC) != 0) {
                 energy = 1;
                 break;
             }
-            ((player_o*)PLAYER)->EnableWeapon(ELECTRIC);
+            (dynamic_cast<player_o*>(PLAYER))->EnableWeapon(ELECTRIC);
             break;
 
         case POWERUP_WEAPON_MINIGUN:
-            if (((player_o*)PLAYER)->HaveWeapon(MINIGUN)) {
+            if ((dynamic_cast<player_o*>(PLAYER))->HaveWeapon(MINIGUN) != 0) {
                 energy = 1;
                 break;
             }
-            ((player_o*)PLAYER)->EnableWeapon(MINIGUN);
+            (dynamic_cast<player_o*>(PLAYER))->EnableWeapon(MINIGUN);
             break;
 
         case POWERUP_AMMO_FLAME_THROWER:
 
-            ((player_o*)PLAYER)->AddAmmo(FLAME_THROWER, 50);
+            (dynamic_cast<player_o*>(PLAYER))->AddAmmo(FLAME_THROWER, 50);
             break;
 
         case POWERUP_AMMO_ICEMAKER:
 
-            ((player_o*)PLAYER)->AddAmmo(ICEMAKER, 50);
+            (dynamic_cast<player_o*>(PLAYER))->AddAmmo(ICEMAKER, 50);
             break;
 
         case POWERUP_AMMO_GRENADE_LAUNCHER:
 
-            ((player_o*)PLAYER)->AddAmmo(GRENADE_LAUNCHER, 1);
+            (dynamic_cast<player_o*>(PLAYER))->AddAmmo(GRENADE_LAUNCHER, 1);
             break;
 
         case POWERUP_AMMO_GRENADE_LAUNCHER6:
 
-            ((player_o*)PLAYER)->AddAmmo(GRENADE_LAUNCHER, 6);
+            (dynamic_cast<player_o*>(PLAYER))->AddAmmo(GRENADE_LAUNCHER, 6);
             break;
 
         case POWERUP_AMMO_PLASMA:
 
-            ((player_o*)PLAYER)->AddAmmo(PLASMA_GUN, 20);
+            (dynamic_cast<player_o*>(PLAYER))->AddAmmo(PLASMA_GUN, 20);
             break;
 
         case POWERUP_AMMO_MINIGUN:
 
-            ((player_o*)PLAYER)->AddAmmo(MINIGUN, 100);
+            (dynamic_cast<player_o*>(PLAYER))->AddAmmo(MINIGUN, 100);
             break;
 
         case POWERUP_AMMO_ELECTRIC:
 
-            ((player_o*)PLAYER)->AddAmmo(ELECTRIC, 20);
+            (dynamic_cast<player_o*>(PLAYER))->AddAmmo(ELECTRIC, 20);
             break;
 
         default:

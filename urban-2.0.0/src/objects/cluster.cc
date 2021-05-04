@@ -31,7 +31,7 @@
 #include "engine.h"
 #include "object2.h"
 #include <allegro.h>
-#include <string.h>
+#include <cstring>
 
 #define EXPLOSION_SAMPLE "samples/heart_1.wav"
 #define FIRE_SAMPLE "samples/ex12.wav"
@@ -51,8 +51,9 @@ Cluster_o::Cluster_o(int X, int Y, int Z, int SpeedX, int SpeedY, int SpeedZ, in
     SOUND.PlaySFX(FIRE_SAMPLE);
     sprintf(filename, "soldier2/kula.pcx");
     images[0] = icache.GetImage(filename, pal);
-    if (images[0])
+    if (images[0] != nullptr) {
         num_images++;
+    }
 
     height = images[0]->h;
     width = images[0]->w;
@@ -80,11 +81,10 @@ Cluster_o::Cluster_o(int X, int Y, int Z, int SpeedX, int SpeedY, int SpeedZ, in
 }
 /****************************************************************************/
 Cluster_o::~Cluster_o()
-{
-}
+    = default;
 
 /****************************************************************************/
-int Cluster_o::update()
+auto Cluster_o::update() -> int
 {
     x += speed_x;
     y += speed_y;
@@ -98,20 +98,23 @@ int Cluster_o::update()
     }
 
     counter--;
-    if (energy <= 0)
+    if (energy <= 0) {
         return -1;
+    }
 
     if (speed_y == 0) {
         //		SOUND.PlaySFX(EXPLOSION_SAMPLE);
         //		ENGINE.create_effect(new SmallExplosion_o(x, y, z));
         switch (direction) {
         case RIGHT_DIR:
-            for (int i = 0; i < NUM_GRENADES; i++)
+            for (int i = 0; i < NUM_GRENADES; i++) {
                 ENGINE.create_alwaysupdate(new ClusterGrenade_o(x + width + 5, y - 10, z, 2 + random() % 5, -(random() % 3), -2 + random() % 4, friends));
+            }
             break;
         case LEFT_DIR:
-            for (int i = 0; i < NUM_GRENADES; i++)
+            for (int i = 0; i < NUM_GRENADES; i++) {
                 ENGINE.create_alwaysupdate(new ClusterGrenade_o(x + width + 5, y - 10, z, -(2 + random() % 5), -(random() % 3), -2 + random() % 4, friends));
+            }
             break;
         }
 
@@ -136,10 +139,12 @@ int Cluster_o::update()
 
 void Cluster_o::Collision(Object* o)
 {
-    if (!energy)
+    if (energy == 0) {
         return;
-    if (friends & o->GetWho())
+    }
+    if ((friends & o->GetWho()) != 0U) {
         return;
+    }
     energy = 0;
     SOUND.PlaySFX(EXPLOSION_SAMPLE);
     ENGINE.create_alwaysupdate(new explosion_o(x, y - TILE_SIDE_HEIGHT + 15, z, 0, 0, 0, friends));

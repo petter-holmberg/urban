@@ -32,7 +32,7 @@
 #include "object.h"
 #include "object2.h"
 #include <allegro.h>
-#include <string.h>
+#include <cstring>
 
 #define EXPLOSION_SAMPLE "samples/heart_1.wav"
 #define FIRE_SAMPLE "samples/grenade.wav"
@@ -50,14 +50,16 @@ rocket_o::rocket_o(int X, int Y, int Z, int Speed, int Mode)
     images = new BITMAP*[1];
 
     SOUND.PlaySFX(FIRE_SAMPLE);
-    if (Speed > 0)
+    if (Speed > 0) {
         sprintf(filename, "grenade.pcx");
-    else
+    } else {
         sprintf(filename, "grenade2.pcx");
+    }
 
     images[0] = icache.GetImage(filename, pal);
-    if (images[0])
+    if (images[0] != nullptr) {
         num_images++;
+    }
 
     height = images[0]->h;
     width = images[0]->w;
@@ -86,24 +88,26 @@ rocket_o::rocket_o(int X, int Y, int Z, int Speed, int Mode)
 }
 /****************************************************************************/
 rocket_o::~rocket_o()
-{
-}
+    = default;
 
 /****************************************************************************/
-int rocket_o::update()
+auto rocket_o::update() -> int
 {
     x += speed_x;
 
-    if (x < 0) //out of range
+    if (x < 0) { //out of range
         return -1;
+    }
 
-    if (energy <= 0)
+    if (energy <= 0) {
         return -1;
+    }
 
     counter += speed_x;
 
-    if (counter > 600)
+    if (counter > 600) {
         return -1;
+    }
 
     // Check collision with walls
     if (ENGINE.check_wall(x, y, z)
@@ -118,11 +122,13 @@ int rocket_o::update()
     }
     if (mode == MODE_WATER) {
         if (speed_x < 0) {
-            if (!(random() % 10))
+            if ((random() % 10) == 0) {
                 ENGINE.create_object(new Bubble_o(x - 20, y, z));
+            }
         } else {
-            if (!(random() % 10))
+            if ((random() % 10) == 0) {
                 ENGINE.create_object(new Bubble_o(x - 30, y, z));
+            }
         }
     }
     return 0;
@@ -130,10 +136,12 @@ int rocket_o::update()
 
 void rocket_o::Collision(Object* o)
 {
-    if (!energy)
+    if (energy == 0) {
         return;
-    if (friends & o->GetWho())
+    }
+    if ((friends & o->GetWho()) != 0U) {
         return;
+    }
     energy = 0;
     SOUND.PlaySFX(EXPLOSION_SAMPLE);
     ENGINE.create_object(new explosion_o(x, y - TILE_SIDE_HEIGHT + 15, z));

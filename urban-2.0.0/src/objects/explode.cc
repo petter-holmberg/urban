@@ -36,12 +36,12 @@
 #define EXPLODE_SPEED 4
 #define EXPLODE_DAMAGE 10
 #define EXPLODE_FRAMES 2
-explosion_o::explosion_o(int X, int Y, int Z, int Speed_X, int Speed_Y, int Speed_Z, int Friends)
+explosion_o::explosion_o(int X, int Y, int Z, int /*Speed_X*/, int /*Speed_Y*/, int /*Speed_Z*/, int Friends)
     : Object(X, Y, Z)
 {
     RGB pal[256];
     char filename[512];
-    int i;
+    int i = 0;
 
     anim.reset();
     images = new BITMAP*[10];
@@ -49,8 +49,9 @@ explosion_o::explosion_o(int X, int Y, int Z, int Speed_X, int Speed_Y, int Spee
     for (i = 0; i < 10; i++) {
         sprintf(filename, "expl/%d.pcx", i + 1);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i])
+        if (images[i] != nullptr) {
             num_images++;
+        }
     }
     height = images[0]->h;
     width = images[0]->w;
@@ -79,18 +80,19 @@ explosion_o::explosion_o(int X, int Y, int Z, int Speed_X, int Speed_Y, int Spee
 }
 
 explosion_o::~explosion_o()
-{
-}
+    = default;
 
-int explosion_o::update()
+auto explosion_o::update() -> int
 {
     //        enemies = 0;
 
-    if (counter)
+    if (counter != 0) {
         counter--;
+    }
 
-    if (!counter)
+    if (counter == 0) {
         strength = 0;
+    }
     /*
         if(counter2 == 0) {
 
@@ -105,8 +107,9 @@ int explosion_o::update()
 
     /*        if (current_image > 5)
                 strength = 0;*/
-    if (current_image >= 10)
+    if (current_image >= 10) {
         return -1;
+    }
     return 0;
 }
 

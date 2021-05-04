@@ -31,8 +31,8 @@
 #include "engine.h"
 #include "object2.h"
 #include <allegro.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cstdlib>
+#include <cstring>
 
 #define STATE_NONE 0x00
 #define STATE_FIND 0x01
@@ -47,8 +47,9 @@ ElevatorWire_o::ElevatorWire_o(int X, int Y, int Z)
     images = new BITMAP*;
     sprintf(filename, "connect.pcx");
     images[0] = icache.GetImage(filename, pal);
-    if (images[0])
+    if (images[0] != nullptr) {
         num_images++;
+    }
 
     current_image = 0;
 
@@ -79,20 +80,20 @@ ElevatorWire_o::ElevatorWire_o(int X, int Y, int Z)
     counter2 = 0;
     counter3 = 0;
     state = STATE_NONE;
-    elev_controller = NULL;
-    wire_up = wire_down = NULL;
+    elev_controller = nullptr;
+    wire_up = wire_down = nullptr;
 }
 
 /****************************************************************************/
 ElevatorWire_o::~ElevatorWire_o()
-{
-}
+    = default;
 
 /****************************************************************************/
-int ElevatorWire_o::update()
+auto ElevatorWire_o::update() -> int
 {
-    if (state == STATE_DESTROY)
+    if (state == STATE_DESTROY) {
         return -1;
+    }
 
     return 0;
 }
@@ -139,23 +140,26 @@ void ElevatorWire_o::FindElevator(int dir, Object *w) {
 
 void ElevatorWire_o::FindElevatorStation(Object* w, Object* sender)
 {
-    if (elev_controller && elev_controller != sender)
-        ((ElevatorStation_o*)elev_controller)->SetElevatorStation(w);
-    else if (wire_down)
-        ((ElevatorWire_o*)wire_down)->FindElevatorStation(w, this);
+    if ((elev_controller != nullptr) && elev_controller != sender) {
+        (dynamic_cast<ElevatorStation_o*>(elev_controller))->SetElevatorStation(w);
+    } else if (wire_down != nullptr) {
+        (dynamic_cast<ElevatorWire_o*>(wire_down))->FindElevatorStation(w, this);
+    }
 
     state = STATE_DESTROY;
 }
 
 void ElevatorWire_o::Collision(Object* o)
 {
-    if (o->GetWho() == FRIEND_ELEVSTAT)
+    if (o->GetWho() == FRIEND_ELEVSTAT) {
         elev_controller = o;
+    }
 
     if (o->GetWho() == FRIEND_ELEVWIRE) {
-        if (o->GetY() > y)
+        if (o->GetY() > y) {
             wire_down = o;
-        else if (o->GetY() < y)
+        } else if (o->GetY() < y) {
             wire_up = o;
+        }
     }
 }
