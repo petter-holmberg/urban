@@ -36,8 +36,8 @@
 #include "object.h"
 #include "urbfont.h"
 #include <allegro.h>
-#include <stdio.h>
-#include <string.h>
+#include <cstdio>
+#include <cstring>
 #include <unistd.h>
 /**************************************************************************/
 #define FRAME_DELAY 100
@@ -57,7 +57,7 @@ Outtro::~Outtro()
 }
 /**************************************************************************/
 extern "C" {
-static int callback()
+static auto callback() -> int
 {
     static unsigned int count = 0;
     unsigned int num_frames = strlen(flctext);
@@ -80,7 +80,7 @@ static int callback()
     /*                if(keypressed())
                 	quit = 1;*/
 
-    if ((count == (num_frames - 1)) || quit) {
+    if ((count == (num_frames - 1)) || (quit != 0)) {
 
         count = 0;
 
@@ -148,14 +148,14 @@ static int callback()
 void Outtro::RunOuttro()
 {
     datfile dat("intro.dat");
-    char* buf = NULL;
+    char* buf = nullptr;
     quit = 0;
     PALETTE palette;
     /*        int i;
         BITMAP *bmp;
         char text[128];
 	char temptext[128];*/
-    BITMAP* bmp;
+    BITMAP* bmp = nullptr;
 
     clear_keybuf();
 

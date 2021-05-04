@@ -7,12 +7,12 @@ class Outtro {
 public:
     Outtro();
     ~Outtro();
-    void RunOuttro();
+    static void RunOuttro();
 
 private:
-    BITMAP** images;
-    RGB palette[256];
-    RGB black[256];
+    BITMAP** images {};
+    RGB palette[256] {};
+    RGB black[256] {};
 };
 
 #endif
