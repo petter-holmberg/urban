@@ -1,6 +1,8 @@
 #ifndef __URBFONT_H__
 #define __URBFONT_H__
 
+#include <allegro.h>
+
 #define FONT_MAGIC 0x55464e54
 
 #define FONT_FLAG_BITMAP 0x01
