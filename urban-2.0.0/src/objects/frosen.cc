@@ -34,17 +34,17 @@
 #include <cstdlib>
 #include <cstring>
 
-#define STATE_FROSEN 0
-#define STATE_CRACKING 1
-#define STATE_CRUSHED 2
+inline constexpr auto STATE_FROSEN = 0;
+inline constexpr auto STATE_CRACKING = 1;
+inline constexpr auto STATE_CRUSHED = 2;
 
-#define FRAME_DELAY 2
+inline constexpr auto FRAME_DELAY = 2;
 
 /**************************************************************************/
 FrosenBody_o::FrosenBody_o(int X, int Y, int Z, int dir)
     : Object(X, Y, Z)
 {
-    RGB pal[256];
+    PALETTE pal;
     char filename[512];
     //        int i;
 

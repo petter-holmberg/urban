@@ -34,23 +34,23 @@
 #include <cstdlib>
 #include <cstring>
 
-#define STATE_NONE 0x00
-#define STATE_ACTIVATE 0x01
-#define STATE_ACTIVATED 0x02
+inline constexpr auto STATE_NONE = 0x00;
+inline constexpr auto STATE_ACTIVATE = 0x01;
+inline constexpr auto STATE_ACTIVATED = 0x02;
 
-#define STATE_STOP 0x03
-#define STATE_SEND 0x04
+inline constexpr auto STATE_STOP = 0x03;
+inline constexpr auto STATE_SEND = 0x04;
 
-#define STATE_LOCATESTATION 0x05
+inline constexpr auto STATE_LOCATESTATION = 0x05;
 
-#define SEND_DELAY 100
-#define FRAME_DELAY 2
+inline constexpr auto SEND_DELAY = 100;
+inline constexpr auto FRAME_DELAY = 2;
 
 /****************************************************************************/
 ElevatorStation_o::ElevatorStation_o(int X, int Y, int Z, int dir, Cardtype Card)
     : Object(X, Y, Z)
 {
-    RGB pal[256];
+    PALETTE pal;
     char filename[512];
 
     images = new BITMAP*[10];

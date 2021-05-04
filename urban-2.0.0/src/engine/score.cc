@@ -33,8 +33,7 @@
 #include <allegro.h>
 #include <engine.h>
 
-//#define BOSSHEALTH_HEIGHT 100
-#define BOSSHEALTH_HEIGHT (SCREEN_WIDTH - (2 * 20))
+inline constexpr auto BOSSHEALTH_HEIGHT = SCREEN_WIDTH - (2 * 20);
 /*************************************************************************/
 ScoreBoard::ScoreBoard()
 {

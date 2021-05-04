@@ -35,45 +35,45 @@
 #include <cstdlib>
 #include <cstring>
 
-#define PROB_WALK_START 0
-#define PROB_WALK_END 40
-#define PROB_STOP_START 41
-#define PROB_STOP_END 70
-#define PROB_TURN_START 71
-#define PROB_TURN_END 100
-#define PROB_NUMBER 100
+inline constexpr auto PROB_WALK_START = 0;
+inline constexpr auto PROB_WALK_END = 40;
+inline constexpr auto PROB_STOP_START = 41;
+inline constexpr auto PROB_STOP_END = 70;
+inline constexpr auto PROB_TURN_START = 71;
+inline constexpr auto PROB_TURN_END = 100;
+inline constexpr auto PROB_NUMBER = 100;
 
-#define MAX_NUM 15
-#define STATE_NONE 0
-#define STATE_STOP 1
-#define STATE_WALK 2
-#define STATE_TURN 3
-#define STATE_HIT 4
-#define STATE_HIT_COUNTDOWN 5
-#define STATE_FIRE 6
-#define STATE_FIRING 7
-#define STATE_ALARM 8
+inline constexpr auto MAX_NUM = 15;
+inline constexpr auto STATE_NONE = 0;
+inline constexpr auto STATE_STOP = 1;
+inline constexpr auto STATE_WALK = 2;
+inline constexpr auto STATE_TURN = 3;
+inline constexpr auto STATE_HIT = 4;
+inline constexpr auto STATE_HIT_COUNTDOWN = 5;
+inline constexpr auto STATE_FIRE = 6;
+inline constexpr auto STATE_FIRING = 7;
+inline constexpr auto STATE_ALARM = 8;
 
-#define FIRE_RANGE 100
+inline constexpr auto FIRE_RANGE = 100;
 
-#define MAX_X_SPEED 2 //4
-#define X_FRICTION 1
-#define MIN_X_SPEED (-MAX_X_SPEED) //-4
-#define MAX_Y_SPEED 16
-#define MIN_Y_SPEED (-12)
-#define X_ACCEL 2 //2
-#define Y_ACCEL 1
+inline constexpr auto MAX_X_SPEED = 2;
+inline constexpr auto X_FRICTION = 1;
+inline constexpr auto MIN_X_SPEED = -MAX_X_SPEED;
+inline constexpr auto MAX_Y_SPEED = 16;
+inline constexpr auto MIN_Y_SPEED = -12;
+inline constexpr auto X_ACCEL = 2;
+inline constexpr auto Y_ACCEL = 1;
 
-#define FRAME_DELAY 2
-#define FIRE_DELAY 4
-#define NUM_ROUNDS 6
-#define ALARM_DELAY 120
+inline constexpr auto FRAME_DELAY = 2;
+inline constexpr auto FIRE_DELAY = 4;
+inline constexpr auto NUM_ROUNDS = 6;
+inline constexpr auto ALARM_DELAY = 120;
 
 /**************************************************************************/
 soldier_o::soldier_o(int X, int Y, int Z)
     : Object(X, Y, Z)
 {
-    RGB pal[256];
+    PALETTE pal;
     char filename[512];
     int i = 0;
 
@@ -296,9 +296,9 @@ void soldier_o::Collision(Object* o)
     if ((o->GetStrength() > 0) && ((o->GetFriends() & me) == 0U)) {
         if (direction == RIGHT_DIR) {
             if (energy <= 0) {
-                if ((o->GetWho() & ENEMY_EXPLOSION) != 0)
-                    DEATH_BY_EXPLOSION
-                else if ((o->GetWho() & (ENEMY_FIREBALL | ENEMY_BEAM)) != 0) {
+                if ((o->GetWho() & ENEMY_EXPLOSION) != 0) {
+                    DEATH_BY_EXPLOSION(x, width, y, height, z);
+                } else if ((o->GetWho() & (ENEMY_FIREBALL | ENEMY_BEAM)) != 0) {
                     ENGINE.create_effect(new BurningBody_o(x, y + height, z));
                 } else if ((o->GetWho() & ENEMY_ICEBALL) != 0) {
                     ENGINE.create_object(new FrosenBody_o(x, y + height, z, direction));
@@ -313,9 +313,9 @@ void soldier_o::Collision(Object* o)
             }
         } else {
             if (energy <= 0) {
-                if ((o->GetWho() & ENEMY_EXPLOSION) != 0)
-                    DEATH_BY_EXPLOSION
-                else if ((o->GetWho() & (ENEMY_FIREBALL | ENEMY_BEAM)) != 0) {
+                if ((o->GetWho() & ENEMY_EXPLOSION) != 0) {
+                    DEATH_BY_EXPLOSION(x, width, y, height, z);
+                } else if ((o->GetWho() & (ENEMY_FIREBALL | ENEMY_BEAM)) != 0) {
                     ENGINE.create_effect(new BurningBody_o(x, y + height, z));
                 } else if ((o->GetWho() & ENEMY_ICEBALL) != 0) {
                     ENGINE.create_object(new FrosenBody_o(x, y + height, z, direction));

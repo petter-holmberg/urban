@@ -39,62 +39,94 @@
 #include <cstdlib>
 #include <cstring>
 
-#define FIRE_SAMPLE "samples/flame.wav"
-#define ELEVATOR(x) ((Elevator_o*)(x))
-#define ELEVATORSTATION(x) ((ElevatorStation_o*)(x))
+inline constexpr auto FIRE_SAMPLE = "samples/flame.wav";
+constexpr auto ELEVATOR(Object* x)
+{
+    return dynamic_cast<Elevator_o*>(x);
+}
+constexpr auto ELEVATORSTATION(Object* x)
+{
+    return dynamic_cast<ElevatorStation_o*>(x);
+}
 
-#define FALL_DAMAGE 20
-#define FALL_DAMAGE_BEGIN 30
+inline constexpr auto FALL_DAMAGE = 20;
+inline constexpr auto FALL_DAMAGE_BEGIN = 30;
 
-#define X_FRICTION 1
-#define Z_FRICTION X_FRICTION
-#define MAX_X_SPEED (mode == MODE_NORMAL ? 3 : 2) //4
-#define MIN_X_SPEED (-MAX_X_SPEED) //-4
-#define MAX_Y_SPEED (mode == MODE_NORMAL ? 16 : 8)
-#define MIN_Y_SPEED (mode == MODE_NORMAL ? -12 : -6)
-#define MAX_Z_SPEED (mode == MODE_NORMAL ? 2 : 1) //MAX_X_SPEED
-#define MIN_Z_SPEED (-MAX_Z_SPEED)
-#define X_ACCEL (mode == MODE_NORMAL ? 2 : 1) //2
-#define Y_ACCEL 1
-#define Z_ACCEL (mode == MODE_NORMAL ? 2 : 1)
-#define LIFE_IMMORTAL 0xfffffff
-#define LEFT_FOOT_X 30
-#define RIGHT_FOOT_X 32
-#define FOOT_Y 66
+inline constexpr auto X_FRICTION = 1;
+inline constexpr auto Z_FRICTION = X_FRICTION;
+constexpr auto MAX_X_SPEED(int mode)
+{
+    return (mode == MODE_NORMAL ? 3 : 2);
+}
+constexpr auto MIN_X_SPEED(int mode)
+{
+    return -MAX_X_SPEED(mode);
+}
+constexpr auto MAX_Y_SPEED(int mode)
+{
+    return (mode == MODE_NORMAL ? 16 : 8);
+}
+constexpr auto MIN_Y_SPEED(int mode)
+{
+    return (mode == MODE_NORMAL ? -12 : -6);
+}
+constexpr auto MAX_Z_SPEED(int mode)
+{
+    return (mode == MODE_NORMAL ? 2 : 1);
+}
 
-#define DEATH_EXPLOSION 0x01
-#define DEATH_ICEBALL 0x02
-#define DEATH_FIREBALL 0x03
-#define DEATH_BULLET 0x04
+constexpr auto MIN_Z_SPEED(int mode)
+{
+    return -MAX_Z_SPEED(mode);
+}
 
-#define STATE_NONE 0x00
-#define STATE_WALK 0x01
-#define STATE_TURN 0x02
-#define STATE_FIRE 0x04
-#define STATE_FIRING 0x08
-#define STATE_HIT 0x10
-#define STATE_DEAD 0x20
-#define STATE_FIREDELAY 0x40
-#define STATE_IMMORTAL 0x80
+constexpr auto X_ACCEL(int mode)
+{
+    return (mode == MODE_NORMAL ? 2 : 1);
+}
 
-#define FRAME_DELAY (mode == MODE_NORMAL ? 4 : 8)
-#define IMMORTAL_DELAY 200
-#define TOUCH_DELAY 10
+inline constexpr auto Y_ACCEL = 1;
+constexpr auto Z_ACCEL(int mode)
+{
+    return (mode == MODE_NORMAL ? 2 : 1);
+}
+inline constexpr auto LIFE_IMMORTAL = 0xfffffff;
+inline constexpr auto LEFT_FOOT_X = 30;
+inline constexpr auto RIGHT_FOOT_X = 32;
+inline constexpr auto FOOT_Y = 66;
 
-#define EL_LENGTH 5
+inline constexpr auto DEATH_EXPLOSION = 0x01;
+inline constexpr auto DEATH_ICEBALL = 0x02;
+inline constexpr auto DEATH_FIREBALL = 0x03;
+inline constexpr auto DEATH_BULLET = 0x04;
 
-#define SAVE_DELAY 1000
+inline constexpr auto STATE_NONE = 0x00;
+inline constexpr auto STATE_WALK = 0x01;
+inline constexpr auto STATE_TURN = 0x02;
+inline constexpr auto STATE_FIRE = 0x04;
+inline constexpr auto STATE_FIRING = 0x08;
+inline constexpr auto STATE_HIT = 0x10;
+inline constexpr auto STATE_DEAD = 0x20;
+inline constexpr auto STATE_FIREDELAY = 0x40;
+inline constexpr auto STATE_IMMORTAL = 0x80;
+
+constexpr auto FRAME_DELAY(int mode)
+{
+    return (mode == MODE_NORMAL ? 4 : 8);
+}
+inline constexpr auto IMMORTAL_DELAY = 200;
+inline constexpr auto TOUCH_DELAY = 10;
+
+inline constexpr auto EL_LENGTH = 5;
+
+inline constexpr auto SAVE_DELAY = 1000;
 int temp = 0;
 int temp2 = 0;
 int fall_counter = 0;
 
 extern Config* config;
-#define NUM_WEAPONS 7 //OBS!!! Ändra i ENGINE.CC också!!!
-#define NUM_LIFES 3
-
-#if defined(ALLOW_Fx_CHEATING) && defined(__DISTRIBUTION__)
-#warning ALLOW_Fx_CHEATING defined and compiling for distribution
-#endif
+inline constexpr auto NUM_WEAPONS = 7; //OBS!!! Change in ENGINE.CC as well!!!;
+inline constexpr auto NUM_LIFES = 3;
 
 Weapon Weapons[NUM_WEAPONS] = {
     { { 6, 7, 8, 9, 10, 11 },
@@ -179,16 +211,18 @@ Weapon Weapons[NUM_WEAPONS] = {
         char availible;
 };*/
 
-#define CURRENT_WEAPON weapon[current_weapon]
-#define WEAPON_AVAILIBLE (CURRENT_WEAPON.ammo && (mode == MODE_NORMAL ? 1 : CURRENT_WEAPON.waterproof))
+constexpr auto WEAPON_AVAILIBLE(Weapon* weapon, int current_weapon, int mode)
+{
+    return (weapon[current_weapon].ammo && (mode == MODE_NORMAL ? 1 : weapon[current_weapon].waterproof));
+}
 
-#define MAX_ENERGY 300
+inline constexpr auto MAX_ENERGY = 300;
 static PALETTE pal;
 /**************************************************************************/
 player_o::player_o(int X, int Y, int Z, int controls)
     : Object(X, Y, Z)
 {
-    RGB pal[256];
+    PALETTE pal;
     char filename[512];
 
     lives = NUM_LIFES;
@@ -199,16 +233,6 @@ player_o::player_o(int X, int Y, int Z, int controls)
     case CONTROLLER_KEYBOARD:
         ctrl = new Keyboard_ctrl();
         break;
-
-#ifdef DJGPP
-    case CONTROLLER_GAMEPAD2:
-    case CONTROLLER_GAMEPAD4:
-    case CONTROLLER_GAMEPAD6:
-    case CONTROLLER_GAMEPAD8:
-    case CONTROLLER_JOYSTICK:
-        ctrl = new Gamepad_ctrl();
-        break;
-#endif
     };
 
     //	images = (BITMAP **)malloc(205 * sizeof(BITMAP *));
@@ -661,7 +685,7 @@ auto player_o::update() -> int
         SOUND.PlaySFX_Critical("samples/pathetic.wav");
     }
     if ((cheat_codes_active & CHEAT_GIVE_PLAYER_1K_OF_AMMO) != 0U) {
-        CURRENT_WEAPON.ammo += 1000;
+        weapon[current_weapon].ammo += 1000;
     }
     if ((cheat_codes_active & CHEAT_GIVE_PLAYER_CARDS) != 0U) {
         card = (red | green | blue);
@@ -729,11 +753,11 @@ auto player_o::update() -> int
         SOUND.PlaySFX_Critical("samples/pathetic.wav");
     }
     if (key[KEY_A])
-        if (CURRENT_WEAPON.ammo < CURRENT_WEAPON.max_ammo)
-            CURRENT_WEAPON.ammo++;
+        if (weapon[current_weapon].ammo < weapon[current_weapon].max_ammo)
+            weapon[current_weapon].ammo++;
     if (key[KEY_Z])
-        if (CURRENT_WEAPON.ammo)
-            CURRENT_WEAPON.ammo--;
+        if (weapon[current_weapon].ammo)
+            weapon[current_weapon].ammo--;
 #endif
 
     /*	if (key[KEY_1] && weapon[SHOTGUN].availible)
@@ -746,30 +770,30 @@ auto player_o::update() -> int
         	current_weapon = GRENADE_LAUNCHER;
 */
 
-    if ((ctrl->weapon1() != 0) && (weapon[SHOTGUN].availible != 0)) {
+    if (ctrl->weapon1() && (weapon[SHOTGUN].availible != 0)) {
         current_weapon = SHOTGUN;
-    } else if ((ctrl->weapon2() != 0) && (weapon[FLAME_THROWER].availible != 0)) {
+    } else if (ctrl->weapon2() && (weapon[FLAME_THROWER].availible != 0)) {
         current_weapon = FLAME_THROWER;
-    } else if ((ctrl->weapon3() != 0) && (weapon[ICEMAKER].availible != 0)) {
+    } else if (ctrl->weapon3() && (weapon[ICEMAKER].availible != 0)) {
         current_weapon = ICEMAKER;
-    } else if ((ctrl->weapon4() != 0) && (weapon[GRENADE_LAUNCHER].availible != 0)) {
+    } else if (ctrl->weapon4() && (weapon[GRENADE_LAUNCHER].availible != 0)) {
         current_weapon = GRENADE_LAUNCHER;
-    } else if ((ctrl->weapon5() != 0) && (weapon[PLASMA_GUN].availible != 0)) {
+    } else if (ctrl->weapon5() && (weapon[PLASMA_GUN].availible != 0)) {
         current_weapon = PLASMA_GUN;
-    } else if ((ctrl->weapon6() != 0) && (weapon[MINIGUN].availible != 0)) {
+    } else if (ctrl->weapon6() && (weapon[MINIGUN].availible != 0)) {
         current_weapon = MINIGUN;
-    } else if ((ctrl->weapon7() != 0) && (weapon[ELECTRIC].availible != 0)) {
+    } else if (ctrl->weapon7() && (weapon[ELECTRIC].availible != 0)) {
         current_weapon = ELECTRIC;
     }
 
-    if (ctrl->next_weapon() != 0) {
+    if (ctrl->next_weapon()) {
         do {
             current_weapon++;
             if (current_weapon >= NUM_WEAPONS) {
                 current_weapon = 0;
             }
         } while (weapon[current_weapon].availible == 0);
-    } else if (ctrl->prev_weapon() != 0) {
+    } else if (ctrl->prev_weapon()) {
         do {
             if (current_weapon == 0) {
                 current_weapon = NUM_WEAPONS;
@@ -780,19 +804,17 @@ auto player_o::update() -> int
     if (counter == 0) {
         if ((state & STATE_FIRE) != 0) {
             state &= ~STATE_FIRE;
-            counter = CURRENT_WEAPON.fire_delay;
-        } else if ((ctrl->fire() != 0) && WEAPON_AVAILIBLE &&
-            //                } else if (ctrl->fire() && CURRENT_WEAPON.ammo && CURRENT_WEAPON.waterproof &&
-            direction != UP_DIR && direction != DOWN_DIR) {
+            counter = weapon[current_weapon].fire_delay;
+        } else if (ctrl->fire() && WEAPON_AVAILIBLE(weapon, current_weapon, mode) && direction != UP_DIR && direction != DOWN_DIR) {
             state |= STATE_FIRE;
-            counter = CURRENT_WEAPON.fire_rep;
-            CURRENT_WEAPON.ammo--;
+            counter = weapon[current_weapon].fire_rep;
+            weapon[current_weapon].ammo--;
             switch (current_weapon) {
             case ELECTRIC:
-                CURRENT_WEAPON.ammo -= 4;
+                weapon[current_weapon].ammo -= 4;
                 SOUND.PlaySFX("samples/el.wav");
-                if (CURRENT_WEAPON.ammo < 0) {
-                    CURRENT_WEAPON.ammo = 0;
+                if (weapon[current_weapon].ammo < 0) {
+                    weapon[current_weapon].ammo = 0;
                 }
                 for (int i = 0; i < EL_LENGTH; i++) {
                     int tmp = 0;
@@ -839,50 +861,50 @@ auto player_o::update() -> int
                 ENGINE.create_object(new Plasma_o(x + (direction == RIGHT_DIR ? 67 : 20), y + 28, z, direction, friends, 5));
                 break;
             }
-        } else if ((ctrl->fire() != 0) && direction == UP_DIR) {
+        } else if (ctrl->fire() && direction == UP_DIR) {
             if (elev_station != nullptr) {
                 ELEVATORSTATION(elev_station)->StartElevator();
             }
         }
     }
 
-    if (ctrl->right() != 0) {
-        if (speed_x < MAX_X_SPEED) {
-            speed_x += X_ACCEL;
+    if (ctrl->right()) {
+        if (speed_x < MAX_X_SPEED(mode)) {
+            speed_x += X_ACCEL(mode);
         }
         direction = RIGHT_DIR;
         state |= STATE_WALK;
     }
-    if (ctrl->left() != 0) {
-        if (speed_x > MIN_X_SPEED) {
-            speed_x -= X_ACCEL;
+    if (ctrl->left()) {
+        if (speed_x > MIN_X_SPEED(mode)) {
+            speed_x -= X_ACCEL(mode);
         }
         direction = LEFT_DIR;
         state |= STATE_WALK;
     }
-    if (ctrl->up() != 0) {
-        if (speed_z > MIN_Z_SPEED) {
-            speed_z -= Z_ACCEL;
+    if (ctrl->up()) {
+        if (speed_z > MIN_Z_SPEED(mode)) {
+            speed_z -= Z_ACCEL(mode);
         }
         direction = UP_DIR;
         state |= STATE_WALK;
         state &= ~STATE_FIRE;
     }
-    if (ctrl->down() != 0) {
-        if (speed_z < MAX_Z_SPEED) {
-            speed_z += Z_ACCEL;
+    if (ctrl->down()) {
+        if (speed_z < MAX_Z_SPEED(mode)) {
+            speed_z += Z_ACCEL(mode);
         }
         direction = DOWN_DIR;
         state |= STATE_WALK;
         state &= ~STATE_FIRE;
     }
 
-    if ((ctrl->jump() != 0) && (jumping == 0) && (jump_keypressed == 0)) {
-        speed_y = MIN_Y_SPEED;
+    if (ctrl->jump() && (jumping == 0) && (jump_keypressed == 0)) {
+        speed_y = MIN_Y_SPEED(mode);
         jumping = 1;
         jump_keypressed = 1;
         saved_mode = mode;
-    } else if ((ctrl->jump() == 0) && (jumping == 0)) {
+    } else if (!ctrl->jump() && (jumping == 0)) {
         jump_keypressed = 0;
     }
 
@@ -890,23 +912,23 @@ auto player_o::update() -> int
         switch (direction) {
         case RIGHT_DIR:
             if ((state & STATE_FIRE) != 0) {
-                current_image = CURRENT_WEAPON.fire_right[anim.next_frame(4, FRAME_DELAY)];
+                current_image = weapon[current_weapon].fire_right[anim.next_frame(4, FRAME_DELAY(mode))];
             } else {
-                current_image = CURRENT_WEAPON.walk_right[anim.next_frame(4, FRAME_DELAY)];
+                current_image = weapon[current_weapon].walk_right[anim.next_frame(4, FRAME_DELAY(mode))];
             }
             break;
         case LEFT_DIR:
             if ((state & STATE_FIRE) != 0) {
-                current_image = CURRENT_WEAPON.fire_left[anim.next_frame(4, FRAME_DELAY)];
+                current_image = weapon[current_weapon].fire_left[anim.next_frame(4, FRAME_DELAY(mode))];
             } else {
-                current_image = CURRENT_WEAPON.walk_left[anim.next_frame(4, FRAME_DELAY)];
+                current_image = weapon[current_weapon].walk_left[anim.next_frame(4, FRAME_DELAY(mode))];
             }
             break;
         case UP_DIR:
-            current_image = CURRENT_WEAPON.walk_up[anim.next_frame(4, FRAME_DELAY)];
+            current_image = weapon[current_weapon].walk_up[anim.next_frame(4, FRAME_DELAY(mode))];
             break;
         case DOWN_DIR:
-            current_image = CURRENT_WEAPON.walk_down[anim.next_frame(4, FRAME_DELAY)];
+            current_image = weapon[current_weapon].walk_down[anim.next_frame(4, FRAME_DELAY(mode))];
             break;
         }
     }
@@ -916,23 +938,23 @@ auto player_o::update() -> int
         switch (direction) {
         case RIGHT_DIR:
             if ((state & STATE_FIRE) != 0) {
-                current_image = CURRENT_WEAPON.fire_right[5];
+                current_image = weapon[current_weapon].fire_right[5];
             } else {
-                current_image = CURRENT_WEAPON.walk_right[5];
+                current_image = weapon[current_weapon].walk_right[5];
             }
             break;
         case LEFT_DIR:
             if ((state & STATE_FIRE) != 0) {
-                current_image = CURRENT_WEAPON.fire_left[5];
+                current_image = weapon[current_weapon].fire_left[5];
             } else {
-                current_image = CURRENT_WEAPON.walk_left[5];
+                current_image = weapon[current_weapon].walk_left[5];
             }
             break;
         case UP_DIR:
-            current_image = CURRENT_WEAPON.walk_up[5];
+            current_image = weapon[current_weapon].walk_up[5];
             break;
         case DOWN_DIR:
-            current_image = CURRENT_WEAPON.walk_down[5];
+            current_image = weapon[current_weapon].walk_down[5];
             break;
         }
     }
@@ -954,7 +976,7 @@ auto player_o::update() -> int
             energy = 0;
             PerformDeath(DEATH_EXPLOSION);
         }
-    } else if (speed_y < MAX_Y_SPEED) {
+    } else if (speed_y < MAX_Y_SPEED(mode)) {
         if (saved_mode == MODE_NORMAL) {
             speed_y += Y_ACCEL;
         } else if (saved_mode == MODE_WATER) {
@@ -1184,7 +1206,7 @@ void player_o::Collision(Object* o)
             }
         }
 
-        if (MAKE_PLAYER_IMMORTAL & o->GetWho()) {
+        if ((MAKE_PLAYER_IMMORTAL & o->GetWho()) != 0) {
 
             state |= STATE_IMMORTAL;
             counter4 = TOUCH_DELAY;

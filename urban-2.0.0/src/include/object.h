@@ -34,84 +34,82 @@
 #include "allegro.h"
 #include "anim.h"
 
-#define RIGHT_DIR 0
-#define LEFT_DIR 1
-#define UP_DIR 2
-#define DOWN_DIR 3
+inline constexpr auto RIGHT_DIR = 0;
+inline constexpr auto LEFT_DIR = 1;
+inline constexpr auto UP_DIR = 2;
+inline constexpr auto DOWN_DIR = 3;
 
-#define EVIL_PLAYER 0
-#define EVIL_ENEMY 1
+inline constexpr auto EVIL_PLAYER = 0;
+inline constexpr auto EVIL_ENEMY = 1;
 
-#define FRIEND_PLAYER 0x01
-#define FRIEND_SCIENTIST 0x02
-#define FRIEND_SOLDIER 0x04
-#define FRIEND_GRENADE 0x08
-#define FRIEND_HS_BULLET 0x10
-#define FRIEND_MINE 0x20
-#define FRIEND_POWERUP 0x40
-#define FRIEND_CARD 0x80
-#define FRIEND_SOLDIER2 0x100
-#define FRIEND_EXPLOSION 0x200
-#define FRIEND_FIREBALL 0x400
-#define FRIEND_VAKTM 0x800
-#define FRIEND_ICEBALL 0x1000
-#define FRIEND_FROZENBODY 0x2000
-#define FRIEND_RAMBO 0x4000
-#define FRIEND_CHECKPOINT 0x8000
-#define FRIEND_DOOR 0x10000
-#define FRIEND_AGENT 0x20000
-#define FRIEND_DEKOR 0x40000
-#define FRIEND_ELEVATOR 0x80000
-#define FRIEND_ELEVSTAT 0x100000
-#define FRIEND_ELEVWIRE 0x200000
-#define FRIEND_WATER 0x400000
-#define FRIEND_BUBBLE 0x800000
-#define FRIEND_BEAM 0x1000000
-#define FRIEND_TANK 0x2000000
-#define FRIEND_PLASMA 0x4000000
+inline constexpr auto FRIEND_PLAYER = 0x01;
+inline constexpr auto FRIEND_SCIENTIST = 0x02;
+inline constexpr auto FRIEND_SOLDIER = 0x04;
+inline constexpr auto FRIEND_GRENADE = 0x08;
+inline constexpr auto FRIEND_HS_BULLET = 0x10;
+inline constexpr auto FRIEND_MINE = 0x20;
+inline constexpr auto FRIEND_POWERUP = 0x40;
+inline constexpr auto FRIEND_CARD = 0x80;
+inline constexpr auto FRIEND_SOLDIER2 = 0x100;
+inline constexpr auto FRIEND_EXPLOSION = 0x200;
+inline constexpr auto FRIEND_FIREBALL = 0x400;
+inline constexpr auto FRIEND_VAKTM = 0x800;
+inline constexpr auto FRIEND_ICEBALL = 0x1000;
+inline constexpr auto FRIEND_FROZENBODY = 0x2000;
+inline constexpr auto FRIEND_RAMBO = 0x4000;
+inline constexpr auto FRIEND_CHECKPOINT = 0x8000;
+inline constexpr auto FRIEND_DOOR = 0x10000;
+inline constexpr auto FRIEND_AGENT = 0x20000;
+inline constexpr auto FRIEND_DEKOR = 0x40000;
+inline constexpr auto FRIEND_ELEVATOR = 0x80000;
+inline constexpr auto FRIEND_ELEVSTAT = 0x100000;
+inline constexpr auto FRIEND_ELEVWIRE = 0x200000;
+inline constexpr auto FRIEND_WATER = 0x400000;
+inline constexpr auto FRIEND_BUBBLE = 0x800000;
+inline constexpr auto FRIEND_BEAM = 0x1000000;
+inline constexpr auto FRIEND_TANK = 0x2000000;
+inline constexpr auto FRIEND_PLASMA = 0x4000000;
 
-#define ENEMY_PLAYER 0x01
-#define ENEMY_SCIENTIST 0x02
-#define ENEMY_SOLDIER 0x04
-#define ENEMY_GRENADE 0x08
-#define ENEMY_HS_BULLET 0x10
-#define ENEMY_MINE 0x20
-#define ENEMY_POWERUP 0x40
-#define ENEMY_CARD 0x80
-#define ENEMY_SOLDIER2 0x100
-#define ENEMY_EXPLOSION 0x200
-#define ENEMY_FIREBALL 0x400
-#define ENEMY_VAKTM 0x800
-#define ENEMY_ICEBALL 0x1000
-#define ENEMY_FROZENBODY 0x2000
-#define ENEMY_RAMBO 0x4000
-#define ENEMY_CHECKPOINT 0x8000
-#define ENEMY_DOOR 0x10000
-#define ENEMY_AGENT 0x20000
-#define ENEMY_DEKOR 0x40000
-#define ENEMY_ELEVATOR 0x80000
-#define ENEMY_ELEVSTAT 0x100000
-#define ENEMY_ELEVWIRE 0x200000
-#define ENEMY_WATER 0x400000
-#define ENEMY_BUBBLE 0x800000
-#define ENEMY_BEAM 0x1000000
-#define ENEMY_TANK 0x2000000
-#define ENEMY_PLASMA 0x4000000
+inline constexpr auto ENEMY_PLAYER = 0x01;
+inline constexpr auto ENEMY_SCIENTIST = 0x02;
+inline constexpr auto ENEMY_SOLDIER = 0x04;
+inline constexpr auto ENEMY_GRENADE = 0x08;
+inline constexpr auto ENEMY_HS_BULLET = 0x10;
+inline constexpr auto ENEMY_MINE = 0x20;
+inline constexpr auto ENEMY_POWERUP = 0x40;
+inline constexpr auto ENEMY_CARD = 0x80;
+inline constexpr auto ENEMY_SOLDIER2 = 0x100;
+inline constexpr auto ENEMY_EXPLOSION = 0x200;
+inline constexpr auto ENEMY_FIREBALL = 0x400;
+inline constexpr auto ENEMY_VAKTM = 0x800;
+inline constexpr auto ENEMY_ICEBALL = 0x1000;
+inline constexpr auto ENEMY_FROZENBODY = 0x2000;
+inline constexpr auto ENEMY_RAMBO = 0x4000;
+inline constexpr auto ENEMY_CHECKPOINT = 0x8000;
+inline constexpr auto ENEMY_DOOR = 0x10000;
+inline constexpr auto ENEMY_AGENT = 0x20000;
+inline constexpr auto ENEMY_DEKOR = 0x40000;
+inline constexpr auto ENEMY_ELEVATOR = 0x80000;
+inline constexpr auto ENEMY_ELEVSTAT = 0x100000;
+inline constexpr auto ENEMY_ELEVWIRE = 0x200000;
+inline constexpr auto ENEMY_WATER = 0x400000;
+inline constexpr auto ENEMY_BUBBLE = 0x800000;
+inline constexpr auto ENEMY_BEAM = 0x1000000;
+inline constexpr auto ENEMY_TANK = 0x2000000;
+inline constexpr auto ENEMY_PLASMA = 0x4000000;
 
-#define MAKE_PLAYER_IMMORTAL (ENEMY_SOLDIER | ENEMY_SOLDIER2 | ENEMY_RAMBO)
+inline constexpr auto MAKE_PLAYER_IMMORTAL = ENEMY_SOLDIER | ENEMY_SOLDIER2 | ENEMY_RAMBO;
 
-#define shells_o bodyparts_o
+inline constexpr auto MODE_NORMAL = 0x01;
+inline constexpr auto MODE_WATER = 0x02;
 
-#define MODE_NORMAL 0x01
-#define MODE_WATER 0x02
-
-#define SHOTGUN 0
-#define FLAME_THROWER 1
-#define ICEMAKER 2
-#define GRENADE_LAUNCHER 3
-#define PLASMA_GUN 4
-#define MINIGUN 5
-#define ELECTRIC 6
+inline constexpr auto SHOTGUN = 0;
+inline constexpr auto FLAME_THROWER = 1;
+inline constexpr auto ICEMAKER = 2;
+inline constexpr auto GRENADE_LAUNCHER = 3;
+inline constexpr auto PLASMA_GUN = 4;
+inline constexpr auto MINIGUN = 5;
+inline constexpr auto ELECTRIC = 6;
 
 class Controllers;
 enum Cardtype { none = 0,
@@ -448,22 +446,22 @@ public:
     virtual ~rocket_o();
     //                static void init();
 };
-#define POWERUP_ENERGY 1
-#define POWERUP_AMMO_SHOTGUN 2
-#define POWERUP_AMMO_ICEMAKER 3
-#define POWERUP_AMMO_FLAME_THROWER 4
-#define POWERUP_AMMO_GRENADE_LAUNCHER 5
-#define POWERUP_AMMO_GRENADE_LAUNCHER6 6
-#define POWERUP_WEAPON_FLAME_THROWER 7
-#define POWERUP_WEAPON_ICEMAKER 8
-#define POWERUP_WEAPON_GRENADE_LAUNCHER 9
-#define POWERUP_EXTRA_LIFE 10
-#define POWERUP_AMMO_PLASMA 11
-#define POWERUP_WEAPON_PLASMA 12
-#define POWERUP_AMMO_MINIGUN 13
-#define POWERUP_WEAPON_MINIGUN 14
-#define POWERUP_AMMO_ELECTRIC 15
-#define POWERUP_WEAPON_ELECTRIC 16
+inline constexpr auto POWERUP_ENERGY = 1;
+inline constexpr auto POWERUP_AMMO_SHOTGUN = 2;
+inline constexpr auto POWERUP_AMMO_ICEMAKER = 3;
+inline constexpr auto POWERUP_AMMO_FLAME_THROWER = 4;
+inline constexpr auto POWERUP_AMMO_GRENADE_LAUNCHER = 5;
+inline constexpr auto POWERUP_AMMO_GRENADE_LAUNCHER6 = 6;
+inline constexpr auto POWERUP_WEAPON_FLAME_THROWER = 7;
+inline constexpr auto POWERUP_WEAPON_ICEMAKER = 8;
+inline constexpr auto POWERUP_WEAPON_GRENADE_LAUNCHER = 9;
+inline constexpr auto POWERUP_EXTRA_LIFE = 10;
+inline constexpr auto POWERUP_AMMO_PLASMA = 11;
+inline constexpr auto POWERUP_WEAPON_PLASMA = 12;
+inline constexpr auto POWERUP_AMMO_MINIGUN = 13;
+inline constexpr auto POWERUP_WEAPON_MINIGUN = 14;
+inline constexpr auto POWERUP_AMMO_ELECTRIC = 15;
+inline constexpr auto POWERUP_WEAPON_ELECTRIC = 16;
 
 //Increases the energy or ammo of the player
 class powerup_o : public Object {
@@ -566,6 +564,8 @@ public:
 private:
     Anim anim {};
 };
+
+using shells_o = bodyparts_o;
 
 class BurningBody_o : public Object {
 public:

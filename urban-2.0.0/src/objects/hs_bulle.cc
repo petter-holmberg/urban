@@ -33,14 +33,14 @@
 #include <allegro.h>
 #include <cstring>
 /***************************************************************************/
-#define HS_SPEED 7
-#define FIRE_SAMPLE "samples/gun2.wav"
+inline constexpr auto HS_SPEED = 7;
+inline constexpr auto FIRE_SAMPLE = "samples/gun2.wav";
 /***************************************************************************/
 HighSpeed_Bullet_o::HighSpeed_Bullet_o(int X, int Y, int Z, int Dir, int friendship, int Damage)
     : Object(X, Y, Z)
 {
     char filename[512];
-    RGB pal[256];
+    PALETTE pal;
 
     width = 1;
     height = 1;

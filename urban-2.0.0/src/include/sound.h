@@ -40,23 +40,14 @@ class Sound {
 
                 int PlayMusic(char *);
                 void StopMusic();
-#ifdef DJGPP
-                void SetMusicVolume(int vol) {set_mod_volume(vol);}
-                int GetMusicVolume() {return get_mod_volume();}
-#else
                 void SetMusicVolume(int vol) {md_musicvolume = vol / 2;}
                 int GetMusicVolume() {return md_musicvolume * 2;}
-#endif
                 void PlaySFX_Critical(const char *);
                 void PlaySFX(const char *);
                 void LoadSFX(const char *);
 
 	private:
-#ifdef DJGPP
-        	JGMOD *current_mod;
-#else
         	MODULE *current_mod;
-#endif
                 SoundCache scache;
                 int soundcard;
 };

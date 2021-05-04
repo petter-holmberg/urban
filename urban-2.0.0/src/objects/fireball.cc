@@ -32,14 +32,13 @@
 #include "object.h"
 #include <allegro.h>
 
-#define X_SPEED 1
-#define FRAME_DELAY 4
+inline constexpr auto X_SPEED = 1;
+inline constexpr auto FRAME_DELAY = 4;
 
 FireBall_o::FireBall_o(int X, int Y, int Z, int Friends, int SpeedX, int SpeedY, int SpeedZ, int Strength)
     : Object(X, Y, Z)
 {
-
-    RGB pal[256];
+    PALETTE pal;
     char filename[512];
     int i = 0;
 

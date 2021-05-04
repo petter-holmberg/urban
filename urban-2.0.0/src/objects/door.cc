@@ -33,14 +33,14 @@
 #include <allegro.h>
 #include <cstring>
 
-#define FRAME_DELAY 5
+inline constexpr auto FRAME_DELAY = 5;
 /****************************************************************************/
-//#define POWERUP_STRENGTH 1000
+
 /****************************************************************************/
 Door_o::Door_o(int X, int Y, int /*Z*/, Cardtype Card)
     : Object(X, Y, 0)
 {
-    RGB pal[256];
+    PALETTE pal;
     char filename[512];
     int i = 0;
 

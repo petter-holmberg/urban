@@ -35,44 +35,44 @@
 #include <cstdlib>
 #include <cstring>
 
-#define PROB_WALK_START 0
-#define PROB_WALK_END 60
-#define PROB_STOP_START 61
-#define PROB_STOP_END 80
-#define PROB_TURN_START 81
-#define PROB_TURN_END 100
-#define PROB_NUMBER 100
+inline constexpr auto PROB_WALK_START = 0;
+inline constexpr auto PROB_WALK_END = 60;
+inline constexpr auto PROB_STOP_START = 61;
+inline constexpr auto PROB_STOP_END = 80;
+inline constexpr auto PROB_TURN_START = 81;
+inline constexpr auto PROB_TURN_END = 100;
+inline constexpr auto PROB_NUMBER = 100;
 
-#define MAX_NUM 15
-#define STATE_NONE 0
-#define STATE_STOP 1
-#define STATE_WALK 2
-#define STATE_TURN 3
-#define STATE_HIT 4
-#define STATE_HIT_COUNTDOWN 5
-#define STATE_COLLAPS 6
-#define STATE_DYING 7
-#define STATE_WAITING 8
-#define STATE_DEAD 9
-#define STATE_WRITE 10
-#define STATE_WRITING 11
+inline constexpr auto MAX_NUM = 15;
+inline constexpr auto STATE_NONE = 0;
+inline constexpr auto STATE_STOP = 1;
+inline constexpr auto STATE_WALK = 2;
+inline constexpr auto STATE_TURN = 3;
+inline constexpr auto STATE_HIT = 4;
+inline constexpr auto STATE_HIT_COUNTDOWN = 5;
+inline constexpr auto STATE_COLLAPS = 6;
+inline constexpr auto STATE_DYING = 7;
+inline constexpr auto STATE_WAITING = 8;
+inline constexpr auto STATE_DEAD = 9;
+inline constexpr auto STATE_WRITE = 10;
+inline constexpr auto STATE_WRITING = 11;
 
-#define MAX_X_SPEED 2 //4
-#define X_FRICTION 1
-#define MIN_X_SPEED (-MAX_X_SPEED) //-4
-#define MAX_Y_SPEED 16
-#define MIN_Y_SPEED (-12)
-#define X_ACCEL 2 //2
-#define Y_ACCEL 1
+inline constexpr auto MAX_X_SPEED = 2;
+inline constexpr auto X_FRICTION = 1;
+inline constexpr auto MIN_X_SPEED = -MAX_X_SPEED;
+inline constexpr auto MAX_Y_SPEED = 16;
+inline constexpr auto MIN_Y_SPEED = -12;
+inline constexpr auto X_ACCEL = 2;
+inline constexpr auto Y_ACCEL = 1;
 
-#define FRAME_DELAY 2
-#define WRITE_DELAY 30
+inline constexpr auto FRAME_DELAY = 2;
+inline constexpr auto WRITE_DELAY = 30;
 
 /**************************************************************************/
 DrGreen_o::DrGreen_o(int X, int Y, int Z)
     : Object(X, Y, Z)
 {
-    RGB pal[256];
+    PALETTE pal;
     char filename[512];
     int i = 0;
 

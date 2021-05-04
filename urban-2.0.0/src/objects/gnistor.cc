@@ -35,7 +35,7 @@
 gnistor_o::gnistor_o(int X, int Y, int Z, int /*Speed_X*/, int /*Speed_Y*/, int /*Speed_Z*/, int Direction)
     : Object(X, Y, Z)
 {
-    RGB pal[256];
+    PALETTE pal;
     char filename[512];
     int i = 0;
 

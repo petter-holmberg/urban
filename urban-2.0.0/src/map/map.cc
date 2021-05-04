@@ -35,10 +35,11 @@
 #include <cstdlib>
 #include <cstring>
 
-#define __CHECK_MAP_BOUNDRIES
-#define BLUE_LEVEL 30
-//#define _USE_EFFECTS
-//#define _USE_DEKORATIONS
+inline constexpr bool CHECK_MAP_BOUNDRIES = true;
+
+inline constexpr auto BLUE_LEVEL = 30;
+inline constexpr bool USE_EFFECTS = false;
+inline constexpr bool USE_DEKORATIONS = false;
 
 struct TileLoadInfo {
     long tile_info;
@@ -330,7 +331,7 @@ Map::Map()
     BITMAP* bmp = icache.GetImage("tiles/desk10.pcx", Pal_air);
     icache.FreeImage(bmp);
 
-    memcpy(Pal, Pal_air, sizeof(PALETTE));
+    Pal = Pal_air;
 
     // Create a blue palette
     for (auto& i : Blue) {
@@ -364,9 +365,7 @@ void Map::NewLevel(int width, int height)
         delete[] objects[2];
     }
 
-    if (background != nullptr) {
-        delete[] background;
-    }
+    delete[] background;
 
     x_size = width;
     y_size = height;
@@ -390,16 +389,16 @@ void Map::NewLevel(int width, int height)
     objects[0] = (int*)calloc(x_size * y_size, sizeof(int));
     objects[1] = (int*)calloc(x_size * y_size, sizeof(int));
     objects[2] = (int*)calloc(x_size * y_size, sizeof(int));
-#ifdef _USE_DEKORATIONS
-    dekor[0] = (int*)calloc(x_size * y_size, sizeof(int));
-    dekor[1] = (int*)calloc(x_size * y_size, sizeof(int));
-    dekor[2] = (int*)calloc(x_size * y_size, sizeof(int));
-#endif
-#ifdef _USE_EFFECTS
-    effect[0] = (int*)calloc(x_size * y_size, sizeof(int));
-    effect[1] = (int*)calloc(x_size * y_size, sizeof(int));
-    effect[2] = (int*)calloc(x_size * y_size, sizeof(int));
-#endif
+    if constexpr (USE_DEKORATIONS) {
+        dekor[0] = (int*)calloc(x_size * y_size, sizeof(int));
+        dekor[1] = (int*)calloc(x_size * y_size, sizeof(int));
+        dekor[2] = (int*)calloc(x_size * y_size, sizeof(int));
+    }
+    if constexpr (USE_EFFECTS) {
+        effect[0] = (int*)calloc(x_size * y_size, sizeof(int));
+        effect[1] = (int*)calloc(x_size * y_size, sizeof(int));
+        effect[2] = (int*)calloc(x_size * y_size, sizeof(int));
+    }
     options = (char**)calloc(MAX_OPTIONS, sizeof(char*));
 }
 /***************************************************************************/
@@ -459,32 +458,32 @@ auto Map::SaveMap(const char* filename) -> int
         }
         fprintf(fd, "</OBJECT_%d>\n\n", z);
     }
-#ifdef _USE_DEKORATIONS
-    for (z = 0; z < 3; z++) {
-        fprintf(fd, "<DEKOR_%d>\n", z);
-        for (y = 0; y < y_size; y++) {
-            for (x = 0; x < x_size; x++) {
+    if constexpr (USE_DEKORATIONS) {
+        for (z = 0; z < 3; z++) {
+            fprintf(fd, "<DEKOR_%d>\n", z);
+            for (y = 0; y < y_size; y++) {
+                for (x = 0; x < x_size; x++) {
 
-                fprintf(fd, "%X,", GetDekor(x, y, z));
+                    fprintf(fd, "%X,", GetDekor(x, y, z));
+                }
+                fprintf(fd, "\n");
             }
-            fprintf(fd, "\n");
+            fprintf(fd, "</DEKOR_%d>\n\n", z);
         }
-        fprintf(fd, "</DEKOR_%d>\n\n", z);
     }
-#endif
-#ifdef _USE_EFFECTS
-    for (z = 0; z < 3; z++) {
-        fprintf(fd, "<EFFECT_%d>\n", z);
-        for (y = 0; y < y_size; y++) {
-            for (x = 0; x < x_size; x++) {
+    if constexpr (USE_EFFECTS) {
+        for (z = 0; z < 3; z++) {
+            fprintf(fd, "<EFFECT_%d>\n", z);
+            for (y = 0; y < y_size; y++) {
+                for (x = 0; x < x_size; x++) {
 
-                fprintf(fd, "%X,", GetEffect(x, y, z));
+                    fprintf(fd, "%X,", GetEffect(x, y, z));
+                }
+                fprintf(fd, "\n");
             }
-            fprintf(fd, "\n");
+            fprintf(fd, "</EFFECT_%d>\n\n", z);
         }
-        fprintf(fd, "</EFFECT_%d>\n\n", z);
     }
-#endif
     fprintf(fd, "<BACKGROUND>\n");
     for (y = 0; y < bg_y_size; y++) {
         for (x = 0; x < bg_x_size; x++) {
@@ -582,7 +581,7 @@ auto Map::LoadMap(const char* filename) -> int
     }
     line = GetLine(fd);
 
-    if (strncmp(line, "URBAN MAP 1.0", 13) != 0 != 0) {
+    if (static_cast<int>(strncmp(line, "URBAN MAP 1.0", 13) != 0) != 0) {
         return 0;
     }
 
@@ -633,7 +632,7 @@ auto Map::LoadMap(const char* filename) -> int
 
     i = 0;
     num_tiles = 0;
-    while (strlen(tiles_to_load[i].filename) != 0u) {
+    while (strlen(tiles_to_load[i].filename) != 0U) {
 
         Filename[num_tiles] = strdup(tiles_to_load[i].filename);
         Tiles[num_tiles] = icache.GetImage(tiles_to_load[i].filename, tmppal);
@@ -644,7 +643,7 @@ auto Map::LoadMap(const char* filename) -> int
 
     i = 0;
     bg_num_tiles = 0;
-    while (strlen(bg_to_load[i].filename) != 0u) {
+    while (strlen(bg_to_load[i].filename) != 0U) {
 
         BGFilename[bg_num_tiles] = strdup(bg_to_load[i].filename);
         BGTiles[bg_num_tiles] = icache.GetImage(bg_to_load[i].filename, tmppal);
@@ -658,7 +657,7 @@ auto Map::LoadMap(const char* filename) -> int
         }
 
         if (strcmp(line, "<TILES>") == 0) {
-            while (strcmp("</TILES>", (line = GetLine(fd))) != 0 != 0) {
+            while (static_cast<int>(strcmp("</TILES>", (line = GetLine(fd))) != 0) != 0) {
 
                 Tiles[num_tiles] = icache.GetImage(line + 5, tmppal);
                 Filename[num_tiles] = strdup(line + 5);
@@ -673,7 +672,7 @@ auto Map::LoadMap(const char* filename) -> int
             };
         }
         if (strcmp(line, "<BGTILES>") == 0) {
-            while (strcmp("</BGTILES>", (line = GetLine(fd))) != 0 != 0) {
+            while (static_cast<int>(strcmp("</BGTILES>", (line = GetLine(fd))) != 0) != 0) {
 
                 BGTiles[bg_num_tiles] = icache.GetImage(line + 5, tmppal);
                 BGFilename[bg_num_tiles] = strdup(line + 5);
@@ -701,7 +700,7 @@ auto Map::LoadMap(const char* filename) -> int
                 }
             }
             line = GetLine(fd);
-            if (strcmp(strtok(line, " \n"), "</SECTION_0>") != 0 != 0) {
+            if (static_cast<int>(strcmp(strtok(line, " \n"), "</SECTION_0>") != 0) != 0) {
                 return 0;
             }
         }
@@ -720,7 +719,7 @@ auto Map::LoadMap(const char* filename) -> int
                 }
             }
             line = GetLine(fd);
-            if (strcmp(strtok(line, " \n"), "</SECTION_1>") != 0 != 0) {
+            if (static_cast<int>(strcmp(strtok(line, " \n"), "</SECTION_1>") != 0) != 0) {
                 return 0;
             }
         }
@@ -738,7 +737,7 @@ auto Map::LoadMap(const char* filename) -> int
                 }
             }
             line = GetLine(fd);
-            if (strcmp(strtok(line, " \n"), "</SECTION_2>") != 0 != 0) {
+            if (static_cast<int>(strcmp(strtok(line, " \n"), "</SECTION_2>") != 0) != 0) {
                 return 0;
             }
         }
@@ -756,7 +755,7 @@ auto Map::LoadMap(const char* filename) -> int
                 }
             }
             line = GetLine(fd);
-            if (strcmp(strtok(line, " \n"), "</OBJECT_0>") != 0 != 0) {
+            if (static_cast<int>(strcmp(strtok(line, " \n"), "</OBJECT_0>") != 0) != 0) {
                 return 0;
             }
         }
@@ -774,7 +773,7 @@ auto Map::LoadMap(const char* filename) -> int
                 }
             }
             line = GetLine(fd);
-            if (strcmp(strtok(line, " \n"), "</OBJECT_1>") != 0 != 0) {
+            if (static_cast<int>(strcmp(strtok(line, " \n"), "</OBJECT_1>") != 0) != 0) {
                 return 0;
             }
         }
@@ -795,7 +794,7 @@ auto Map::LoadMap(const char* filename) -> int
                 }
             }
             line = GetLine(fd);
-            if (strcmp(strtok(line, " \n"), "</OBJECT_2>") != 0 != 0) {
+            if (static_cast<int>(strcmp(strtok(line, " \n"), "</OBJECT_2>") != 0) != 0) {
                 return 0;
             }
         }
@@ -813,116 +812,122 @@ auto Map::LoadMap(const char* filename) -> int
                 }
             }
             line = GetLine(fd);
-            if (strcmp(strtok(line, " \n"), "</BACKGROUND>") != 0 != 0) {
+            if (static_cast<int>(strcmp(strtok(line, " \n"), "</BACKGROUND>") != 0) != 0) {
                 return 0;
             }
         }
-#ifdef _USE_DEKORATIONS
-        if (!strcmp(line, "<DEKOR_0>")) {
-            dekor[0] = new maptype[x_size * y_size];
+        if constexpr (USE_DEKORATIONS) {
+            if (strcmp(line, "<DEKOR_0>") == 0) {
+                dekor[0] = new maptype[x_size * y_size];
 
-            for (int i = 0; i < y_size; i++) {
-                int j = 0;
+                for (int i = 0; i < y_size; i++) {
+                    int j = 0;
+                    line = GetLine(fd);
+                    char* tok = nullptr;
+                    for (tok = strtok(line, " ,");
+                         tok != nullptr; tok = strtok(nullptr, " ,")) {
+
+                        dekor[0][(j++) + (i * x_size)] = (int)strtol(tok, nullptr, 16);
+                    }
+                }
                 line = GetLine(fd);
-                char* tok;
-                for (tok = strtok(line, " ,");
-                     tok; tok = strtok(NULL, " ,")) {
-
-                    dekor[0][(j++) + (i * x_size)] = (int)strtol(tok, NULL, 16);
+                if (static_cast<int>(strcmp(strtok(line, " \n"), "</DEKOR_0>") != 0) != 0) {
+                    return 0;
                 }
             }
-            line = GetLine(fd);
-            if (strcmp(strtok(line, " \n"), "</DEKOR_0>"))
-                return 0;
-        }
-        if (!strcmp(line, "<DEKOR_1>")) {
-            dekor[1] = new maptype[x_size * y_size];
+            if (strcmp(line, "<DEKOR_1>") == 0) {
+                dekor[1] = new maptype[x_size * y_size];
 
-            for (int i = 0; i < y_size; i++) {
-                int j = 0;
+                for (int i = 0; i < y_size; i++) {
+                    int j = 0;
+                    line = GetLine(fd);
+                    char* tok = nullptr;
+                    for (tok = strtok(line, " ,");
+                         tok != nullptr; tok = strtok(nullptr, " ,")) {
+
+                        dekor[1][(j++) + (i * x_size)] = (int)strtol(tok, nullptr, 16);
+                    }
+                }
                 line = GetLine(fd);
-                char* tok;
-                for (tok = strtok(line, " ,");
-                     tok; tok = strtok(NULL, " ,")) {
-
-                    dekor[1][(j++) + (i * x_size)] = (int)strtol(tok, NULL, 16);
+                if (static_cast<int>(strcmp(strtok(line, " \n"), "</DEKOR_1>") != 0) != 0) {
+                    return 0;
                 }
             }
-            line = GetLine(fd);
-            if (strcmp(strtok(line, " \n"), "</DEKOR_1>"))
-                return 0;
-        }
-        if (!strcmp(line, "<DEKOR_2>")) {
-            dekor[2] = new maptype[x_size * y_size];
+            if (strcmp(line, "<DEKOR_2>") == 0) {
+                dekor[2] = new maptype[x_size * y_size];
 
-            for (int i = 0; i < y_size; i++) {
-                int j = 0;
+                for (int i = 0; i < y_size; i++) {
+                    int j = 0;
+                    line = GetLine(fd);
+                    char* tok = nullptr;
+                    for (tok = strtok(line, " ,");
+                         tok != nullptr; tok = strtok(nullptr, " ,")) {
+
+                        dekor[2][(j++) + (i * x_size)] = (int)strtol(tok, nullptr, 16);
+                    }
+                }
                 line = GetLine(fd);
-                char* tok;
-                for (tok = strtok(line, " ,");
-                     tok; tok = strtok(NULL, " ,")) {
-
-                    dekor[2][(j++) + (i * x_size)] = (int)strtol(tok, NULL, 16);
+                if (static_cast<int>(strcmp(strtok(line, " \n"), "</DEKOR_2>") != 0) != 0) {
+                    return 0;
                 }
             }
-            line = GetLine(fd);
-            if (strcmp(strtok(line, " \n"), "</DEKOR_2>"))
-                return 0;
         }
-#endif
-#ifdef _USE_EFFECTS
-        if (!strcmp(line, "<EFFECT_0>")) {
-            effect[0] = new maptype[x_size * y_size];
+        if constexpr (USE_EFFECTS) {
+            if (strcmp(line, "<EFFECT_0>") == 0) {
+                effect[0] = new maptype[x_size * y_size];
 
-            for (int i = 0; i < y_size; i++) {
-                int j = 0;
+                for (int i = 0; i < y_size; i++) {
+                    int j = 0;
+                    line = GetLine(fd);
+                    char* tok = nullptr;
+                    for (tok = strtok(line, " ,");
+                         tok != nullptr; tok = strtok(nullptr, " ,")) {
+
+                        effect[0][(j++) + (i * x_size)] = (int)strtol(tok, nullptr, 16);
+                    }
+                }
                 line = GetLine(fd);
-                char* tok;
-                for (tok = strtok(line, " ,");
-                     tok; tok = strtok(NULL, " ,")) {
-
-                    effect[0][(j++) + (i * x_size)] = (int)strtol(tok, NULL, 16);
+                if (static_cast<int>(strcmp(strtok(line, " \n"), "</EFFECT_0>") != 0) != 0) {
+                    return 0;
                 }
             }
-            line = GetLine(fd);
-            if (strcmp(strtok(line, " \n"), "</EFFECT_0>"))
-                return 0;
-        }
-        if (!strcmp(line, "<EFFECT_1>")) {
-            effect[1] = new maptype[x_size * y_size];
+            if (strcmp(line, "<EFFECT_1>") == 0) {
+                effect[1] = new maptype[x_size * y_size];
 
-            for (int i = 0; i < y_size; i++) {
-                int j = 0;
+                for (int i = 0; i < y_size; i++) {
+                    int j = 0;
+                    line = GetLine(fd);
+                    char* tok = nullptr;
+                    for (tok = strtok(line, " ,");
+                         tok != nullptr; tok = strtok(nullptr, " ,")) {
+
+                        effect[1][(j++) + (i * x_size)] = (int)strtol(tok, nullptr, 16);
+                    }
+                }
                 line = GetLine(fd);
-                char* tok;
-                for (tok = strtok(line, " ,");
-                     tok; tok = strtok(NULL, " ,")) {
-
-                    effect[1][(j++) + (i * x_size)] = (int)strtol(tok, NULL, 16);
+                if (static_cast<int>(strcmp(strtok(line, " \n"), "</EFFECT_1>") != 0) != 0) {
+                    return 0;
                 }
             }
-            line = GetLine(fd);
-            if (strcmp(strtok(line, " \n"), "</EFFECT_1>"))
-                return 0;
-        }
-        if (!strcmp(line, "<EFFECT_2>")) {
-            effect[2] = new maptype[x_size * y_size];
+            if (strcmp(line, "<EFFECT_2>") == 0) {
+                effect[2] = new maptype[x_size * y_size];
 
-            for (int i = 0; i < y_size; i++) {
-                int j = 0;
+                for (int i = 0; i < y_size; i++) {
+                    int j = 0;
+                    line = GetLine(fd);
+                    char* tok = nullptr;
+                    for (tok = strtok(line, " ,");
+                         tok != nullptr; tok = strtok(nullptr, " ,")) {
+
+                        effect[2][(j++) + (i * x_size)] = (int)strtol(tok, nullptr, 16);
+                    }
+                }
                 line = GetLine(fd);
-                char* tok;
-                for (tok = strtok(line, " ,");
-                     tok; tok = strtok(NULL, " ,")) {
-
-                    effect[2][(j++) + (i * x_size)] = (int)strtol(tok, NULL, 16);
+                if (static_cast<int>(strcmp(strtok(line, " \n"), "</EFFECT_2>") != 0) != 0) {
+                    return 0;
                 }
             }
-            line = GetLine(fd);
-            if (strcmp(strtok(line, " \n"), "</EFFECT_2>"))
-                return 0;
         }
-#endif
         if (strcmp(line, "<OPTIONS>") == 0) {
             options = (char**)calloc(MAX_OPTIONS, sizeof(char*));
             i = 0;
@@ -930,7 +935,7 @@ auto Map::LoadMap(const char* filename) -> int
             do {
                 line = GetLine(fd);
                 tok = strtok(line, "\n");
-                if (strcmp(tok, "</OPTIONS>") != 0 != 0) {
+                if (static_cast<int>(strcmp(tok, "</OPTIONS>") != 0) != 0) {
                     options[i++] = strdup(tok);
                     if (i > MAX_OPTIONS) {
                         return 0;
@@ -938,7 +943,7 @@ auto Map::LoadMap(const char* filename) -> int
                 } else {
                     break;
                 }
-            } while (strcmp(tok, "</OPTIONS>") != 0 != 0);
+            } while (static_cast<int>(strcmp(tok, "</OPTIONS>") != 0) != 0);
         }
     };
     if (using_dat == 0) {
@@ -972,14 +977,14 @@ auto Map::GetLine(FILE* fd) -> char*
 /***************************************************************************/
 auto Map::GetBackGround(int x, int y) -> int
 {
-#ifdef __CHECK_MAP_BOUNDRIES
-    if (x < 0 || y < 0) {
-        return 0;
+    if constexpr (CHECK_MAP_BOUNDRIES) {
+        if (x < 0 || y < 0) {
+            return 0;
+        }
+        if (x > bg_x_size || y > bg_y_size) {
+            return 0;
+        }
     }
-    if (x > bg_x_size || y > bg_y_size) {
-        return 0;
-    }
-#endif
     if (background == nullptr) {
         return 0;
     }
@@ -989,138 +994,148 @@ auto Map::GetBackGround(int x, int y) -> int
 /***************************************************************************/
 auto Map::SetBackGround(int x, int y, int v) -> int
 {
-#ifdef __CHECK_MAP_BOUNDRIES
-    if (x < 0 || y < 0) {
-        return 0;
+    if constexpr (CHECK_MAP_BOUNDRIES) {
+        if (x < 0 || y < 0) {
+            return 0;
+        }
+        if (x > bg_x_size || y > bg_y_size) {
+            return 0;
+        }
     }
-    if (x > bg_x_size || y > bg_y_size) {
-        return 0;
-    }
-#endif
     return (background[x + (y * bg_x_size)] = v);
 }
 
 /***************************************************************************/
-auto Map::GetEffect(int /*x*/, int /*y*/, int /*z*/) -> int
+auto Map::GetEffect(int x, int y, int z) -> int
 {
-#ifdef _USE_EFFECTS
-#ifdef __CHECK_MAP_BOUNDRIES
-    if (x < 0 || y < 0 || z < 0)
+    if constexpr (USE_EFFECTS) {
+        if constexpr (CHECK_MAP_BOUNDRIES) {
+            if (x < 0 || y < 0 || z < 0) {
+                return 0;
+            }
+            if (x > x_size || y > y_size || z > 2) {
+                return 0;
+            }
+        }
+        if (effect[z] == nullptr) {
+            return 0;
+        }
+        return effect[z][x + (y * x_size)];
+    } else {
         return 0;
-    if (x > x_size || y > y_size || z > 2)
-        return 0;
-#endif
-    if (effect[z] == NULL)
-        return 0;
-    return effect[z][x + (y * x_size)];
-#else
-    return 0;
-#endif
+    }
 }
 
 /***************************************************************************/
-auto Map::SetEffect(int /*x*/, int /*y*/, int /*z*/, int /*v*/) -> int
+auto Map::SetEffect(int x, int y, int z, int v) -> int
 {
-#ifdef _USE_EFFECTS
-#ifdef __CHECK_MAP_BOUNDRIES
-    if (x < 0 || y < 0 || z < 0)
+    if constexpr (USE_EFFECTS) {
+        if constexpr (CHECK_MAP_BOUNDRIES) {
+            if (x < 0 || y < 0 || z < 0) {
+                return 0;
+            }
+            if (x > x_size || y > y_size || z > 2) {
+                return 0;
+            }
+        }
+        return (effect[z][x + (y * x_size)] = v);
+    } else {
         return 0;
-    if (x > x_size || y > y_size || z > 2)
-        return 0;
-#endif
-    return (effect[z][x + (y * x_size)] = v);
-#else
-    return 0;
-#endif
+    }
 }
 
 /***************************************************************************/
-auto Map::GetDekor(int /*x*/, int /*y*/, int /*z*/) -> int
+auto Map::GetDekor(int x, int y, int z) -> int
 {
-#ifdef _USE_DEKORATIONS
-#ifdef __CHECK_MAP_BOUNDRIES
-    if (x < 0 || y < 0 || z < 0)
+    if constexpr (USE_EFFECTS) {
+        if constexpr (CHECK_MAP_BOUNDRIES) {
+            if (x < 0 || y < 0 || z < 0) {
+                return 0;
+            }
+            if (x > x_size || y > y_size || z > 2) {
+                return 0;
+            }
+        }
+        if (dekor[z] == nullptr) {
+            return 0;
+        }
+        return dekor[z][x + (y * x_size)];
+    } else {
         return 0;
-    if (x > x_size || y > y_size || z > 2)
-        return 0;
-#endif
-    if (dekor[z] == NULL)
-        return 0;
-    return dekor[z][x + (y * x_size)];
-#else
-    return 0;
-#endif
+    }
 }
 
 /***************************************************************************/
-auto Map::SetDekor(int /*x*/, int /*y*/, int /*z*/, int /*v*/) -> int
+auto Map::SetDekor(int x, int y, int z, int v) -> int
 {
-#ifdef _USE_DEKORATIONS
-#ifdef __CHECK_MAP_BOUNDRIES
-    if (x < 0 || y < 0 || z < 0)
+    if constexpr (USE_EFFECTS) {
+        if constexpr (CHECK_MAP_BOUNDRIES) {
+            if (x < 0 || y < 0 || z < 0) {
+                return 0;
+            }
+            if (x > x_size || y > y_size || z > 2) {
+                return 0;
+            }
+        }
+        return (dekor[z][x + (y * x_size)] = v);
+    } else {
         return 0;
-    if (x > x_size || y > y_size || z > 2)
-        return 0;
-#endif
-    return (dekor[z][x + (y * x_size)] = v);
-#else
-    return 0;
-#endif
+    }
 }
 
 /***************************************************************************/
 auto Map::GetObj(int x, int y, int z) -> int
 {
-#ifdef __CHECK_MAP_BOUNDRIES
-    if (x < 0 || y < 0 || z < 0) {
-        return 0;
+    if constexpr (CHECK_MAP_BOUNDRIES) {
+        if (x < 0 || y < 0 || z < 0) {
+            return 0;
+        }
+        if (x >= x_size || y >= y_size || z > 2) {
+            return 0;
+        }
     }
-    if (x >= x_size || y >= y_size || z > 2) {
-        return 0;
-    }
-#endif
     return objects[z][x + (y * x_size)];
 }
 
 /***************************************************************************/
 auto Map::SetObj(int x, int y, int z, int v) -> int
 {
-#ifdef __CHECK_MAP_BOUNDRIES
-    if (x < 0 || y < 0 || z < 0) {
-        return 0;
+    if constexpr (CHECK_MAP_BOUNDRIES) {
+        if (x < 0 || y < 0 || z < 0) {
+            return 0;
+        }
+        if (x >= x_size || y >= y_size || z > 2) {
+            return 0;
+        }
     }
-    if (x >= x_size || y >= y_size || z > 2) {
-        return 0;
-    }
-#endif
     return (objects[z][x + (y * x_size)] = v);
 }
 
 /***************************************************************************/
 auto Map::SetBG(int x, int y, int z, int v) -> int
 {
-#ifdef __CHECK_MAP_BOUNDRIES
-    if (x < 0 || y < 0 || z < 0) {
-        return 0;
+    if constexpr (CHECK_MAP_BOUNDRIES) {
+        if (x < 0 || y < 0 || z < 0) {
+            return 0;
+        }
+        if (x >= x_size || y >= y_size || z > 2) {
+            return 0;
+        }
     }
-    if (x >= x_size || y >= y_size || z > 2) {
-        return 0;
-    }
-#endif
     return (sections[z][x + (y * x_size)] = v);
 }
 
 /***************************************************************************/
 auto Map::GetBG(int x, int y, int z) -> int
 {
-#ifdef __CHECK_MAP_BOUNDRIES
-    if (x < 0 || y < 0 || z < 0) {
-        return 0;
+    if constexpr (CHECK_MAP_BOUNDRIES) {
+        if (x < 0 || y < 0 || z < 0) {
+            return 0;
+        }
+        if (x >= x_size || y >= y_size || z > 2) {
+            return 0;
+        }
     }
-    if (x >= x_size || y >= y_size || z > 2) {
-        return 0;
-    }
-#endif
     return sections[z][x + (y * x_size)];
 }
 /***************************************************************************/
@@ -1150,14 +1165,14 @@ auto Map::GetTile(int num) -> BITMAP*
 /***************************************************************************/
 auto Map::GetTile(int x, int y, int z) -> BITMAP*
 {
-#ifdef __CHECK_MAP_BOUNDRIES
-    if (x < 0 || y < 0 || z < 0) {
-        return nullptr;
+    if constexpr (CHECK_MAP_BOUNDRIES) {
+        if (x < 0 || y < 0 || z < 0) {
+            return nullptr;
+        }
+        if (x > x_size || y > y_size || z > 2) {
+            return nullptr;
+        }
     }
-    if (x > x_size || y > y_size || z > 2) {
-        return nullptr;
-    }
-#endif
     return Tiles[sections[z][x + (y * x_size)]];
     //	return Tiles[background[x + (y * x_size)]];
 }
@@ -1172,7 +1187,7 @@ auto Map::GetBGTile(int num) -> BITMAP*
     return BGTiles[num];
 }
 /***************************************************************************/
-auto Map::GetPal() -> RGB*
+auto Map::GetPal() -> PALETTE&
 {
     return Pal;
 }

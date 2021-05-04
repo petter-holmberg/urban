@@ -39,87 +39,87 @@ Controllers::Controllers()
 Controllers::~Controllers()
     = default;
 
-auto Controllers::up() -> int
+auto Controllers::up() -> bool
 {
     return 0;
 }
 
-auto Controllers::down() -> int
+auto Controllers::down() -> bool
 {
     return 0;
 }
 
-auto Controllers::left() -> int
+auto Controllers::left() -> bool
 {
     return 0;
 }
 
-auto Controllers::right() -> int
+auto Controllers::right() -> bool
 {
     return 0;
 }
 
-auto Controllers::jump() -> int
+auto Controllers::jump() -> bool
 {
     return 0;
 }
 
-auto Controllers::fire() -> int
+auto Controllers::fire() -> bool
 {
     return 0;
 }
 
-auto Controllers::weapon1() -> int
+auto Controllers::weapon1() -> bool
 {
     return 0;
 }
 
-auto Controllers::weapon2() -> int
+auto Controllers::weapon2() -> bool
 {
     return 0;
 }
 
-auto Controllers::weapon3() -> int
+auto Controllers::weapon3() -> bool
 {
     return 0;
 }
 
-auto Controllers::weapon4() -> int
+auto Controllers::weapon4() -> bool
 {
     return 0;
 }
 
-auto Controllers::weapon5() -> int
+auto Controllers::weapon5() -> bool
 {
     return 0;
 }
 
-auto Controllers::weapon6() -> int
+auto Controllers::weapon6() -> bool
 {
     return 0;
 }
 
-auto Controllers::weapon7() -> int
+auto Controllers::weapon7() -> bool
 {
     return 0;
 }
 
-auto Controllers::weapon8() -> int
+auto Controllers::weapon8() -> bool
 {
     return 0;
 }
 
-auto Controllers::weapon9() -> int
+auto Controllers::weapon9() -> bool
 {
     return 0;
 }
 
-auto Controllers::next_weapon() -> int
+auto Controllers::next_weapon() -> bool
 {
     return 0;
 }
 
-auto Controllers::prev_weapon() -> int
+auto Controllers::prev_weapon() -> bool
 {
     return 0;
 }

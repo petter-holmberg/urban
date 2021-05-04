@@ -34,36 +34,36 @@
 #include <cstdlib>
 #include <cstring>
 
-#define PROB_WALK_START 0
-#define PROB_WALK_END 80
-#define PROB_TURN_START 81
-#define PROB_TURN_END 100
-#define PROB_NUMBER 100
-#define MAX_NUM 10
+inline constexpr auto PROB_WALK_START = 0;
+inline constexpr auto PROB_WALK_END = 80;
+inline constexpr auto PROB_TURN_START = 81;
+inline constexpr auto PROB_TURN_END = 100;
+inline constexpr auto PROB_NUMBER = 100;
+inline constexpr auto MAX_NUM = 10;
 
-#define MAX_X_SPEED 1 //4
-#define X_FRICTION 1
-#define MIN_X_SPEED (-MAX_X_SPEED) //-4
-#define MAX_Y_SPEED 16
-#define MIN_Y_SPEED (-12)
-#define X_ACCEL 2 //2
-#define Y_ACCEL 1
+inline constexpr auto MAX_X_SPEED = 1;
+inline constexpr auto X_FRICTION = 1;
+inline constexpr auto MIN_X_SPEED = -MAX_X_SPEED;
+inline constexpr auto MAX_Y_SPEED = 16;
+inline constexpr auto MIN_Y_SPEED = -12;
+inline constexpr auto X_ACCEL = 2;
+inline constexpr auto Y_ACCEL = 1;
 
-#define STATE_WALK 0
-#define STATE_TURN 1
-#define STATE_DEAD 2
-#define STATE_NONE 3
-#define STATE_BURN 4
-#define STATE_BURNING 5
+inline constexpr auto STATE_WALK = 0;
+inline constexpr auto STATE_TURN = 1;
+inline constexpr auto STATE_DEAD = 2;
+inline constexpr auto STATE_NONE = 3;
+inline constexpr auto STATE_BURN = 4;
+inline constexpr auto STATE_BURNING = 5;
 
-#define FRAME_DELAY 2
-#define BURN_DELAY 300
+inline constexpr auto FRAME_DELAY = 2;
+inline constexpr auto BURN_DELAY = 300;
 
 /**************************************************************************/
 BurningBody_o::BurningBody_o(int X, int Y, int Z, int Move)
     : Object(X, Y, Z)
 {
-    RGB pal[256];
+    PALETTE pal;
     char filename[512];
     int i = 0;
 

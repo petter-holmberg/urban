@@ -34,105 +34,103 @@
 
 extern Config* config;
 
-#define __USE_CONFIG_KEYS
+inline constexpr auto USE_CONFIG_KEYS = false;
 
 Keyboard_ctrl::Keyboard_ctrl()
 {
-//	controller_type = CONTROLLER_KEYBOARD;
-#ifdef __USE_CONFIG_KEYS
-    key_up = config->keyconf.key_up;
-    key_down = config->keyconf.key_down;
-    key_left = config->keyconf.key_left;
-    key_right = config->keyconf.key_right;
-    key_jump = config->keyconf.key_jump;
-    key_fire = config->keyconf.key_fire;
-    key_next = config->keyconf.key_prevweapon;
-    key_prev = config->keyconf.key_nextweapon;
-    if (key_next == 0) {
-        key_next = KEY_INSERT;
+    //	controller_type = CONTROLLER_KEYBOARD;
+    if constexpr (USE_CONFIG_KEYS) {
+        key_up = config->keyconf.key_up;
+        key_down = config->keyconf.key_down;
+        key_left = config->keyconf.key_left;
+        key_right = config->keyconf.key_right;
+        key_jump = config->keyconf.key_jump;
+        key_fire = config->keyconf.key_fire;
+        key_next = config->keyconf.key_prevweapon;
+        key_prev = config->keyconf.key_nextweapon;
+        if (key_next == scan_code::NONE) {
+            key_next = scan_code::KEY_INSERT;
+        }
+        if (key_prev == scan_code::NONE) {
+            key_prev = scan_code::KEY_DEL;
+        }
+    } else {
+        key_up = scan_code::KEY_UP;
+        key_down = scan_code::KEY_DOWN;
+        key_right = scan_code::KEY_RIGHT;
+        key_left = scan_code::KEY_LEFT;
+        key_jump = scan_code::KEY_SPACE;
+        key_fire = scan_code::KEY_LCONTROL;
+        key_next = scan_code::KEY_INSERT;
+        key_prev = scan_code::KEY_DEL;
     }
-    if (key_prev == 0) {
-        key_prev = KEY_DEL;
-    }
-#else
-    key_up = KEY_UP;
-    key_down = KEY_DOWN;
-    key_right = KEY_RIGHT;
-    key_left = KEY_LEFT;
-    key_jump = KEY_SPACE;
-    key_fire = KEY_LCONTROL;
-    key_next = KEY_INSERT;
-    key_prev = KEY_DEL;
-#endif
 }
 
 Keyboard_ctrl::~Keyboard_ctrl()
     = default;
 
-auto Keyboard_ctrl::up() -> int
+auto Keyboard_ctrl::up() -> bool
 {
-    return key[key_up];
+    return key[static_cast<size_t>(key_up)];
 }
 
-auto Keyboard_ctrl::down() -> int
+auto Keyboard_ctrl::down() -> bool
 {
-    return key[key_down];
+    return key[static_cast<size_t>(key_down)];
 }
 
-auto Keyboard_ctrl::left() -> int
+auto Keyboard_ctrl::left() -> bool
 {
-    return key[key_left];
+    return key[static_cast<size_t>(key_left)];
 }
 
-auto Keyboard_ctrl::right() -> int
+auto Keyboard_ctrl::right() -> bool
 {
-    return key[key_right];
+    return key[static_cast<size_t>(key_right)];
 }
 
-auto Keyboard_ctrl::jump() -> int
+auto Keyboard_ctrl::jump() -> bool
 {
-    return key[key_jump];
+    return key[static_cast<size_t>(key_jump)];
 }
 
-auto Keyboard_ctrl::fire() -> int
+auto Keyboard_ctrl::fire() -> bool
 {
-    return key[key_fire];
+    return key[static_cast<size_t>(key_fire)];
 }
 
-auto Keyboard_ctrl::next_weapon() -> int
+auto Keyboard_ctrl::next_weapon() -> bool
 {
     static int pressed = 0;
 
-    if (key[key_next] == 0u) {
+    if (!key[static_cast<size_t>(key_next)]) {
         pressed = 0;
     }
 
-    if (key[key_next] != 0u) {
+    if (!key[static_cast<size_t>(key_next)]) {
         if (pressed != 0) {
-            return 0;
-        } else {
-            pressed = 1;
+            return false;
         }
+        pressed = 1;
     }
 
-    return key[key_next];
+    return key[static_cast<size_t>(key_next)];
 }
 
-auto Keyboard_ctrl::prev_weapon() -> int
+auto Keyboard_ctrl::prev_weapon() -> bool
 {
     static int pressed = 0;
 
-    if (key[key_prev] == 0u) {
+    if (!key[static_cast<size_t>(key_prev)]) {
         pressed = 0;
     }
 
-    if (key[key_prev] != 0u) {
+    if (!key[static_cast<size_t>(key_prev)]) {
         if (pressed != 0) {
-            return 0;
-        } else {
-            pressed = 1;
+            return false;
         }
+        pressed = 1;
     }
 
-    return key[key_prev];
+    return key[static_cast<size_t>(key_prev)];
 }

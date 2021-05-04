@@ -32,12 +32,8 @@
 #include <cstring>
 #include <unistd.h>
 
-#ifdef DJGPP
-#include <dos.h>
-#else
 #include <csignal>
 #include <sys/time.h>
-#endif
 
 #include "cheat.h"
 #include "config.h"
@@ -52,41 +48,60 @@
 #include "urbfont.h"
 #include <ctime>
 
-#define LIGHTENING_MAX 58
-#define LIGHTENING_STEP 5
+inline constexpr auto LIGHTENING_MAX = 58;
+inline constexpr auto LIGHTENING_STEP = 5;
 
-#define MAP_WIDTH map.GetWidth()
-#define MAP_HEIGHT map.GetHeight()
-#define FRAMESPERSEC 60
-#define SCORE_BOARD_HEIGHT (61 - (2 * TILE_SIDE_HEIGHT))
-#define TRANSPARENT_TILE 4096
-#define FAKE_TILE 8192
-#define IS_TRANSPARENT(n) (map.GetTileInfo((n)-1) & TRANSPARENT_TILE)
-#define IS_FAKE(n) (map.GetTileInfo((n)-1) & FAKE_TILE)
-#define SHAKE_DELAY 50
-#define MSG_FRAME_DELAY 120
+inline constexpr auto FRAMESPERSEC = 60;
+inline constexpr auto SCORE_BOARD_HEIGHT = 61 - (2 * TILE_SIDE_HEIGHT);
+inline constexpr auto TRANSPARENT_TILE = 4096;
+inline constexpr auto FAKE_TILE = 8192;
 
-//#define NEED_TO_STEGA
+inline auto IS_TRANSPARENT(const Map& map, int n)
+{
+    return map.GetTileInfo((n)-1) & TRANSPARENT_TILE;
+}
 
-#if defined(NEED_TO_STEGA) && defined(__DISTRIBUTION__)
-#warning NEED_TO_STEGA defined and compiling for distribution
-#endif
+inline auto IS_FAKE(const Map& map, int n)
+{
+    return map.GetTileInfo((n)-1) & FAKE_TILE;
+}
 
-#define SECONDS_TO_FRAMES(x) ((x)*FRAMESPERSEC)
-#define FRAMES_TO_SECONDS(x) ((x) / FRAMESPERSEC)
-//#define _ALLOW_Fx_LAYER_OFF
+inline constexpr auto SHAKE_DELAY = 50;
+inline constexpr auto MSG_FRAME_DELAY = 120;
 
-#define PLAYER_N_WEAPONS 7 //OBS!! ändra i player.cc
+inline constexpr auto SECONDS_TO_FRAMES(int x)
+{
+    return x * FRAMESPERSEC;
+}
 
-#define OBJ_ON_LEFT (map_x - 500)
-#define OBJ_ON_RIGHT (map_x + max_update_area_x)
-#define OBJ_ON_TOP (map_y - 500)
-#define OBJ_ON_BOTTOM (map_y + 500)
+inline constexpr auto FRAMES_TO_SECONDS(int x)
+{
+    return x / FRAMESPERSEC;
+}
 
-#define CLEAR_MESSAGES ({    \
-    while (num_messages > 0) \
-        PopMessage();        \
-})
+inline constexpr bool ALLOW_Fx_LAYER_OFF = false;
+
+inline constexpr auto PLAYER_N_WEAPONS = 7; //OBS!! change in player.cc
+
+constexpr auto OBJ_ON_LEFT(int map_x)
+{
+    return map_x - 500;
+}
+
+constexpr auto OBJ_ON_RIGHT(int map_x, int max_update_area_x)
+{
+    return map_x + max_update_area_x;
+}
+
+constexpr auto OBJ_ON_TOP(int map_y)
+{
+    return map_y - 500;
+}
+
+constexpr auto OBJ_ON_BOTTOM(int map_y)
+{
+    return map_y + 500;
+}
 
 volatile long n = 0;
 volatile long n2 = 0;
@@ -99,35 +114,35 @@ int cheat_cl_p = 0;
 unsigned long cheat_codes_active = 0;
 
 struct Letter Letters[] = {
-    { KEY_A, 'A' },
-    { KEY_B, 'B' },
-    { KEY_C, 'C' },
-    { KEY_D, 'D' },
-    { KEY_E, 'E' },
-    { KEY_F, 'F' },
-    { KEY_G, 'G' },
-    { KEY_H, 'H' },
-    { KEY_I, 'I' },
-    { KEY_J, 'J' },
-    { KEY_K, 'K' },
-    { KEY_L, 'L' },
-    { KEY_M, 'M' },
-    { KEY_N, 'N' },
-    { KEY_O, 'O' },
-    { KEY_P, 'P' },
-    { KEY_Q, 'Q' },
-    { KEY_R, 'R' },
-    { KEY_S, 'S' },
-    { KEY_T, 'T' },
-    { KEY_U, 'U' },
-    { KEY_V, 'V' },
-    { KEY_W, 'W' },
-    { KEY_X, 'X' },
-    { KEY_Y, 'Y' },
-    { KEY_Z, 'Z' }
+    { scan_code::KEY_A, 'A' },
+    { scan_code::KEY_B, 'B' },
+    { scan_code::KEY_C, 'C' },
+    { scan_code::KEY_D, 'D' },
+    { scan_code::KEY_E, 'E' },
+    { scan_code::KEY_F, 'F' },
+    { scan_code::KEY_G, 'G' },
+    { scan_code::KEY_H, 'H' },
+    { scan_code::KEY_I, 'I' },
+    { scan_code::KEY_J, 'J' },
+    { scan_code::KEY_K, 'K' },
+    { scan_code::KEY_L, 'L' },
+    { scan_code::KEY_M, 'M' },
+    { scan_code::KEY_N, 'N' },
+    { scan_code::KEY_O, 'O' },
+    { scan_code::KEY_P, 'P' },
+    { scan_code::KEY_Q, 'Q' },
+    { scan_code::KEY_R, 'R' },
+    { scan_code::KEY_S, 'S' },
+    { scan_code::KEY_T, 'T' },
+    { scan_code::KEY_U, 'U' },
+    { scan_code::KEY_V, 'V' },
+    { scan_code::KEY_W, 'W' },
+    { scan_code::KEY_X, 'X' },
+    { scan_code::KEY_Y, 'Y' },
+    { scan_code::KEY_Z, 'Z' }
 };
 
-#define NUM_LETTERS (sizeof(Letters) / sizeof(Letters[0]))
+inline constexpr auto NUM_LETTERS = sizeof(Letters) / sizeof(Letters[0]);
 
 struct CheatCode cheat_codes[] = {
     { "LINUSISGOD", CHEAT_MK_PLAYER_IMMORTAL },
@@ -149,7 +164,7 @@ struct CheatCode cheat_codes[] = {
     { "RETURNOFMRA", CHEAT_AIRSTRIKE },
 };
 
-#define NUM_CHEATCODES (sizeof(cheat_codes) / sizeof(cheat_codes[0]))
+inline constexpr auto NUM_CHEATCODES = sizeof(cheat_codes) / sizeof(cheat_codes[0]);
 
 extern "C" {
 void testframe(...)
@@ -157,27 +172,14 @@ void testframe(...)
     n = n2;
     n2 = 0;
 }
-END_OF_FUNCTION(testframe);
-#ifdef DJGPP
-void update_screen()
-{
-#else
 void update_screen(int /*sig*/)
 {
-#endif
     show_next_frame = 1;
 }
-END_OF_FUNCTION(update_screen);
 }
 /**************************************************************************/
 Engine::Engine()
 {
-    LOCK_FUNCTION(testframe);
-    LOCK_FUNCTION(update_screen);
-    LOCK_VARIABLE(n);
-    LOCK_VARIABLE(n2);
-    LOCK_VARIABLE(ENGINE.buffers);
-    LOCK_VARIABLE(show_next_frame);
     player = nullptr;
     num_objects = 0;
     num_alwaysupdate = 0;
@@ -219,15 +221,9 @@ void Engine::EnableLightening()
 void Engine::UpdateLightening()
 {
     PALETTE out;
-    static RGB* white = nullptr;
-
-    if (white == nullptr) {
-
-        white = new RGB[256];
-        for (int i = 0; i < 256; i++) {
-
-            white[i].r = white[i].g = white[i].b = 63;
-        }
+    PALETTE white;
+    for (auto& color : white) {
+        color.r = color.g = color.b = 63;
     }
 
     if (lightening != 0) {
@@ -292,8 +288,8 @@ void Engine::create_objects()
     blit(ibild, screen, 0, 0, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
     for (k = 0; k < 3; k++) {
-        for (i = 0; i < MAP_WIDTH; i++) {
-            procent = (100 * (k * MAP_WIDTH + i)) / (3 * MAP_WIDTH);
+        for (i = 0; i < map.GetWidth(); i++) {
+            procent = (100 * (k * map.GetWidth() + i)) / (3 * map.GetWidth());
 
             sprintf(buffer, "Loading %d%%", procent);
             BITMAP* bmp = fnt.print(buffer);
@@ -315,7 +311,7 @@ void Engine::create_objects()
                 destroy_bitmap(bmp);
             }
 
-            for (j = 0; j < MAP_HEIGHT; j++) {
+            for (j = 0; j < map.GetHeight(); j++) {
                 switch (map.GetDekor(i, j, k)) {
                 case TYPE_PLAYER:
                     map_dekor[num_pre_dekor++] = new player_o(i * (TILE_WIDTH - 1),
@@ -741,7 +737,7 @@ always_shake
             break;
         }
     }
-    if (IS_SOUND_ON) {
+    if (is_sound_on()) {
         sound.PlayMusic(buf2);
     }
     for (; i < j; i++) {
@@ -824,7 +820,6 @@ void Engine::NewGame()
 auto Engine::play_level(const char* map_name, struct PlayerData* p_dat, int controls) -> int
 {
     int i = 0;
-    RGB* pal = nullptr;
 
     srandom(time(nullptr));
 
@@ -835,7 +830,7 @@ auto Engine::play_level(const char* map_name, struct PlayerData* p_dat, int cont
         exit(1);
     }
     // Black background
-    pal = map.GetPal();
+    auto& pal = map.GetPal();
     pal[0].r = 0;
     pal[0].g = 0;
     pal[0].b = 0;
@@ -885,11 +880,6 @@ auto Engine::play_level(const char* map_name, struct PlayerData* p_dat, int cont
     lightening = 0;
 
     create_objects();
-#ifdef DJGPP
-    install_int(testframe, 1000);
-
-    install_int(update_screen, 1000 / FRAMESPERSEC);
-#else
     signal(SIGALRM, update_screen);
 
     struct itimerval tval {
@@ -903,23 +893,20 @@ auto Engine::play_level(const char* map_name, struct PlayerData* p_dat, int cont
     tval.it_value.tv_usec = 1000000 / FRAMESPERSEC;
 
     setitimer(ITIMER_REAL, &tval, &oldval);
-#endif
-    //	CLEAR_MESSAGES;
     for (i = 0; i < num_messages; i++) {
         PopMessage();
     }
 
-#define _PLAYER ((player_o*)player)
     if (p_dat != nullptr) {
         score.SetScore(p_dat->score);
-        _PLAYER->SetEnergy(p_dat->health);
-        _PLAYER->SetLife(p_dat->num_lives);
+        (dynamic_cast<player_o*>(player))->SetEnergy(p_dat->health);
+        (dynamic_cast<player_o*>(player))->SetLife(p_dat->num_lives);
         for (i = 0; i < PLAYER_N_WEAPONS; i++) {
-            _PLAYER->SetAmmo(i, p_dat->weapon_ammo[i]);
+            (dynamic_cast<player_o*>(player))->SetAmmo(i, p_dat->weapon_ammo[i]);
             if (p_dat->weapon_avail[i] != 0) {
-                _PLAYER->EnableWeapon(i);
+                (dynamic_cast<player_o*>(player))->EnableWeapon(i);
             } else {
-                _PLAYER->DisableWeapon(i);
+                (dynamic_cast<player_o*>(player))->DisableWeapon(i);
             }
         }
     }
@@ -934,24 +921,18 @@ auto Engine::play_level(const char* map_name, struct PlayerData* p_dat, int cont
     clear_keybuf();
 
     if (p_dat != nullptr) {
-        p_dat->health = _PLAYER->GetEnergy();
-        p_dat->num_lives = _PLAYER->GetLives();
+        p_dat->health = (dynamic_cast<player_o*>(player))->GetEnergy();
+        p_dat->num_lives = (dynamic_cast<player_o*>(player))->GetLives();
         for (i = 0; i < PLAYER_N_WEAPONS; i++) {
-            p_dat->weapon_ammo[i] = _PLAYER->GetAmmo(i);
-            p_dat->weapon_avail[i] = _PLAYER->HaveWeapon(i);
+            p_dat->weapon_ammo[i] = (dynamic_cast<player_o*>(player))->GetAmmo(i);
+            p_dat->weapon_avail[i] = (dynamic_cast<player_o*>(player))->HaveWeapon(i);
         }
         p_dat->score = score.GetScore();
     }
-#undef _PLAYER
 
     // Remove screen update callback
-#ifdef DJGPP
-    remove_int(testframe);
-    remove_int(update_screen);
-#else
     setitimer(ITIMER_REAL, &oldval, nullptr);
     clear_keybuf();
-#endif
     return return_code;
 }
 /**************************************************************************/
@@ -984,9 +965,8 @@ auto Engine::display_map() -> int
     map.UpdatePal();
     UpdateLightening();
 
-#ifndef DJGPP
     keyboard_update(); // Update Keyboard for *NIX
-#endif
+
     if (background_availible == 0) {
         clear_to_color(buffer, 1);
     }
@@ -1011,20 +991,23 @@ auto Engine::display_map() -> int
         }
     }
     for (k = 0; k < 3; k++) {
-#ifdef _ALLOW_Fx_LAYER_OFF
-        if (key[KEY_F1] && k == 0)
-            continue;
-        if (key[KEY_F2] && k == 1)
-            continue;
-        if (key[KEY_F3] && k == 2)
-            continue;
-#endif
+        if constexpr (ALLOW_Fx_LAYER_OFF) {
+            if (key[static_cast<size_t>(scan_code::KEY_F1)] && k == 0) {
+                continue;
+            }
+            if (key[static_cast<size_t>(scan_code::KEY_F2)] && k == 1) {
+                continue;
+            }
+            if (key[static_cast<size_t>(scan_code::KEY_F3)] && k == 2) {
+                continue;
+            }
+        }
         ki = (TILE_TOP_HEIGHT * k) - k;
         draw_player = 0;
         for (i = startx; i < (startx + 14); i++) {
             for (j = (starty + 10); j >= starty; j--) {
                 if ((kalle3 = map.GetBG(i, j, k)) != 0) {
-                    if (IS_TRANSPARENT(kalle3)) {
+                    if (IS_TRANSPARENT(map, kalle3) != 0) {
                         masked_blit(map.GetTile(kalle3 - 1), buffer,
                             0, 0, (i - startx) * TILE_WIDTH + offsetx - i,
                             (j - starty) * TILE_SIDE_HEIGHT + offsety + ki + SCORE_BOARD_HEIGHT,
@@ -1135,7 +1118,7 @@ auto Engine::display_map() -> int
             }
         }
         for (i = 0; i < num_objects; i++) {
-            if ((objects[i] != nullptr) && objects[i]->GetLayer() == k && objects[i]->GetX() > OBJ_ON_LEFT && objects[i]->GetX() < OBJ_ON_RIGHT && objects[i]->GetY() > OBJ_ON_TOP && objects[i]->GetY() < OBJ_ON_BOTTOM) {
+            if ((objects[i] != nullptr) && objects[i]->GetLayer() == k && objects[i]->GetX() > OBJ_ON_LEFT(map_x) && objects[i]->GetX() < OBJ_ON_RIGHT(map_x, max_update_area_x) && objects[i]->GetY() > OBJ_ON_TOP(map_y) && objects[i]->GetY() < OBJ_ON_BOTTOM(map_y)) {
                 numosc++;
                 if ((temp = objects[i]->update()) < 0) {
                     score.AddScore(objects[i]->GetScore());
@@ -1178,7 +1161,7 @@ auto Engine::display_map() -> int
     score.Display(buffer);
 
     /* Pause */
-    if (key[KEY_P] != 0U) {
+    if (key[static_cast<size_t>(scan_code::KEY_P)]) {
         BITMAP* buf = create_bitmap(SCREEN_WIDTH, SCREEN_HEIGHT);
 
         while (keypressed() != 0) {
@@ -1208,7 +1191,7 @@ auto Engine::display_map() -> int
         clear_keybuf();
     }
 
-    if (key[KEY_F11] != 0U) {
+    if (key[static_cast<size_t>(scan_code::KEY_F11)]) {
         textprintf(buffer, font, 0, 0, 36, "Frames/s %ld", n);
     }
 
@@ -1233,17 +1216,9 @@ auto Engine::display_map() -> int
         max_time = SECONDS_TO_FRAMES(atoi(opt));
     }
 
-#ifdef DJGPP
-    if (config->keyconf.gfx_quality == QUALITY_NORMAL)
-        while (show_next_frame == 0)
-            ;
-    else if (config->keyconf.gfx_quality == QUALITY_HIGH)
-        vsync();
-#else
     while (show_next_frame == 0) {
         usleep(10);
     }
-#endif
 
     show_next_frame = 0;
 
@@ -1257,7 +1232,7 @@ auto Engine::display_map() -> int
     cheat_codes_active = 0; /* reset cheats */
 
     for (i = 0; i < NUM_LETTERS; i++) {
-        if ((key[Letters[i].key] != 0U) && cheat_cl_p < 63) {
+        if ((key[static_cast<size_t>(Letters[i].key)]) && cheat_cl_p < 63) {
             if (cheat_cl_p > 0 && cheat_code_letters[cheat_cl_p - 1] == Letters[i].letter) {
                 break;
             }
@@ -1361,7 +1336,7 @@ auto Engine::check_floor(int x, int y, int z) -> int
 
     /*        if (map.GetBG(bx, by, bz))
 		map.SetBG(bx, by, bz, 10);*/
-    if (IS_FAKE(map.GetBG(bx, by, bz))) {
+    if (IS_FAKE(map, map.GetBG(bx, by, bz)) != 0) {
         return 0;
     }
     {
@@ -1476,7 +1451,7 @@ void Engine::check_collision()
 
     // Objects
     for (i = 0; i < num_objects; i++) {
-        if (objects[i]->GetX() < OBJ_ON_LEFT || objects[i]->GetX() > OBJ_ON_RIGHT || objects[i]->GetY() < OBJ_ON_TOP || objects[i]->GetY() > OBJ_ON_BOTTOM) {
+        if (objects[i]->GetX() < OBJ_ON_LEFT(map_x) || objects[i]->GetX() > OBJ_ON_RIGHT(map_x, max_update_area_x) || objects[i]->GetY() < OBJ_ON_TOP(map_y) || objects[i]->GetY() > OBJ_ON_BOTTOM(map_y)) {
             continue;
         }
         z = objects[i]->GetLayer();
@@ -1486,7 +1461,7 @@ void Engine::check_collision()
             if (z != objects[j]->GetLayer()) {
                 continue;
             }
-            if (objects[j]->GetX() < OBJ_ON_LEFT || objects[j]->GetX() > OBJ_ON_RIGHT || objects[j]->GetY() < OBJ_ON_TOP || objects[j]->GetY() > OBJ_ON_BOTTOM) {
+            if (objects[j]->GetX() < OBJ_ON_LEFT(map_x) || objects[j]->GetX() > OBJ_ON_RIGHT(map_x, max_update_area_x) || objects[j]->GetY() < OBJ_ON_TOP(map_y) || objects[j]->GetY() > OBJ_ON_BOTTOM(map_y)) {
                 continue;
             }
 
@@ -1547,7 +1522,7 @@ auto Engine::check_wall(int x, int y, int z) -> int
 
     /*	if (map.GetBG(bx, by, bz))
 		map.SetBG(bx, by, bz, 9);*/
-    if (IS_FAKE(map.GetBG(bx, by, bz))) {
+    if (IS_FAKE(map, map.GetBG(bx, by, bz)) != 0) {
         return 0;
     }
     {
@@ -1555,31 +1530,37 @@ auto Engine::check_wall(int x, int y, int z) -> int
     }
 }
 /**************************************************************************/
-#define SCROLL                                                        \
-    map_x = player->GetX() - 100;                                     \
-    playery = player->GetY();                                         \
-                                                                      \
-    if ((playery - 65) < map_y) {                                     \
-                                                                      \
-        map_y = playery - 65;                                         \
-                                                                      \
-    } else if ((playery - 110 + SCORE_BOARD_HEIGHT) > map_y) {        \
-                                                                      \
-        map_y = (playery - 110 + SCORE_BOARD_HEIGHT);                 \
-    }                                                                 \
-                                                                      \
-    if (map_y > (MAP_HEIGHT * TILE_SIDE_HEIGHT - SCREEN_HEIGHT + 25)) \
-        map_y = (MAP_HEIGHT * TILE_SIDE_HEIGHT - SCREEN_HEIGHT + 25); \
-                                                                      \
-    if (map_y < 0)                                                    \
-        map_y = 0;                                                    \
-                                                                      \
-    if (map_x > (MAP_WIDTH * (TILE_WIDTH - 1) - 330))                 \
-        map_x = (MAP_WIDTH * (TILE_WIDTH - 1) - 330);                 \
-                                                                      \
-    if (map_x < 0)                                                    \
-        map_x = 0;
+inline void scroll(Map& map, int& map_x, int& map_y, Object* player, int& playery)
+{
+    map_x = player->GetX() - 100;
+    playery = player->GetY();
 
+    if ((playery - 65) < map_y) {
+
+        map_y = playery - 65;
+
+    } else if ((playery - 110 + SCORE_BOARD_HEIGHT) > map_y) {
+
+        map_y = (playery - 110 + SCORE_BOARD_HEIGHT);
+    }
+
+    if (map_y > (map.GetHeight() * TILE_SIDE_HEIGHT - SCREEN_HEIGHT + 25)) {
+        map_y = (map.GetHeight() * TILE_SIDE_HEIGHT - SCREEN_HEIGHT + 25);
+    }
+
+    if (map_y < 0) {
+        map_y = 0;
+    }
+
+    if (map_x > (map.GetWidth() * (TILE_WIDTH - 1) - 330)) {
+        map_x = (map.GetWidth() * (TILE_WIDTH - 1) - 330);
+    }
+
+    if (map_x < 0) {
+        map_x = 0;
+    }
+}
+/**************************************************************************/
 auto Engine::play_loop() -> int
 {
     int first_frame = 1;
@@ -1591,7 +1572,7 @@ auto Engine::play_loop() -> int
     set_palette(black_palette);
 
     for (;;) {
-        SCROLL;
+        scroll(map, map_x, map_y, player, playery);
         if (display_map() == -1) {
             return -1;
         }
@@ -1601,7 +1582,7 @@ auto Engine::play_loop() -> int
             for (i = 0; i < 65; i++) {
 
                 fade_interpolate(black_palette, map.GetPal(), output, i, 0, 255);
-                SCROLL;
+                scroll(map, map_x, map_y, player, playery);
                 set_palette(output);
                 if (display_map() == -1) {
                     return -1;
@@ -1611,30 +1592,9 @@ auto Engine::play_loop() -> int
             first_frame = 0;
         }
 
-        if (key[KEY_ESC] != 0U) {
+        if (key[static_cast<size_t>(scan_code::KEY_ESC)]) {
             return 0;
         }
-#ifdef DJGPP
-        if (key[KEY_F12]) {
-
-            while (key[KEY_F12])
-                ;
-
-            PALETTE pal;
-            char name[80];
-            int counter = 0;
-
-            do {
-
-                sprintf(name, "dump%d.pcx", counter++);
-            } while (!access(name, F_OK));
-
-            get_palette(pal);
-            BITMAP* bmp = create_sub_bitmap(screen, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-            save_bitmap(name, bmp, pal);
-            destroy_bitmap(bmp);
-        }
-#endif
         if (level_complete != 0) {
             return level_complete;
         }
@@ -1653,23 +1613,6 @@ void Engine::PushMessage(const char* msg, int prior)
     messages[0].msg = font->print(msg);
     messages[0].delay = 0;
     num_messages = 1;
-#if 0
-        if (num_messages < MAX_MESSAGES) {
-        	messages[num_messages].priority = prior;
-                messages[num_messages].msg = font->print(msg);
-                messages[num_messages].delay = 0;
-                num_messages++;
-/*	       	memmove(&messages[1], &messages[0], sizeof(struct MessageQueue) * num_messages);
-	       	messages[0].priority = prior;
-        	messages[0].msg = font->print(msg);
-		messages[0].delay = 0;
-        	num_messages++;*/
-	}
-/*
-        if (num_messages < MAX_MESSAGES) {
-		messages[num_messages++] = font->print(msg);
-	}*/
-#endif
 }
 
 void Engine::PopMessage()

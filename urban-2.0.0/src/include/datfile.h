@@ -20,7 +20,7 @@ class datfile {
 public:
     datfile(const char* filenam);
     ~datfile();
-    BITMAP* load_pcx(const char* filename, RGB* pal);
+    BITMAP* load_pcx(const char* filename, PALETTE& pal);
     FILE* open_file(const char* filename);
     char* load_file_to_memory(const char* filename);
     int GetNumEntries() { return num_entries; };

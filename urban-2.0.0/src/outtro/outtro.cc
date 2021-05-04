@@ -40,7 +40,7 @@
 #include <cstring>
 #include <unistd.h>
 /**************************************************************************/
-#define FRAME_DELAY 100
+inline constexpr auto FRAME_DELAY = 100;
 /**************************************************************************/
 static UrbanFont* lg;
 static int quit;
@@ -92,58 +92,40 @@ static auto callback() -> int
 }
 }
 /**************************************************************************/
-#define PLAY_FLC(x, y)                              \
-    strcpy(flctext, y);                             \
-    if ((buf = dat.load_file_to_memory(x)) == NULL) \
-        exit(1);                                    \
-    play_memory_fli(buf, screen, 1, callback);      \
-    delete[] buf;                                   \
-    if (quit) {                                     \
-        QUIT;                                       \
+inline auto PLAY_FLC(datfile& dat, const char* x, const char* y) -> bool
+{
+    char* buf = nullptr;
+    strcpy(flctext, y);
+    if ((buf = dat.load_file_to_memory(x)) == nullptr) {
+        exit(1);
     }
-
-#define ANIM_TEXT(x)                             \
-    strcpy(text, x);                             \
-                                                 \
-    clear_keybuf();                              \
-                                                 \
-    for (i = 0; i < (signed)strlen(text); i++) { \
-                                                 \
-        strncpy(temptext, text, i + 1);          \
-        temptext[i + 1] = 0;                     \
-        lg->print(temptext, 50, 170, screen);    \
-                                                 \
-        rest(FRAME_DELAY);                       \
+    play_memory_fli(buf, screen, 1, callback);
+    delete[] buf;
+    if (quit != 0) {
+        clear_keybuf();
+        return false;
     }
+    return true;
+}
 
-/*		if(keypressed()) { \
-\
-                	QUIT; \
-		} \
-\ */
-
-#define DISPLAY_IMAGE(x)                     \
-    bmp = icache.GetImage(x, palette);       \
-    set_palette(palette);                    \
-    blit(bmp, screen, 0, 0, 0, 0, 320, 240); \
+inline void DISPLAY_IMAGE(BITMAP* bmp, PALETTE& palette, const char* x)
+{
+    bmp = icache.GetImage(x, palette);
+    set_palette(palette);
+    blit(bmp, screen, 0, 0, 0, 0, 320, 240);
     icache.FreeImage(bmp);
+}
 
-#define QUIT        \
-    clear_keybuf(); \
-    return;
+inline void PLAY_MOD(const char* x)
+{
+    char* buf = new char[1024];
 
-#define PLAY_MOD(x)                      \
-    {                                    \
-        char* buf = new char[1024];      \
-                                         \
-        sprintf(buf, x, DATPATH);        \
-        ENGINE.sound.PlayMusic(buf);     \
-                                         \
-        delete[] buf;                    \
-        ENGINE.sound.SetMusicVolume(64); \
-    }
+    sprintf(buf, x, DATPATH);
+    ENGINE.sound.PlayMusic(buf);
 
-//#define PLAY_MOD(x)
+    delete[] buf;
+    ENGINE.sound.SetMusicVolume(64);
+}
 /**************************************************************************/
 void Outtro::RunOuttro()
 {
@@ -151,10 +133,6 @@ void Outtro::RunOuttro()
     char* buf = nullptr;
     quit = 0;
     PALETTE palette;
-    /*        int i;
-        BITMAP *bmp;
-        char text[128];
-	char temptext[128];*/
     BITMAP* bmp = nullptr;
 
     clear_keybuf();
@@ -163,7 +141,7 @@ void Outtro::RunOuttro()
 
     //        get_palette(pal);
 
-    DISPLAY_IMAGE("intro/atom.pcx");
+    DISPLAY_IMAGE(bmp, palette, "intro/atom.pcx");
 
     //        fade_in(pal, 5);
 
@@ -171,29 +149,51 @@ void Outtro::RunOuttro()
 
     fade_out(5);
 
-    PLAY_FLC("gfx/intro/12.flc", "A zhame we had to nuke\nzee complex to destroy him...   ");
+    if (!PLAY_FLC(dat, "gfx/intro/12.flc", "A zhame we had to nuke\nzee complex to destroy him...   ")) {
+        return;
+    }
 
-    PLAY_FLC("gfx/intro/9.flc", "Well, at least we \nmanaged to stop him.   ");
+    if (!PLAY_FLC(dat, "gfx/intro/9.flc", "Well, at least we \nmanaged to stop him.   ")) {
+        return;
+    }
 
     //        rest(1000);                      8,12:forskare    9:militär
 
-    PLAY_FLC("gfx/intro/12.flc", "Unfortunately, all zee\nother prototypes were\nlost in zee explozion.   ");
+    if (!PLAY_FLC(dat, "gfx/intro/12.flc", "Unfortunately, all zee\nother prototypes were\nlost in zee explozion.   ")) {
+        return;
+    }
 
-    PLAY_FLC("gfx/intro/9.flc", "Yeah. He managed to make\nquite a mess out there.    ");
+    if (!PLAY_FLC(dat, "gfx/intro/9.flc", "Yeah. He managed to make\nquite a mess out there.    ")) {
+        return;
+    }
 
-    PLAY_FLC("gfx/intro/8.flc", "Yes. Except for zee\nsmall... malfunction, he\nwas operating quite nizely.    ");
+    if (!PLAY_FLC(dat, "gfx/intro/8.flc", "Yes. Except for zee\nsmall... malfunction, he\nwas operating quite nizely.    ")) {
+        return;
+    }
 
-    PLAY_FLC("gfx/intro/9.flc", "Lots of money and\nequipment was wasted though.      ");
+    if (!PLAY_FLC(dat, "gfx/intro/9.flc", "Lots of money and\nequipment was wasted though.      ")) {
+        return;
+    }
 
-    PLAY_FLC("gfx/intro/8.flc", "Not to worry. Nobody\nwill ever know what\nhappened out zhere.     ");
+    if (!PLAY_FLC(dat, "gfx/intro/8.flc", "Not to worry. Nobody\nwill ever know what\nhappened out zhere.     ")) {
+        return;
+    }
 
-    PLAY_FLC("gfx/intro/9.flc", "That's right. I'll\ntake care of the\ncoverup personally.     ");
+    if (!PLAY_FLC(dat, "gfx/intro/9.flc", "That's right. I'll\ntake care of the\ncoverup personally.     ")) {
+        return;
+    }
 
-    PLAY_FLC("gfx/intro/12.flc", "Won't you require\nmore money for zhat?     ");
+    if (!PLAY_FLC(dat, "gfx/intro/12.flc", "Won't you require\nmore money for zhat?     ")) {
+        return;
+    }
 
-    PLAY_FLC("gfx/intro/9.flc", "No problem. We can\nalways start a new\nwar somewhere...     ");
+    if (!PLAY_FLC(dat, "gfx/intro/9.flc", "No problem. We can\nalways start a new\nwar somewhere...     ")) {
+        return;
+    }
 
-    PLAY_FLC("gfx/intro/8.flc", "Aah, Thiz iz why I love\nthiz country so much.\nOn to zee next project!     ");
+    if (!PLAY_FLC(dat, "gfx/intro/8.flc", "Aah, Thiz iz why I love\nthiz country so much.\nOn to zee next project!     ")) {
+        return;
+    }
 
     fade_out(4);
 

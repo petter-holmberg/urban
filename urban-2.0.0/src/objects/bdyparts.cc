@@ -32,18 +32,18 @@
 #include "object.h"
 #include <allegro.h>
 /****************************************************************************/
-#define MAX_Y_SPEED 4
-#define MIN_Y_SPEED (-4)
-#define Y_ACCEL 1
+inline constexpr auto MAX_Y_SPEED = 4;
+inline constexpr auto MIN_Y_SPEED = -4;
+inline constexpr auto Y_ACCEL = 1;
 /****************************************************************************/
-#define STATE_NONE 0
-#define STATE_DESTROY 1
+inline constexpr auto STATE_NONE = 0;
+inline constexpr auto STATE_DESTROY = 1;
 /****************************************************************************/
 bodyparts_o::bodyparts_o(int X, int Y, int Z, const char* name, int num_pics, int Speed_X, int Speed_Y, int Speed_Z)
     : Object(X, Y, Z)
 {
     int i = 0;
-    RGB pal[256];
+    PALETTE pal;
     char filename[512];
 
     images = new BITMAP*[num_pics];

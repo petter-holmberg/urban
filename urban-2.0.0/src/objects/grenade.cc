@@ -33,16 +33,16 @@
 #include <allegro.h>
 #include <cstring>
 
-#define EXPLOSION_SAMPLE "samples/heart_1.wav"
-#define FIRE_SAMPLE "samples/grenade.wav"
+inline constexpr auto EXPLOSION_SAMPLE = "samples/heart_1.wav";
+inline constexpr auto FIRE_SAMPLE = "samples/grenade.wav";
 /****************************************************************************/
-#define GRENADE_SPEED 4
-#define ACCEL_COUNTER 3
+inline constexpr auto GRENADE_SPEED = 4;
+inline constexpr auto ACCEL_COUNTER = 3;
 /****************************************************************************/
 grenade_o::grenade_o(int X, int Y, int Z, int SpeedX, int SpeedY, int SpeedZ)
     : Object(X, Y, Z)
 {
-    RGB pal[256];
+    PALETTE pal;
     char filename[512];
 
     images = new BITMAP*[1];

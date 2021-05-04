@@ -112,13 +112,8 @@ struct ObjectTypes {
     { TYPE_GREEN_DOOR, "door1/1.pcx", "Green Door" },
     { TYPE_EINSTEIN, "prof2/prof2v/1.pcx", "Civilian" },
     { TYPE_CRYCHECK, "inspecto/inspv/1.pcx", "CIA Agent" },
-#ifdef __AT_THOMAS_HOME__
-    { TYPE_LEFT_COMPUTER_SCREEN, "dekor/skÄrm1.pcx", "Item" },
-    { TYPE_RIGHT_COMPUTER_SCREEN, "dekor/skÄrm2.pcx", "Item" },
-#else
     { TYPE_LEFT_COMPUTER_SCREEN, "dekor/skarm1.pcx", "Item" },
     { TYPE_RIGHT_COMPUTER_SCREEN, "dekor/skarm2.pcx", "Item" },
-#endif
     { TYPE_RED_CARD, "items/redcard.pcx", "Red Card" },
     { TYPE_BLUE_CARD, "items/bluecard.pcx", "Blue Card" },
     { TYPE_GREEN_CARD, "items/greencar.pcx", "Green Card" },

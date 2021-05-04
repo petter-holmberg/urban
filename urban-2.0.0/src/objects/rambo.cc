@@ -28,7 +28,6 @@
 
     thomas.nyberg@usa.net				jonas_b@bitsmart.com
 *****************************************************************************/
-#include "ai.h"
 #include "death.h"
 #include "engine.h"
 #include "object.h"
@@ -36,75 +35,66 @@
 #include <cstdlib>
 #include <cstring>
 
-#define FIRE_SAMPLE "samples/weapon6.wav"
+inline constexpr auto FIRE_SAMPLE = "samples/weapon6.wav";
 
-#define PROB_WALK_START 0
-#define PROB_WALK_END 50
-//#define PROB_INTER_START	51
-//#define PROB_INTER_END		70
-#define PROB_STOP_START 51
-#define PROB_STOP_END 60
-#define PROB_TURN_START 61
-#define PROB_TURN_END 100
-#define PROB_NUMBER 100
+inline constexpr auto PROB_WALK_START = 0;
+inline constexpr auto PROB_WALK_END = 50;
+inline constexpr auto PROB_STOP_START = 51;
+inline constexpr auto PROB_STOP_END = 60;
+inline constexpr auto PROB_TURN_START = 61;
+inline constexpr auto PROB_TURN_END = 100;
+inline constexpr auto PROB_NUMBER = 100;
 
-#define MAX_NUM 15
-#define STATE_NONE 0
-#define STATE_STOP 1
-#define STATE_WALK 2
-#define STATE_TURN 3
-#define STATE_HIT 4
-#define STATE_HIT_COUNTDOWN 5
-#define STATE_FIRE 6
-#define STATE_FIRING 7
-#define STATE_ALARM 8
-#define STATE_INTERLAYER 9
-#define STATE_JUMP 10
-#define STATE_JUMPING 11
-#define STATE_LAND 12
+inline constexpr auto MAX_NUM = 15;
+inline constexpr auto STATE_NONE = 0;
+inline constexpr auto STATE_STOP = 1;
+inline constexpr auto STATE_WALK = 2;
+inline constexpr auto STATE_TURN = 3;
+inline constexpr auto STATE_HIT = 4;
+inline constexpr auto STATE_HIT_COUNTDOWN = 5;
+inline constexpr auto STATE_FIRE = 6;
+inline constexpr auto STATE_FIRING = 7;
+inline constexpr auto STATE_ALARM = 8;
+inline constexpr auto STATE_INTERLAYER = 9;
+inline constexpr auto STATE_JUMP = 10;
+inline constexpr auto STATE_JUMPING = 11;
+inline constexpr auto STATE_LAND = 12;
 
-#define FIRE_RANGE 150
-#define FIRE_STRENGTH 3
-#define MAX_X_SPEED 2 //4
-#define X_FRICTION 1
-#define MIN_X_SPEED (-MAX_X_SPEED) //-4
-#define MAX_Y_SPEED 16
-#define MIN_Y_SPEED (-12)
-#define X_ACCEL 2 //2
-#define Y_ACCEL 1
-#define Z_ACCEL 2
-#define MAX_Z_SPEED 2
-#define MIN_Z_SPEED (-MAX_Z_SPEED)
-#define Z_FRICTION 1
-//#define FRAME_DELAY 2
-//#define FIRE_DELAY 30
-//#define NUM_ROUNDS 6
-//#define ALARM_DELAY 120
+inline constexpr auto FIRE_RANGE = 150;
+inline constexpr auto FIRE_STRENGTH = 3;
+inline constexpr auto MAX_X_SPEED = 2;
+inline constexpr auto X_FRICTION = 1;
+inline constexpr auto MIN_X_SPEED = -MAX_X_SPEED;
+inline constexpr auto MAX_Y_SPEED = 16;
+inline constexpr auto MIN_Y_SPEED = -12;
+inline constexpr auto X_ACCEL = 2;
+inline constexpr auto Y_ACCEL = 1;
+inline constexpr auto Z_ACCEL = 2;
+inline constexpr auto MAX_Z_SPEED = 2;
+inline constexpr auto MIN_Z_SPEED = -MAX_Z_SPEED;
+inline constexpr auto Z_FRICTION = 1;
 
-#define ALARM_DELAY 5
-#define FRAME_DELAY 2
-#define FIRE_DELAY 60
-#define SHELL_DELAY 4
-#define FIRING_DELAY 3
-#define HIT_DELAY 10
-#define JUMP_DELAY 20
-#define LAND_DELAY 10
+inline constexpr auto ALARM_DELAY = 5;
+inline constexpr auto FRAME_DELAY = 2;
+inline constexpr auto FIRE_DELAY = 60;
+inline constexpr auto SHELL_DELAY = 4;
+inline constexpr auto FIRING_DELAY = 3;
+inline constexpr auto HIT_DELAY = 10;
+inline constexpr auto JUMP_DELAY = 20;
+inline constexpr auto LAND_DELAY = 10;
 
-#define COLL_X (coll_x + coll_width)
-#define COLL_Y (coll_y + coll_height)
+inline constexpr auto FOOT_LEFT = 39;
+inline constexpr auto FOOT_WIDTH = 17;
+inline constexpr auto FOOT_RIGHT = FOOT_LEFT + FOOT_WIDTH;
 
-#define FOOT_LEFT 39
-#define FOOT_WIDTH 17
-#define FOOT_RIGHT (FOOT_LEFT + FOOT_WIDTH)
-
-#define NO_BOX_DISTANCE 20
-#define BOX_DISTANCE 50
+inline constexpr auto NO_BOX_DISTANCE = 20;
+inline constexpr auto BOX_DISTANCE = 50;
 
 /**************************************************************************/
 Rambo_o::Rambo_o(int X, int Y, int Z)
     : Object(X, Y, Z)
 {
-    RGB pal[256];
+    PALETTE pal;
     char filename[512];
     int i = 0;
 
@@ -194,7 +184,7 @@ Rambo_o::Rambo_o(int X, int Y, int Z)
     coll_width = 31;
     coll_height = height - 1;
     /*        for (i = 0;i < num_images;i++)
-		rect(images[i], coll_x, coll_y, COLL_X, COLL_Y, 15);*/
+		rect(images[i], coll_x, coll_y, coll_x + coll_width, coll_y + coll_height, 15);*/
 
     /*
 
@@ -295,7 +285,7 @@ auto Rambo_o::update() -> int
                 if (ENGINE.check_wall(x + coll_x + speed_x + BOX_DISTANCE, y + height, z) && !ENGINE.check_wall(x + coll_x + speed_x + NO_BOX_DISTANCE, y + height, z) && !ENGINE.check_wall(x + coll_x + speed_x + BOX_DISTANCE, y + height - TILE_SIDE_HEIGHT, z)) {
                     state = STATE_JUMP;
                 } else {
-                    while (ENGINE.check_wall(x + COLL_X + speed_x, y + COLL_Y, z) && (speed_x != 0)) {
+                    while (ENGINE.check_wall(x + coll_x + coll_width + speed_x, y + coll_y + coll_height, z) && (speed_x != 0)) {
                         speed_x--;
                     }
                 }
@@ -311,7 +301,7 @@ auto Rambo_o::update() -> int
                 if (ENGINE.check_wall(x + coll_x + speed_x - BOX_DISTANCE, y + height, z) && !ENGINE.check_wall(x + coll_x + speed_x - NO_BOX_DISTANCE, y + height, z) && !ENGINE.check_wall(x + coll_x + speed_x - BOX_DISTANCE, y + height - TILE_SIDE_HEIGHT, z)) {
                     state = STATE_JUMP;
                 } else {
-                    while (ENGINE.check_wall(x + coll_x + speed_x, y + COLL_Y, z) && (speed_x != 0)) {
+                    while (ENGINE.check_wall(x + coll_x + speed_x, y + coll_y + coll_height, z) && (speed_x != 0)) {
                         speed_x++;
                     }
                 }
@@ -337,7 +327,7 @@ då ska jag hoppa
                 if (speed_z > MIN_Z_SPEED) {
                     speed_z -= Z_ACCEL;
                 }
-                while ((ENGINE.check_wall(x + coll_x, y + COLL_Y, z + speed_z - 5) || ENGINE.check_wall(x + COLL_X, y + COLL_Y, z + speed_z - 5)) && (speed_z != 0)) {
+                while ((ENGINE.check_wall(x + coll_x, y + coll_y + coll_height, z + speed_z - 5) || ENGINE.check_wall(x + coll_x + coll_width, y + coll_y + coll_height, z + speed_z - 5)) && (speed_z != 0)) {
                     speed_z++;
                 }
                 current_image = 15 + anim.next_frame(4, 5);
@@ -347,7 +337,7 @@ då ska jag hoppa
                 if (speed_z < MAX_Z_SPEED) {
                     speed_z += Z_ACCEL;
                 }
-                while ((ENGINE.check_wall(x + coll_x, y + COLL_Y, z + speed_z + 5) || ENGINE.check_wall(x + COLL_X, y + COLL_Y, z + speed_z + 5)) && (speed_z != 0)) {
+                while ((ENGINE.check_wall(x + coll_x, y + coll_y + coll_height, z + speed_z + 5) || ENGINE.check_wall(x + coll_x + coll_width, y + coll_y + coll_height, z + speed_z + 5)) && (speed_z != 0)) {
                     speed_z--;
                 }
                 current_image = 10 + anim.next_frame(4, 5);
@@ -518,9 +508,9 @@ void Rambo_o::Collision(Object* o)
     if ((o->GetStrength() > 0) && ((o->GetFriends() & me) == 0U)) {
         if (direction == RIGHT_DIR) {
             if (energy <= 0) {
-                if ((o->GetWho() & ENEMY_EXPLOSION) != 0)
-                    DEATH_BY_EXPLOSION
-                else if ((o->GetWho() & (ENEMY_FIREBALL | ENEMY_BEAM)) != 0) {
+                if ((o->GetWho() & ENEMY_EXPLOSION) != 0) {
+                    DEATH_BY_EXPLOSION(x, width, y, height, z);
+                } else if ((o->GetWho() & (ENEMY_FIREBALL | ENEMY_BEAM)) != 0) {
                     ENGINE.create_effect(new BurningBody_o(x, y + height, z));
                 } else if ((o->GetWho() & ENEMY_ICEBALL) != 0) {
                     ENGINE.create_object(new FrosenBody_o(x, y + height, z, direction));
@@ -536,9 +526,9 @@ void Rambo_o::Collision(Object* o)
             //				        ENGINE.create_effect(new blood_o(x + width, y + random() % height, z, 1 + random() % 4));
         } else {
             if (energy <= 0) {
-                if ((o->GetWho() & ENEMY_EXPLOSION) != 0)
-                    DEATH_BY_EXPLOSION
-                else if ((o->GetWho() & (ENEMY_FIREBALL | ENEMY_BEAM)) != 0) {
+                if ((o->GetWho() & ENEMY_EXPLOSION) != 0) {
+                    DEATH_BY_EXPLOSION(x, width, y, height, z);
+                } else if ((o->GetWho() & (ENEMY_FIREBALL | ENEMY_BEAM)) != 0) {
                     ENGINE.create_effect(new BurningBody_o(x, y + height, z));
                 } else if ((o->GetWho() & ENEMY_ICEBALL) != 0) {
                     ENGINE.create_object(new FrosenBody_o(x, y + height, z, direction));

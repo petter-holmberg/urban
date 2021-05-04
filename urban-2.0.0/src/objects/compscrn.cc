@@ -37,7 +37,7 @@
 ComputerScreen_o::ComputerScreen_o(int X, int Y, int Z, int Type)
     : Object(X, Y, Z)
 {
-    RGB pal[256];
+    PALETTE pal;
 
     images = new BITMAP*;
 

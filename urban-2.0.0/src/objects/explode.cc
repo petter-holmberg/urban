@@ -32,14 +32,14 @@
 #include "object.h"
 #include <allegro.h>
 
-#define EXPLODE_SAMPLE "samples/ex12.wav"
-#define EXPLODE_SPEED 4
-#define EXPLODE_DAMAGE 10
-#define EXPLODE_FRAMES 2
+inline constexpr auto EXPLODE_SAMPLE = "samples/ex12.wav";
+inline constexpr auto EXPLODE_SPEED = 4;
+inline constexpr auto EXPLODE_DAMAGE = 10;
+inline constexpr auto EXPLODE_FRAMES = 2;
 explosion_o::explosion_o(int X, int Y, int Z, int /*Speed_X*/, int /*Speed_Y*/, int /*Speed_Z*/, int Friends)
     : Object(X, Y, Z)
 {
-    RGB pal[256];
+    PALETTE pal;
     char filename[512];
     int i = 0;
 

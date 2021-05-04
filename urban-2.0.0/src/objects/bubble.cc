@@ -34,16 +34,16 @@
 #include <cstdlib>
 #include <cstring>
 
-#define STATE_DIE 0x01
-#define STATE_NONE 0x00
-#define MAX_LIFE 200
-#define MIN_LIFE 50
+inline constexpr auto STATE_DIE = 0x01;
+inline constexpr auto STATE_NONE = 0x00;
+inline constexpr auto MAX_LIFE = 200;
+inline constexpr auto MIN_LIFE = 50;
 
 /****************************************************************************/
 Bubble_o::Bubble_o(int X, int Y, int Z)
     : Object(X, Y, Z)
 {
-    RGB pal[256];
+    PALETTE pal;
     char filename[512];
 
     images = new BITMAP*;

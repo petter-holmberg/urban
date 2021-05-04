@@ -37,14 +37,12 @@
 #include <cstdlib>
 #include <cstring>
 
-#define WARNING_SAMPLE "samples/airnuke.wav"
-#define MAX_CLUSTER_COUNTER 5
-#define MAX_ENERGY 1000
-#define NUM_SKADA 4
+inline constexpr auto WARNING_SAMPLE = "samples/airnuke.wav";
+inline constexpr auto MAX_CLUSTER_COUNTER = 5;
+inline constexpr auto MAX_ENERGY = 1000;
+inline constexpr auto NUM_SKADA = 4;
 
-#if (MAX_ENERGY % NUM_SKADA) != 0
-#error MAX_ENERGY must be a multiple of NUM_SKADA!
-#endif
+static_assert((MAX_ENERGY % NUM_SKADA) == 0, "MAX_ENERGY must be a multiple of NUM_SKADA!");
 
 const char* comments[] = {
     "samples/oldare.wav",
@@ -54,46 +52,48 @@ const char* comments[] = {
     "samples/olvictor.wav"
 };
 
-#define __URK ((NUM_SKADA - 1) - (std::min(energy, (MAX_ENERGY - 1)) / (MAX_ENERGY / NUM_SKADA)))
+constexpr auto IMAGE(int x, int energy)
+{
+    return (x) + 3 * (std::min(((NUM_SKADA - 1) - (std::min(energy, (MAX_ENERGY - 1)) / (MAX_ENERGY / NUM_SKADA))), 3));
+}
 
-#define IMAGE(x) ((x) + 3 * (std::min(__URK, 3)))
-#define FROMIMAGE(x) ((x) % 3)
+constexpr auto FROMIMAGE(int x)
+{
+    return x % 3;
+}
 
-#define STATE_NONE 0
-#define STATE_MOVE_LEFT 1
-#define STATE_MOVE_RIGHT 2
-#define STATE_FIRE_MINIGUN 4
-#define STATE_FIRE_CLUSTER 8
-#define STATE_DEAD 16
+inline constexpr auto STATE_NONE = 0;
+inline constexpr auto STATE_MOVE_LEFT = 1;
+inline constexpr auto STATE_MOVE_RIGHT = 2;
+inline constexpr auto STATE_FIRE_MINIGUN = 4;
+inline constexpr auto STATE_FIRE_CLUSTER = 8;
+inline constexpr auto STATE_DEAD = 16;
 
-#define FIRE_REP 2
-#define FIRE_DELAY 1
+inline constexpr auto FIRE_REP = 2;
+inline constexpr auto FIRE_DELAY = 1;
 
-#define CLUSTER_REP 4
-#define CLUSTER_DELAY 20
+inline constexpr auto CLUSTER_REP = 4;
+inline constexpr auto CLUSTER_DELAY = 20;
 
-#define MAX_X_SPEED 2 //4
-#define X_FRICTION 1
-#define MIN_X_SPEED (-MAX_X_SPEED) //-4
-#define MAX_Y_SPEED 16
-#define MIN_Y_SPEED (-12)
-#define X_ACCEL 2 //2
-#define Y_ACCEL 1
-#define Z_ACCEL 2
-#define MAX_Z_SPEED 2
-#define MIN_Z_SPEED (-MAX_Z_SPEED)
-#define Z_FRICTION 1
+inline constexpr auto MAX_X_SPEED = 2;
+inline constexpr auto X_FRICTION = 1;
+inline constexpr auto MIN_X_SPEED = -MAX_X_SPEED;
+inline constexpr auto MAX_Y_SPEED = 16;
+inline constexpr auto MIN_Y_SPEED = -12;
+inline constexpr auto X_ACCEL = 2;
+inline constexpr auto Y_ACCEL = 1;
+inline constexpr auto Z_ACCEL = 2;
+inline constexpr auto MAX_Z_SPEED = 2;
+inline constexpr auto MIN_Z_SPEED = -MAX_Z_SPEED;
+inline constexpr auto Z_FRICTION = 1;
 
-#define COLL_X (coll_x + coll_width)
-#define COLL_Y (coll_y + coll_height)
+inline constexpr auto MOVE_LEFT = 1;
+inline constexpr auto MOVE_RIGHT = 2;
+inline constexpr auto MOVE_STOP = 3;
 
-#define MOVE_LEFT 1
-#define MOVE_RIGHT 2
-#define MOVE_STOP 3
-
-#define FIRE_MINIGUN 4
-#define FIRE_CLUSTER 5
-#define FIRE_STOP 6
+inline constexpr auto FIRE_MINIGUN = 4;
+inline constexpr auto FIRE_CLUSTER = 5;
+inline constexpr auto FIRE_STOP = 6;
 
 struct AIInfo {
     int what;
@@ -119,14 +119,14 @@ struct AIInfo aifire[] = {
     { FIRE_STOP, 200 },
 };
 
-#define NUM_AIMOVE ((signed)(sizeof(aimove) / sizeof(aimove[0])))
-#define NUM_AIFIRE ((signed)(sizeof(aifire) / sizeof(aifire[0])))
+inline constexpr auto NUM_AIMOVE = (signed)(sizeof(aimove) / sizeof(aimove[0]));
+inline constexpr auto NUM_AIFIRE = (signed)(sizeof(aifire) / sizeof(aifire[0]));
 
 /**************************************************************************/
 Tank_o::Tank_o(int X, int Y, int Z)
     : Object(X, Y, Z)
 {
-    RGB pal[256];
+    PALETTE pal;
     char filename[512];
     int i = 0;
 
@@ -337,7 +337,7 @@ auto Tank_o::update() -> int
     }
     if (counter4 == 0) {
         state &= ~(STATE_FIRE_MINIGUN | STATE_FIRE_CLUSTER);
-        current_image = IMAGE(0);
+        current_image = IMAGE(0, energy);
         switch (aifire[aif].what) {
         case FIRE_MINIGUN:
             state |= STATE_FIRE_MINIGUN;
@@ -358,7 +358,7 @@ auto Tank_o::update() -> int
     }
 
     if ((state & STATE_MOVE_RIGHT) != 0) {
-        current_image = IMAGE(0);
+        current_image = IMAGE(0, energy);
         switch (direction) {
         case LEFT_DIR:
             x++;
@@ -370,7 +370,7 @@ auto Tank_o::update() -> int
             break;
         };
     } else if ((state & STATE_MOVE_LEFT) != 0) {
-        current_image = IMAGE(0);
+        current_image = IMAGE(0, energy);
         switch (direction) {
         case LEFT_DIR:
             x--;
@@ -386,13 +386,13 @@ auto Tank_o::update() -> int
     if ((state & STATE_FIRE_MINIGUN) != 0) {
         switch (direction) {
         case LEFT_DIR:
-            if (counter2 == 0 && current_image == IMAGE(0)) {
-                current_image = IMAGE(2);
+            if (counter2 == 0 && current_image == IMAGE(0, energy)) {
+                current_image = IMAGE(2, energy);
                 counter2 = FIRE_REP;
                 ENGINE.create_alwaysupdate(new HighSpeed_Bullet_o(x + 20, y + 54, z, direction, me, 5));
-            } else if (counter2 == 0 && current_image == IMAGE(2)) {
+            } else if (counter2 == 0 && current_image == IMAGE(2, energy)) {
                 counter2 = FIRE_DELAY;
-                current_image = IMAGE(0);
+                current_image = IMAGE(0, energy);
             }
             break;
         case RIGHT_DIR:
@@ -403,16 +403,16 @@ auto Tank_o::update() -> int
     } else if ((state & STATE_FIRE_CLUSTER) != 0) {
         switch (direction) {
         case LEFT_DIR:
-            if (counter2 == 0 && current_image == IMAGE(0)) {
-                current_image = IMAGE(1);
+            if (counter2 == 0 && current_image == IMAGE(0, energy)) {
+                current_image = IMAGE(1, energy);
                 counter2 = CLUSTER_REP;
                 ENGINE.create_alwaysupdate(new Cluster_o(x + 67, y + 5, z, -(3 + cluster_counter), -(3 + cluster_counter), 0, me));
                 cluster_counter++;
                 if (cluster_counter > MAX_CLUSTER_COUNTER) {
                     cluster_counter = 0;
                 }
-            } else if (counter2 == 0 && current_image == IMAGE(1)) {
-                current_image = IMAGE(0);
+            } else if (counter2 == 0 && current_image == IMAGE(1, energy)) {
+                current_image = IMAGE(0, energy);
                 counter2 = CLUSTER_DELAY;
             }
             break;
@@ -480,10 +480,10 @@ void Tank_o::Collision(Object* o)
 
     ENGINE.score.SetBossHealth(energy);
 
-    if (IMAGE(FROMIMAGE(current_image)) != current_image) {
+    if (IMAGE(FROMIMAGE(current_image), energy) != current_image) {
         SOUND.PlaySFX_Critical(comments[cmc++]);
     }
-    current_image = IMAGE(FROMIMAGE(current_image));
+    current_image = IMAGE(FROMIMAGE(current_image), energy);
 }
 
 /**************************************************************************/

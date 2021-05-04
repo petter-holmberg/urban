@@ -37,81 +37,65 @@
 #include <cstdio>
 #include <cstring>
 
-//#define DEBUG_FLC_PLAYER
-#ifdef DEBUG_FLC_PLAYER
-#define SHOW_HEADERS
-#define SHOW_CHUNKS
-#define DEBUG_FILE
+inline constexpr auto FLC_MAGIC = 0xaf12;
+inline constexpr auto HEADER_FLAGS = 0x0003;
+inline constexpr auto PREFIX_TYPE = 0xf100;
+inline constexpr auto FRAME_TYPE = 0xf1fa;
 
-#ifdef DEBUG_FILE
-#define PRINTF(x...) \
-    fprintf(debugfile, x)
-FILE* debugfile = NULL;
-#else
-#define PRINTF(x...) \
-    printf(x)
-#endif
-#endif
-
-#define FLC_MAGIC 0xaf12
-#define HEADER_FLAGS 0x0003
-#define PREFIX_TYPE 0xf100
-#define FRAME_TYPE 0xf1fa
-
-#define FLI_COLOR256 0x0004
-#define FLI_SS2 0x0007
-#define FLI_COLOR 0x000b
-#define FLI_LC 0x000c
-#define FLI_BLACK 0x000d
-#define FLI_BRUN 0x000f
-#define FLI_COPY 0x0010
-#define FLI_PSTAMP 0x0012
+inline constexpr auto FLI_COLOR256 = 0x0004;
+inline constexpr auto FLI_SS2 = 0x0007;
+inline constexpr auto FLI_COLOR = 0x000b;
+inline constexpr auto FLI_LC = 0x000c;
+inline constexpr auto FLI_BLACK = 0x000d;
+inline constexpr auto FLI_BRUN = 0x000f;
+inline constexpr auto FLI_COPY = 0x0010;
+inline constexpr auto FLI_PSTAMP = 0x0012;
 
 struct flc_header {
-    unsigned long size;
-    unsigned short magic;
-    unsigned short n_frames;
-    unsigned short width;
-    unsigned short height;
-    unsigned short depth;
-    unsigned short flags;
-    unsigned long speed;
-    short res0;
-    long c_time;
-    long res3;
-    long res4;
-    long res5;
-    short aspectx;
-    short aspecty;
+    uint32_t size;
+    uint16_t magic;
+    uint16_t n_frames;
+    uint16_t width;
+    uint16_t height;
+    uint16_t depth;
+    uint16_t flags;
+    uint32_t speed;
+    int16_t res0;
+    int32_t c_time;
+    int32_t res3;
+    int32_t res4;
+    int32_t res5;
+    int16_t aspectx;
+    int16_t aspecty;
     char res[38];
-    long oframe1;
-    long oframe2;
+    int32_t oframe1;
+    int32_t oframe2;
     char res2[40];
 } __attribute__((packed));
 
 struct prefix_chunk {
-    long size;
-    short type;
-    short n_chunks;
+    int32_t size;
+    int16_t type;
+    int16_t n_chunks;
     char res[8];
 } __attribute__((packed));
 
 struct frame_chunk {
-    long size;
-    short type;
-    short n_chunks;
+    int32_t size;
+    int16_t type;
+    int16_t n_chunks;
     char res[8];
 } __attribute__((packed));
 
 struct frame_header {
-    long size;
-    short type;
+    int32_t size;
+    int16_t type;
 } __attribute__((packed));
 
-#define FLC_NOT_OPEN 0x00
-#define READ_FLC_FROM_DATFILE 0x01
-#define READ_FLC_FROM_FILE 0x02
-#define READ_FLC_FROM_MEMORY 0x03
+inline constexpr auto FLC_NOT_OPEN = 0x00;
+inline constexpr auto READ_FLC_FROM_DATFILE = 0x01;
+inline constexpr auto READ_FLC_FROM_FILE = 0x02;
+inline constexpr auto READ_FLC_FROM_MEMORY = 0x03;
 
 char flc_status = FLC_NOT_OPEN;
 FILE* flc_file = nullptr;
@@ -127,10 +111,6 @@ BITMAP* flc_bitmap = nullptr;
 BITMAP* target_bitmap = nullptr;
 volatile unsigned long flc_counter = 0;
 int (*flc_callback)() = nullptr;
-
-#define FRAME_SIZE (flc_h.width * flc_h.height)
-#define FRAME_WIDTH (flc_h.width)
-#define FRAME_HEIGHT (flc_h.height)
 
 static auto read_flc_data(void* buffer, int count) -> int
 {
@@ -181,28 +161,9 @@ static auto seek_flc_data(int offset, int mode) -> int
 static auto flc_read_header() -> int
 {
     read_flc_data(&flc_h, sizeof(struct flc_header));
-#ifdef SHOW_HEADERS
-    PRINTF("Size: %d\n", flc_h.size);
-    PRINTF("Magic: 0x%x\n", flc_h.magic);
-#endif
     if (flc_h.magic != FLC_MAGIC) {
-#ifdef SHOW_HEADERS
-        PRINTF("Error: Not a valid flc-file\n");
-#endif
         return 1;
     }
-#ifdef SHOW_HEADERS
-    PRINTF("Num frames: %d\n", flc_h.n_frames);
-    PRINTF("Width: %d\n", flc_h.width);
-    PRINTF("Height: %d\n", flc_h.height);
-    PRINTF("Colordepth: %d\n", flc_h.depth);
-    PRINTF("Flags: %d\n", flc_h.flags);
-    PRINTF("Speed: %dms/frame\n", flc_h.speed);
-    PRINTF("Aspect_x: %d\n", flc_h.aspectx);
-    PRINTF("Aspect_y: %d\n", flc_h.aspecty);
-    PRINTF("oFrame1: %d\n", flc_h.oframe1);
-    PRINTF("oFrame2: %d\n", flc_h.oframe2);
-#endif
     return 0;
 }
 
@@ -217,36 +178,21 @@ static auto read_flc_palette(int type) -> int
     RGB rgb;
 
     read_flc_data(&num_packets, 2);
-#ifdef SHOW_CHUNKS
-    PRINTF("Palette-chunk\n");
-    PRINTF("Num packets: %d\n", num_packets);
-#endif
     for (i = 0; i < num_packets; i++) {
         read_flc_data(&skip, 1);
-#ifdef SHOW_CHUNKS
-        PRINTF("Skip: %d\n", skip);
-#endif
         cc += skip;
         num_c = 0;
         read_flc_data(&num_c, 1);
         num_c = num_c == 0 ? 256 : num_c;
-#ifdef SHOW_CHUNKS
-        PRINTF("Num colors: %d\n", num_c);
-#endif
         for (j = 0; j < num_c; j++) {
             read_flc_data(&rgb.r, 1);
             read_flc_data(&rgb.g, 1);
             read_flc_data(&rgb.b, 1);
             if (type == FLI_COLOR256) {
-                rgb.r >>= 2;
-                rgb.g >>= 2;
-                rgb.b >>= 2;
+                rgb.r;
+                rgb.g;
+                rgb.b;
             }
-#ifdef SHOW_CHUNKS
-            PRINTF("R: %d\n", rgb.r);
-            PRINTF("G: %d\n", rgb.g);
-            PRINTF("B: %d\n", rgb.b);
-#endif
             set_color(cc++, &rgb);
         }
     }
@@ -261,11 +207,11 @@ static auto read_flc_brun() -> int
     unsigned char num_p = 0;
     char type = 0;
     unsigned char temp = 0;
-    for (i = 0; i < FRAME_HEIGHT; i++) {
+    for (i = 0; i < flc_h.height; i++) {
         read_flc_data(&num_p, 1); //skit-v?rde
         cw = 0;
         x = 0;
-        while (x < FRAME_WIDTH) {
+        while (x < flc_h.width) {
             read_flc_data(&type, 1);
             if (type < 0) {
                 read_flc_data(&flc_bitmap->dat[(flc_bitmap->w * i) + x], -type);
@@ -295,15 +241,8 @@ auto read_flc_ss2() -> int
     int i = 0;
 
     read_flc_data(&num_lines, 2);
-#ifdef SHOW_CHUNKS
-    PRINTF("SS2\n");
-    PRINTF("Num lines: %d\n", num_lines);
-#endif
     while (num_lines-- > 0) {
         read_flc_data(&num_packets, 2);
-#ifdef SHOW_CHUNKS
-        PRINTF("Num packets: %d\n", num_packets);
-#endif
         while (num_packets < 0) {
             if ((num_packets & 0x4000) != 0) {
                 y -= num_packets;
@@ -311,10 +250,6 @@ auto read_flc_ss2() -> int
                 flc_bitmap->dat[(flc_bitmap->w * y) + flc_bitmap->w - 1] = num_packets & 0xff;
             }
             ret = read_flc_data(&num_packets, 2);
-#ifdef SHOW_CHUNKS
-            PRINTF("-Num packets: %d\n", num_packets);
-            PRINTF("Return: %d\n", ret);
-#endif
         }
         x = 0;
         while (num_packets-- > 0) {
@@ -406,8 +341,6 @@ auto play_fli(char* filename, BITMAP* bmp, int loop, int (*callback)()) -> int
     if (flc_bitmap == nullptr) {
         flc_bitmap = create_bitmap(320, 240);
     }
-    LOCK_VARIABLE(flc_counter);
-    LOCK_FUNCTION(flc_timer_callback);
     flc_callback = callback;
     target_bitmap = bmp;
     if (target_bitmap == nullptr) {
@@ -429,7 +362,6 @@ auto play_memory_fli(void* fli_data, BITMAP* bmp, int loop, int (*callback)()) -
     if (flc_bitmap == nullptr) {
         flc_bitmap = create_bitmap(320, 240);
     }
-    LOCK_VARIABLE(flc_counter);
     flc_callback = callback;
     target_bitmap = bmp;
     if (target_bitmap == nullptr) {

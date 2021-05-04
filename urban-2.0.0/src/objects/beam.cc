@@ -32,15 +32,15 @@
 #include "object2.h"
 #include <allegro.h>
 
-#define X_SPEED 1
-#define FRAME_DELAY 2
+inline constexpr auto X_SPEED = 1;
+inline constexpr auto FRAME_DELAY = 2;
 
-#define LIFE_FRAMES 9
+inline constexpr auto LIFE_FRAMES = 9;
 
 Beam_o::Beam_o(int X, int Y, int Z, int Friends, int SpeedX, int SpeedY)
     : Object(X, Y, Z)
 {
-    RGB pal[256];
+    PALETTE pal;
     char filename[512];
     int i = 0;
 

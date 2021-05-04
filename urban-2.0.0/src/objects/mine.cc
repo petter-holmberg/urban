@@ -34,14 +34,14 @@
 #include <cstdlib>
 #include <cstring>
 /****************************************************************************/
-#define STRENGTH_MINE 100
-#define STATE_NONE 0x00
-#define STATE_EXPLODE 0x01
+inline constexpr auto STRENGTH_MINE = 100;
+inline constexpr auto STATE_NONE = 0x00;
+inline constexpr auto STATE_EXPLODE = 0x01;
 /****************************************************************************/
 mine_o::mine_o(int X, int Y, int Z)
     : Object(X, Y, Z)
 {
-    RGB pal[256];
+    PALETTE pal;
     char filename[512];
 
     images = new BITMAP*[2];

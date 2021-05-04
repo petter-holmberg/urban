@@ -33,18 +33,19 @@
 
 #include "datfile.h"
 #include <allegro.h>
+#include <memory>
 
 struct CacheEntry {
     char* filename;
     BITMAP* bitmap;
     int count;
-    RGB* pal;
+    PALETTE pal;
 };
 
 class ImageCache {
 public:
     ImageCache();
-    BITMAP* GetImage(const char* filename, RGB* pal);
+    BITMAP* GetImage(const char* filename, PALETTE& pal);
     void FreeImage(BITMAP* bitmap);
     ~ImageCache();
 

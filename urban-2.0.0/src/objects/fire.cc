@@ -32,14 +32,13 @@
 #include "object.h"
 #include <allegro.h>
 
-#define FRAME_DELAY 4
-#define BURN_DELAY 2000
+inline constexpr auto FRAME_DELAY = 4;
+inline constexpr auto BURN_DELAY = 2000;
 
 Fire_o::Fire_o(int X, int Y, int Z, int size)
     : Object(X, Y, Z)
 {
-
-    RGB pal[256];
+    PALETTE pal;
     char filename[512];
     int i = 0;
 

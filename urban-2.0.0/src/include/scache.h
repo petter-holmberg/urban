@@ -33,11 +33,7 @@
 
 #include <allegro.h>
 
-#ifdef DJGPP
-#include <jgmod.h>
-#else
 #include <mikmod.h>
-#endif
 
 struct SCacheEntry {
     char* filename;

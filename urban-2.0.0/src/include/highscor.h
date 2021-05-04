@@ -4,7 +4,7 @@
 #include <cstdio>
 
 /***************************************************************************/
-#define NUM_HIGHSCORES 10
+inline constexpr auto NUM_HIGHSCORES = 10;
 /***************************************************************************/
 struct Score_t {
     char Name[64];

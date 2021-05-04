@@ -34,28 +34,25 @@
 #include <cstdlib>
 #include <cstring>
 
-#define STATE_NONE 0
+inline constexpr auto STATE_NONE = 0;
 
-#define MAX_X_SPEED 2 //4
-#define X_FRICTION 1
-#define MIN_X_SPEED (-MAX_X_SPEED) //-4
-#define MAX_Y_SPEED 16
-#define MIN_Y_SPEED (-12)
-#define X_ACCEL 2 //2
-#define Y_ACCEL 1
-#define Z_ACCEL 2
-#define MAX_Z_SPEED 2
-#define MIN_Z_SPEED (-MAX_Z_SPEED)
-#define Z_FRICTION 1
-
-#define COLL_X (coll_x + coll_width)
-#define COLL_Y (coll_y + coll_height)
+inline constexpr auto MAX_X_SPEED = 2;
+inline constexpr auto X_FRICTION = 1;
+inline constexpr auto MIN_X_SPEED = -MAX_X_SPEED;
+inline constexpr auto MAX_Y_SPEED = 16;
+inline constexpr auto MIN_Y_SPEED = -12;
+inline constexpr auto X_ACCEL = 2;
+inline constexpr auto Y_ACCEL = 1;
+inline constexpr auto Z_ACCEL = 2;
+inline constexpr auto MAX_Z_SPEED = 2;
+inline constexpr auto MIN_Z_SPEED = -MAX_Z_SPEED;
+inline constexpr auto Z_FRICTION = 1;
 
 /**************************************************************************/
 TankWheel_o::TankWheel_o(int X, int Y, int Z)
     : Object(X, Y, Z)
 {
-    RGB pal[256];
+    PALETTE pal;
     char filename[512];
     int i = 0;
 
@@ -86,7 +83,7 @@ TankWheel_o::TankWheel_o(int X, int Y, int Z)
     coll_width = width;
     coll_height = height;
     //        for (i = 0;i < num_images;i++)
-    //		rect(images[i], coll_x, coll_y, COLL_X, COLL_Y, 15);
+    //		rect(images[i], coll_x, coll_y, coll_x + coll_width, coll_y + coll_height, 15);
 
     //stå med fötterna
     y -= images[0]->h;

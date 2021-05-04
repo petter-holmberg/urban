@@ -34,13 +34,13 @@
 #include <cstdlib>
 #include <cstring>
 
-#define EXIST_DELAY 100
-#define MOVE_DELAY 2
+inline constexpr auto EXIST_DELAY = 100;
+inline constexpr auto MOVE_DELAY = 2;
 
 Points_o::Points_o(int X, int Y, int Z, int score)
     : Object(X, Y, Z)
 {
-    RGB pal[256];
+    PALETTE pal;
     char filename[512];
     int i = 0;
 

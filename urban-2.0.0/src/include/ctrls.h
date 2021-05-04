@@ -31,57 +31,58 @@
 #ifndef __CTRLS_H__
 #define __CTRLS_H__
 
+#include "keyinfo.h"
 #include <allegro.h>
 #include <stdio.h>
 
-#define CONTROLLER_NONE 0x00
-#define CONTROLLER_FILE 0x01
-#define CONTROLLER_KEYBOARD 0x02 // Ändra ej
-#define CONTROLLER_JOYSTICK 0x03
-#define CONTROLLER_SAVEDEMO 0x04
-#define CONTROLLER_PLAYDEMO 0x05
-#define CONTROLLER_GAMEPAD2 0x06
-#define CONTROLLER_GAMEPAD4 0x07
-#define CONTROLLER_GAMEPAD6 0x08
-#define CONTROLLER_GAMEPAD8 0x09
+inline constexpr auto CONTROLLER_NONE = 0x00;
+inline constexpr auto CONTROLLER_FILE = 0x01;
+inline constexpr auto CONTROLLER_KEYBOARD = 0x02; // Do not change
+inline constexpr auto CONTROLLER_JOYSTICK = 0x03;
+inline constexpr auto CONTROLLER_SAVEDEMO = 0x04;
+inline constexpr auto CONTROLLER_PLAYDEMO = 0x05;
+inline constexpr auto CONTROLLER_GAMEPAD2 = 0x06;
+inline constexpr auto CONTROLLER_GAMEPAD4 = 0x07;
+inline constexpr auto CONTROLLER_GAMEPAD6 = 0x08;
+inline constexpr auto CONTROLLER_GAMEPAD8 = 0x09;
 
-#define JOYSTICK_NONE 0x00
-#define JOYSTICK_UP 0x01
-#define JOYSTICK_DOWN 0x02
-#define JOYSTICK_LEFT 0x03
-#define JOYSTICK_RIGHT 0x04
-#define JOYSTICK_B1 0x05
-#define JOYSTICK_B2 0x06
-#define JOYSTICK_B3 0x07
-#define JOYSTICK_B4 0x08
-#define JOYSTICK_B5 0x09
-#define JOYSTICK_B6 0x0A
-#define JOYSTICK_B7 0x0B
-#define JOYSTICK_B8 0x0C
+inline constexpr auto JOYSTICK_NONE = 0x00;
+inline constexpr auto JOYSTICK_UP = 0x01;
+inline constexpr auto JOYSTICK_DOWN = 0x02;
+inline constexpr auto JOYSTICK_LEFT = 0x03;
+inline constexpr auto JOYSTICK_RIGHT = 0x04;
+inline constexpr auto JOYSTICK_B1 = 0x05;
+inline constexpr auto JOYSTICK_B2 = 0x06;
+inline constexpr auto JOYSTICK_B3 = 0x07;
+inline constexpr auto JOYSTICK_B4 = 0x08;
+inline constexpr auto JOYSTICK_B5 = 0x09;
+inline constexpr auto JOYSTICK_B6 = 0x0A;
+inline constexpr auto JOYSTICK_B7 = 0x0B;
+inline constexpr auto JOYSTICK_B8 = 0x0C;
 
 class Controllers {
 public:
     Controllers();
     virtual ~Controllers();
 
-    virtual int up();
-    virtual int down();
-    virtual int left();
-    virtual int right();
-    virtual int fire();
-    virtual int jump();
+    virtual bool up();
+    virtual bool down();
+    virtual bool left();
+    virtual bool right();
+    virtual bool fire();
+    virtual bool jump();
 
-    virtual int weapon1();
-    virtual int weapon2();
-    virtual int weapon3();
-    virtual int weapon4();
-    virtual int weapon5();
-    virtual int weapon6();
-    virtual int weapon7();
-    virtual int weapon8();
-    virtual int weapon9();
-    virtual int next_weapon();
-    virtual int prev_weapon();
+    virtual bool weapon1();
+    virtual bool weapon2();
+    virtual bool weapon3();
+    virtual bool weapon4();
+    virtual bool weapon5();
+    virtual bool weapon6();
+    virtual bool weapon7();
+    virtual bool weapon8();
+    virtual bool weapon9();
+    virtual bool next_weapon();
+    virtual bool prev_weapon();
     virtual int update();
     //	protected:
     //        	int controller_type;
@@ -91,56 +92,56 @@ class Keyboard_ctrl : public Controllers {
 public:
     Keyboard_ctrl();
     ~Keyboard_ctrl();
-    int up();
-    int down();
-    int left();
-    int right();
-    int jump();
-    int fire();
-    int weapon1() { return key[KEY_1]; }
-    int weapon2() { return key[KEY_2]; }
-    int weapon3() { return key[KEY_3]; }
-    int weapon4() { return key[KEY_4]; }
-    int weapon5() { return key[KEY_5]; }
-    int weapon6() { return key[KEY_6]; }
-    int weapon7() { return key[KEY_7]; }
-    int weapon8() { return key[KEY_8]; }
-    int weapon9() { return key[KEY_9]; }
-    int next_weapon();
-    int prev_weapon();
+    bool up();
+    bool down();
+    bool left();
+    bool right();
+    bool jump();
+    bool fire();
+    bool weapon1() { return key[static_cast<size_t>(scan_code::KEY_1)]; }
+    bool weapon2() { return key[static_cast<size_t>(scan_code::KEY_2)]; }
+    bool weapon3() { return key[static_cast<size_t>(scan_code::KEY_3)]; }
+    bool weapon4() { return key[static_cast<size_t>(scan_code::KEY_4)]; }
+    bool weapon5() { return key[static_cast<size_t>(scan_code::KEY_5)]; }
+    bool weapon6() { return key[static_cast<size_t>(scan_code::KEY_6)]; }
+    bool weapon7() { return key[static_cast<size_t>(scan_code::KEY_7)]; }
+    bool weapon8() { return key[static_cast<size_t>(scan_code::KEY_8)]; }
+    bool weapon9() { return key[static_cast<size_t>(scan_code::KEY_9)]; }
+    bool next_weapon();
+    bool prev_weapon();
 
 private:
-    volatile int key_up;
-    volatile int key_down;
-    volatile int key_left;
-    volatile int key_right;
-    volatile int key_jump;
-    volatile int key_fire;
-    volatile int key_next;
-    volatile int key_prev;
+    scan_code key_up;
+    scan_code key_down;
+    scan_code key_left;
+    scan_code key_right;
+    scan_code key_jump;
+    scan_code key_fire;
+    scan_code key_next;
+    scan_code key_prev;
 };
 
 class Gamepad_ctrl : public Controllers {
 public:
     Gamepad_ctrl();
     ~Gamepad_ctrl();
-    int up();
-    int down();
-    int left();
-    int right();
-    int jump();
-    int fire();
-    int next_weapon();
-    int prev_weapon();
-    int weapon1() { return key[KEY_1]; }
-    int weapon2() { return key[KEY_2]; }
-    int weapon3() { return key[KEY_3]; }
-    int weapon4() { return key[KEY_4]; }
-    int weapon5() { return key[KEY_5]; }
-    int weapon6() { return key[KEY_6]; }
-    int weapon7() { return key[KEY_7]; }
-    int weapon8() { return key[KEY_8]; }
-    int weapon9() { return key[KEY_9]; }
+    bool up();
+    bool down();
+    bool left();
+    bool right();
+    bool jump();
+    bool fire();
+    bool next_weapon();
+    bool prev_weapon();
+    bool weapon1() { return key[static_cast<size_t>(scan_code::KEY_1)]; }
+    bool weapon2() { return key[static_cast<size_t>(scan_code::KEY_2)]; }
+    bool weapon3() { return key[static_cast<size_t>(scan_code::KEY_3)]; }
+    bool weapon4() { return key[static_cast<size_t>(scan_code::KEY_4)]; }
+    bool weapon5() { return key[static_cast<size_t>(scan_code::KEY_5)]; }
+    bool weapon6() { return key[static_cast<size_t>(scan_code::KEY_6)]; }
+    bool weapon7() { return key[static_cast<size_t>(scan_code::KEY_7)]; }
+    bool weapon8() { return key[static_cast<size_t>(scan_code::KEY_8)]; }
+    bool weapon9() { return key[static_cast<size_t>(scan_code::KEY_9)]; }
 
 private:
     void set_key(int, volatile int**);

@@ -11,8 +11,8 @@ public:
 
 private:
     BITMAP** images {};
-    RGB palette[256] {};
-    RGB black[256] {};
+    PALETTE palette {};
+    PALETTE black {};
 };
 
 #endif

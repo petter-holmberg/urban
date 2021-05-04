@@ -48,83 +48,69 @@ void Config::Save()
 /**************************************************************************************/
 Config::Config()
 {
-    // Default values
-
-    keyconf.key_up = KEY_UP;
-    keyconf.key_down = KEY_DOWN;
-    keyconf.key_left = KEY_LEFT;
-    keyconf.key_right = KEY_RIGHT;
-    keyconf.key_jump = KEY_SPACE;
-    keyconf.key_fire = KEY_LCONTROL;
-    keyconf.key_prevweapon = KEY_LSHIFT;
-    keyconf.key_nextweapon = KEY_RSHIFT;
     keyconf.ctrl_type = CONTROLLER_KEYBOARD;
-    keyconf.music_vol = 90;
-    keyconf.sfx_vol = 128;
-    keyconf.gfx_quality = QUALITY_NORMAL;
-
     Load();
 }
 /**************************************************************************************/
 void Config::ConfigureKeyboard()
 {
     PALETTE Pal;
-    int temp = 0;
+    scan_code temp {};
     BITMAP* bmp = icache.GetImage("ibild.pcx", Pal);
     set_palette(Pal);
 
     blit(bmp, screen, 0, 0, 0, 0, bmp->w, bmp->h);
 
-    if ((temp = GetKey("UP")) != (-1)) {
+    if ((temp = GetKey("UP")) != scan_code::INVALID) {
         keyconf.key_up = temp;
     } else {
         return;
     }
     blit(bmp, screen, 0, 0, 0, 0, bmp->w, bmp->h);
 
-    if ((temp = GetKey("DOWN")) != (-1)) {
+    if ((temp = GetKey("DOWN")) != scan_code::INVALID) {
         keyconf.key_down = temp;
     } else {
         return;
     }
     blit(bmp, screen, 0, 0, 0, 0, bmp->w, bmp->h);
 
-    if ((temp = GetKey("LEFT")) != (-1)) {
+    if ((temp = GetKey("LEFT")) != scan_code::INVALID) {
         keyconf.key_left = temp;
     } else {
         return;
     }
     blit(bmp, screen, 0, 0, 0, 0, bmp->w, bmp->h);
 
-    if ((temp = GetKey("RIGHT")) != (-1)) {
+    if ((temp = GetKey("RIGHT")) != scan_code::INVALID) {
         keyconf.key_right = temp;
     } else {
         return;
     }
     blit(bmp, screen, 0, 0, 0, 0, bmp->w, bmp->h);
 
-    if ((temp = GetKey("FIRE")) != (-1)) {
+    if ((temp = GetKey("FIRE")) != scan_code::INVALID) {
         keyconf.key_fire = temp;
     } else {
         return;
     }
     blit(bmp, screen, 0, 0, 0, 0, bmp->w, bmp->h);
 
-    if ((temp = GetKey("JUMP")) != (-1)) {
+    if ((temp = GetKey("JUMP")) != scan_code::INVALID) {
         keyconf.key_jump = temp;
     } else {
         return;
     }
     blit(bmp, screen, 0, 0, 0, 0, bmp->w, bmp->h);
 
-    if ((temp = GetKey("Prev Weapon")) != (-1)) {
+    if ((temp = GetKey("Prev Weapon")) != scan_code::INVALID) {
         keyconf.key_prevweapon = temp;
     } else {
         return;
     }
     blit(bmp, screen, 0, 0, 0, 0, bmp->w, bmp->h);
 
-    if ((temp = GetKey("Next Weapon")) != (-1)) {
+    if ((temp = GetKey("Next Weapon")) != scan_code::INVALID) {
         keyconf.key_nextweapon = temp;
     } else {
         return;
@@ -164,10 +150,10 @@ void Config::ChangeMusicVol()
         rectfill(screen, (SCREEN_WIDTH - 256) / 2, 100,
             vol + (SCREEN_WIDTH - 256) / 2, 120, 192);
 
-        switch ((readkey() >> 8)) { // 207 192
+        switch (readkey()) { // 207 192
 
-        case KEY_LEFT:
-        case KEY_DOWN:
+        case scan_code::KEY_LEFT:
+        case scan_code::KEY_DOWN:
 
             if (vol > 1) {
                 vol -= 2;
@@ -177,8 +163,8 @@ void Config::ChangeMusicVol()
             keyconf.music_vol = vol;
             break;
 
-        case KEY_UP:
-        case KEY_RIGHT:
+        case scan_code::KEY_UP:
+        case scan_code::KEY_RIGHT:
 
             if (vol < 254) {
                 vol += 2;
@@ -225,10 +211,10 @@ void Config::ChangeSFXVol()
         rectfill(screen, (SCREEN_WIDTH - 256) / 2, 100,
             vol + (SCREEN_WIDTH - 256) / 2, 120, 192);
 
-        switch ((readkey() >> 8)) { // 207 192
+        switch (readkey()) { // 207 192
 
-        case KEY_LEFT:
-        case KEY_DOWN:
+        case scan_code::KEY_LEFT:
+        case scan_code::KEY_DOWN:
 
             if (vol > 1) {
                 vol -= 2;
@@ -237,8 +223,8 @@ void Config::ChangeSFXVol()
             keyconf.sfx_vol = vol;
             break;
 
-        case KEY_UP:
-        case KEY_RIGHT:
+        case scan_code::KEY_UP:
+        case scan_code::KEY_RIGHT:
 
             if (vol < 254) {
                 vol += 2;
@@ -264,9 +250,9 @@ void Config::ChangeGFXQuality()
     }
 }
 /**************************************************************************************/
-#define MENY_POS_X 60
-#define MENY_POS_Y 85
-#define FONT_H 26
+inline constexpr auto MENY_POS_X = 60;
+inline constexpr auto MENY_POS_Y = 85;
+inline constexpr auto FONT_H = 26;
 void Config::Start()
 {
     int pos = 1;
@@ -298,10 +284,8 @@ void Config::StartControls()
     Save();
 }
 /**************************************************************************************/
-auto Config::GetKey(const char* Label) -> int
+auto Config::GetKey(const char* Label) -> scan_code
 {
-    int i = 0;
-    int temp = 0;
     char buffer[128];
     UrbanFont fnt(SMALL_FONT2);
 
@@ -309,23 +293,17 @@ auto Config::GetKey(const char* Label) -> int
     fnt.print_centre(buffer, 320 / 2, 90);
 
     clear_keybuf();
-    if (temp == 0) {
-        temp = readkey();
-        temp >>= 8;
-    }
-    i = 0;
-    while (keyinfo[i].num != 0) {
+    auto temp = readkey();
+    size_t i = 0;
+    while (keyinfo[i].num != scan_code::NONE) {
         if (keyinfo[i].num == temp) {
 
             fnt.print_centre(keyinfo[i].description, 320 / 2, 120);
-            while (key[temp] != 0U) {
-                ;
-            }
             rest(500);
             return temp;
         }
         i++;
     }
-    return -1;
+    return scan_code::INVALID;
 }
 /**************************************************************************************/

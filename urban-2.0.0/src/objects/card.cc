@@ -34,12 +34,10 @@
 #include <cstring>
 
 /****************************************************************************/
-//#define POWERUP_STRENGTH 1000
-/****************************************************************************/
 card_o::card_o(int X, int Y, int Z, Cardtype Card)
     : Object(X, Y, Z)
 {
-    RGB pal[256];
+    PALETTE pal;
     char filename[512];
 
     images = new BITMAP*[2];

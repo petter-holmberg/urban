@@ -40,7 +40,7 @@
 #include <cstring>
 #include <unistd.h>
 /**************************************************************************/
-#define FRAME_DELAY 100
+inline constexpr auto FRAME_DELAY = 100;
 /**************************************************************************/
 UrbanFont* lg;
 int quit;
@@ -93,60 +93,68 @@ static auto callback() -> int
 }
 }
 /**************************************************************************/
-#define PLAY_FLC(x, y)                              \
-    strcpy(flctext, y);                             \
-    if ((buf = dat.load_file_to_memory(x)) == NULL) \
-        exit(1);                                    \
-    play_memory_fli(buf, screen, 1, callback);      \
-    delete[] buf;                                   \
-    if (quit) {                                     \
-        QUIT;                                       \
+inline auto PLAY_FLC(datfile& dat, const char* x, const char* y) -> bool
+{
+    char* buf = nullptr;
+    strcpy(flctext, y);
+    if ((buf = dat.load_file_to_memory(x)) == nullptr) {
+        exit(1);
     }
-
-#define ANIM_TEXT(x)                             \
-    strcpy(text, x);                             \
-                                                 \
-    clear_keybuf();                              \
-                                                 \
-    for (i = 0; i < (signed)strlen(text); i++) { \
-                                                 \
-        strncpy(temptext, text, i + 1);          \
-        temptext[i + 1] = 0;                     \
-        lg->print(temptext, 50, 170, screen);    \
-                                                 \
-        rest(FRAME_DELAY);                       \
-                                                 \
-        if (keypressed()) {                      \
-                                                 \
-            QUIT;                                \
-        }                                        \
+    play_memory_fli(buf, screen, 1, callback);
+    delete[] buf;
+    if (quit != 0) {
+        clear_keybuf();
+        return false;
     }
+    return true;
+}
 
-#define DISPLAY_IMAGE(x)                     \
-    bmp = icache.GetImage(x, palette);       \
-    set_palette(palette);                    \
-    blit(bmp, screen, 0, 0, 0, 0, 320, 240); \
+inline auto ANIM_TEXT(const char* x) -> bool
+{
+    char text[128];
+    char temptext[128];
+    strcpy(text, x);
+
+    clear_keybuf();
+
+    for (int i = 0; i < (signed)strlen(text); i++) {
+
+        strncpy(temptext, text, i + 1);
+        temptext[i + 1] = 0;
+        lg->print(temptext, 50, 170, screen);
+
+        rest(FRAME_DELAY);
+
+        if (keypressed() != 0) {
+            clear_keybuf();
+            return false;
+        }
+    }
+    return true;
+}
+
+inline void DISPLAY_IMAGE(BITMAP* bmp, PALETTE& palette, const char* x)
+{
+    bmp = icache.GetImage(x, palette);
+    set_palette(palette);
+    blit(bmp, screen, 0, 0, 0, 0, 320, 240);
     icache.FreeImage(bmp);
+}
 
-#define QUIT        \
-    clear_keybuf(); \
-    return;
+inline void PLAY_MOD(const char* x)
+{
+    char* buf = new char[1024];
 
-#define PLAY_MOD(x)                      \
-    {                                    \
-        char* buf = new char[1024];      \
-                                         \
-        sprintf(buf, x, DATPATH);        \
-        ENGINE.sound.PlayMusic(buf);     \
-                                         \
-        delete[] buf;                    \
-        ENGINE.sound.SetMusicVolume(64); \
-    }
+    sprintf(buf, x, DATPATH);
+    ENGINE.sound.PlayMusic(buf);
+
+    delete[] buf;
+    ENGINE.sound.SetMusicVolume(64);
+}
 /**************************************************************************/
 void Intro::RunIntro()
 {
     datfile dat("intro.dat");
-    char* buf = nullptr;
     int i = 0;
     BITMAP* bmp = nullptr;
     quit = 0;
@@ -155,7 +163,7 @@ void Intro::RunIntro()
 
     PLAY_MOD("%s/snd/modules/warning.mod");
     // Warning:
-    DISPLAY_IMAGE("warning.pcx");
+    DISPLAY_IMAGE(bmp, palette, "warning.pcx");
     // Wait for keypress
     while (keypressed() == 0) {
         ;
@@ -167,45 +175,61 @@ void Intro::RunIntro()
 
     // Limousine:
 
-    DISPLAY_IMAGE("intro/1.pcx");
+    DISPLAY_IMAGE(bmp, palette, "intro/1.pcx");
 
     rest(2000);
 
-    ANIM_TEXT("Container terminal 3B\nLos Angeles Harbour, USA\n11:45 am... Present Day");
+    if (!ANIM_TEXT("Container terminal 3B\nLos Angeles Harbour, USA\n11:45 am... Present Day")) {
+        return;
+    }
 
     rest(1000);
 
-    PLAY_FLC("gfx/intro/2.flc",
-        "                              ");
+    if (!PLAY_FLC(dat, "gfx/intro/2.flc",
+            "                              ")) {
+        return;
+    }
 
-    PLAY_FLC("gfx/intro/3.flc",
-        "Zee lab und all our equipment\niz ready. Zee only thing we need now\niz ein object. ");
-
-    rest(1000);
-
-    PLAY_FLC("gfx/intro/4.flc",
-        "Sure, I'll take care of it.\nDoes he need any special abilities?          ");
-
-    PLAY_FLC("gfx/intro/3.flc",
-        "Of course, here you have eine list...     ");
-
-    PLAY_FLC("gfx/intro/5.flc",
-        "                                   ");
-
-    PLAY_FLC("gfx/intro/6.flc",
-        "Aah... I think I just found\nthe perfect victim!          ");
+    if (!PLAY_FLC(dat, "gfx/intro/3.flc",
+            "Zee lab und all our equipment\niz ready. Zee only thing we need now\niz ein object. ")) {
+        return;
+    }
 
     rest(1000);
 
-    DISPLAY_IMAGE("intro/id.pcx");
+    if (!PLAY_FLC(dat, "gfx/intro/4.flc",
+            "Sure, I'll take care of it.\nDoes he need any special abilities?          ")) {
+        return;
+    }
+
+    if (!PLAY_FLC(dat, "gfx/intro/3.flc",
+            "Of course, here you have eine list...     ")) {
+        return;
+    }
+
+    if (!PLAY_FLC(dat, "gfx/intro/5.flc",
+            "                                   ")) {
+        return;
+    }
+
+    if (!PLAY_FLC(dat, "gfx/intro/6.flc",
+            "Aah... I think I just found\nthe perfect victim!          ")) {
+        return;
+    }
+
+    rest(1000);
+
+    DISPLAY_IMAGE(bmp, palette, "intro/id.pcx");
 
     rest(2000);
 
-    ANIM_TEXT("Yes, He will be perfect!\n       He He He He!");
+    if (!ANIM_TEXT("Yes, He will be perfect!\n       He He He He!")) {
+        return;
+    }
 
     rest(1000);
 
-    DISPLAY_IMAGE("intro/1.pcx");
+    DISPLAY_IMAGE(bmp, palette, "intro/1.pcx");
 
     rest(3000);
 
@@ -213,29 +237,45 @@ void Intro::RunIntro()
 
     rest(2000);
 
-    DISPLAY_IMAGE("intro/nevada.pcx");
+    DISPLAY_IMAGE(bmp, palette, "intro/nevada.pcx");
 
     rest(1000);
 
-    ANIM_TEXT("Three months later...\nLocation: Top secret military\nfacility for weapon development.\nSomewhere in the Nevada desert.");
+    if (!ANIM_TEXT("Three months later...\nLocation: Top secret military\nfacility for weapon development.\nSomewhere in the Nevada desert.")) {
+        return;
+    }
 
     rest(3000);
 
-    PLAY_FLC("gfx/intro/7.flc", "                      ");
+    if (!PLAY_FLC(dat, "gfx/intro/7.flc", "                      ")) {
+        return;
+    }
 
-    PLAY_FLC("gfx/intro/8.flc", "This iz zee last stage\nin zee process.   ");
+    if (!PLAY_FLC(dat, "gfx/intro/8.flc", "This iz zee last stage\nin zee process.   ")) {
+        return;
+    }
 
     rest(1000);
 
-    PLAY_FLC("gfx/intro/9.flc", "Great! \nSo we can soon begin\nthe battle testing?   ");
+    if (!PLAY_FLC(dat, "gfx/intro/9.flc", "Great! \nSo we can soon begin\nthe battle testing?   ")) {
+        return;
+    }
 
-    PLAY_FLC("gfx/intro/8.flc", "Yes, in about zree days\nfrom now.    ");
+    if (!PLAY_FLC(dat, "gfx/intro/8.flc", "Yes, in about zree days\nfrom now.    ")) {
+        return;
+    }
 
-    PLAY_FLC("gfx/intro/7.flc", "Zhen you can play with it\nas much as you like.\n      \nPerfect....    ");
+    if (!PLAY_FLC(dat, "gfx/intro/7.flc", "Zhen you can play with it\nas much as you like.\n      \nPerfect....    ")) {
+        return;
+    }
 
-    PLAY_FLC("gfx/intro/11.flc", "                             \nWHAT?!!      ");
+    if (!PLAY_FLC(dat, "gfx/intro/11.flc", "                             \nWHAT?!!      ")) {
+        return;
+    }
 
-    PLAY_FLC("gfx/intro/12.flc", "He iz not suppozed to\nwake up now.     \nThiz can become eine...\n...grosse problem.");
+    if (!PLAY_FLC(dat, "gfx/intro/12.flc", "He iz not suppozed to\nwake up now.     \nThiz can become eine...\n...grosse problem.")) {
+        return;
+    }
 
     rest(2000);
 }

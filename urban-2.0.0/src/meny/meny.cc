@@ -31,14 +31,11 @@
 #include <allegro.h>
 #include <cstdio>
 #include <cstring>
-#include <unistd.h>
-#ifndef DJGPP
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
 void close_gfx();
-#endif
 
 #include "config.h"
 #include "engine.h"
@@ -48,13 +45,13 @@ void close_gfx();
 #include "intro.h"
 #include "urbfont.h"
 
-#define MENU_MUSIC "snd/modules/nole.xm"
-#define CREDITS_MUSIC "snd/modules/extrem.xm"
-#define MAXPOS 6
-#define MINPOS 1
-#define FONT_H 26
-#define MENY_POS_X 60
-#define MENY_POS_Y 85
+inline constexpr auto MENU_MUSIC = "snd/modules/nole.xm";
+inline constexpr auto CREDITS_MUSIC = "snd/modules/extrem.xm";
+inline constexpr auto MAXPOS = 6;
+inline constexpr auto MINPOS = 1;
+inline constexpr auto FONT_H = 26;
+inline constexpr auto MENY_POS_X = 60;
+inline constexpr auto MENY_POS_Y = 85;
 
 /* From credits.cc */
 void showcredits();
@@ -70,7 +67,7 @@ auto MenuChoice(int alternative) -> int
     case 1:
         NewGame(0);
 
-        if (IS_SOUND_ON) {
+        if (is_sound_on()) {
             char buffer[1024];
 
             sprintf(buffer, "%s/%s", DATPATH, MENU_MUSIC);
@@ -81,7 +78,7 @@ auto MenuChoice(int alternative) -> int
     case 2:
         LoadGame();
 
-        if (IS_SOUND_ON) {
+        if (is_sound_on()) {
             char buffer[1024];
 
             sprintf(buffer, "%s/%s", DATPATH, MENU_MUSIC);
@@ -97,7 +94,7 @@ auto MenuChoice(int alternative) -> int
         break;
 
     case 4:
-        if (IS_SOUND_ON) {
+        if (is_sound_on()) {
             char buffer[1024];
 
             sprintf(buffer, "%s/%s", DATPATH, CREDITS_MUSIC);
@@ -107,7 +104,7 @@ auto MenuChoice(int alternative) -> int
 
         showcredits();
 
-        if (IS_SOUND_ON) {
+        if (is_sound_on()) {
             char buffer[1024];
 
             sprintf(buffer, "%s/%s", DATPATH, MENU_MUSIC);
@@ -150,19 +147,19 @@ auto Do_Menu(const char* text, int num_items, int pos) -> int
         blit(backg, screen, text_x - 10 - choice->w, text_y - 20, text_x - 10 - choice->w, text_y - 20, choice->w, choice->h * 10);
         masked_blit(choice, screen, 0, 0, text_x - 10 - choice->w, text_y + FONT_H * (pos - 1), choice->w, choice->h);
 
-        switch ((readkey() >> 8)) {
+        switch (readkey()) {
 
-        case KEY_ENTER:
-        case KEY_SPACE:
+        case scan_code::KEY_ENTER:
+        case scan_code::KEY_SPACE:
             looping = 0;
             break;
 
-        case KEY_ESC:
+        case scan_code::KEY_ESC:
             pos = 0;
             looping = 0;
             break;
 
-        case KEY_UP:
+        case scan_code::KEY_UP:
             if (pos > 1) {
                 pos--;
             } else {
@@ -170,7 +167,7 @@ auto Do_Menu(const char* text, int num_items, int pos) -> int
             }
             break;
 
-        case KEY_DOWN:
+        case scan_code::KEY_DOWN:
             if (pos < num_items) {
                 pos++;
             } else {
@@ -196,23 +193,17 @@ void LoadGame()
     FILE* fs = nullptr;
     int slot = 0;
 
-#ifdef DJGPP
-    sprintf(filename, "savegame.dat");
-#else
     sprintf(filename, "%s/.urban/savegame.dat", getenv("HOME"));
-#endif
     if ((fs = fopen(filename, "rb")) == nullptr) {
         for (auto& SavedGame : SavedGames) {
             SavedGame.level = 0;
             memcpy(&SavedGame.dat, &DefaultPData, sizeof(struct PlayerData));
         }
-#ifndef DJGPP
         /* Create dir */
         sprintf(filename, "%s/.urban", getenv("HOME"));
         mkdir(filename, S_IRUSR | S_IWUSR | S_IXUSR);
 
         sprintf(filename, "%s/.urban/savegame.dat", getenv("HOME"));
-#endif
         if ((fs = fopen(filename, "wb")) != nullptr) {
 
             fwrite(SavedGames, 1, 5 * sizeof(struct SaveGameData), fs);
@@ -266,8 +257,8 @@ auto main(int argc, char** argv) -> int
     engine = new Engine;
 
     opterr = 0;
-    _SET_SPEC_LEVEL_OFF;
-    _SET_VERT_RETRACE_OFF;
+    set_spec_level_off();
+    set_vert_retrace_off();
     /*
 Möjliga växlar:
 -f<mapname> Namn på karta att spela
@@ -292,35 +283,35 @@ Möjliga växlar:
             return 0;
             break;
         case 'f':
-            _SET_SPEC_LEVEL_ON;
+            set_spec_level_on();
             UrbanSetGFXMode();
             ENGINE.play_level(optarg);
             return 0;
             break;
         case 's':
-            _SET_SOUND_OFF;
+            set_sound_off();
             break;
         case 'b':
-            _SET_BACKGROUND_OFF;
+            set_background_off();
             break;
         case 'v':
-            _SET_VERT_RETRACE_OFF;
+            set_vert_retrace_off();
             break;
         case 'r':
-            _SET_VERT_RETRACE_ON;
+            set_vert_retrace_on();
             break;
         case 'x':
-            _SET_SOUNDFX_OFF;
+            set_soundfx_off();
             break;
         case 'i':
-            _SET_INTRO_OFF;
+            set_intro_off();
             break;
         }
     }
 
     UrbanSetGFXMode();
 
-    if (IS_INTRO_ON) {
+    if (is_intro_on()) {
         // Run intro
         auto* intro = new Intro;
 
@@ -329,7 +320,7 @@ Möjliga växlar:
     }
     clear_keybuf();
 
-    if (IS_SOUND_ON) {
+    if (is_sound_on()) {
         char buffer[1024];
 
         sprintf(buffer, "%s/%s", DATPATH, MENU_MUSIC);
@@ -363,8 +354,6 @@ Möjliga växlar:
     }
     fade_out(6);
 
-#ifndef DJGPP
     close_gfx();
-#endif
     return 0;
 }

@@ -37,30 +37,31 @@
 #include "score.h"
 #include "sound.h"
 
-#define MAX_OBJECTS 1000
-#define MAX_INNERLAYER 100
-#define MAX_EFFECTS_OBJECTS 400
-#define MAX_DEKORATION_OBJECTS 400
-#define MAX_MAP_EFFECT 400
-#define MAX_MAP_DEKORATION_OBJECTS 400
-#define MAX_SHELL_OBJECTS 100
-#define MAX_MESSAGES 10
-#define SCREEN_WIDTH 320
-#define SCREEN_HEIGHT 240
-#define TILE_SIZE 1250
-#define TILE_WIDTH 26
-#define TILE_HEIGHT 40
-#define ENGINE (*engine)
-#define TILE_SIDE_HEIGHT 24
-#define TILE_TOP_HEIGHT (TILE_HEIGHT - TILE_SIDE_HEIGHT)
-#define MAX_Z (TILE_TOP_HEIGHT >> 1)
-#define MIN_Z (3 * TILE_TOP_HEIGHT - 5)
-#define DELETE_ME -1
-#define REMOVE_ME -2
-#define NUM_BUFFERS 1
+inline constexpr auto MAX_OBJECTS = 1000;
+inline constexpr auto MAX_INNERLAYER = 100;
+inline constexpr auto MAX_EFFECTS_OBJECTS = 400;
+inline constexpr auto MAX_DEKORATION_OBJECTS = 400;
+inline constexpr auto MAX_MAP_EFFECT = 400;
+inline constexpr auto MAX_MAP_DEKORATION_OBJECTS = 400;
+inline constexpr auto MAX_SHELL_OBJECTS = 100;
+inline constexpr auto MAX_MESSAGES = 10;
+inline constexpr auto SCREEN_WIDTH = 320;
+inline constexpr auto SCREEN_HEIGHT = 240;
+inline constexpr auto TILE_SIZE = 1250;
+inline constexpr auto TILE_WIDTH = 26;
+inline constexpr auto TILE_HEIGHT = 40;
+inline constexpr auto TILE_SIDE_HEIGHT = 24;
+inline constexpr auto TILE_TOP_HEIGHT = TILE_HEIGHT - TILE_SIDE_HEIGHT;
+inline constexpr auto MAX_Z = TILE_TOP_HEIGHT / 2;
+inline constexpr auto MIN_Z = 3 * TILE_TOP_HEIGHT - 5;
+inline constexpr auto DELETE_ME = -1;
+inline constexpr auto REMOVE_ME = -2;
+inline constexpr auto NUM_BUFFERS = 1;
 
+#define ENGINE (*engine)
 #define PLAYER ENGINE.player
 #define SOUND ENGINE.sound
+
 class Engine;
 
 extern Engine ENGINE;
@@ -72,8 +73,8 @@ struct Buffer {
     volatile int offsety;
 };
 
-#define LOW_PRIORITY 0x01
-#define HIGH_PRIORITY 0x02
+inline constexpr auto LOW_PRIORITY = 0x01;
+inline constexpr auto HIGH_PRIORITY = 0x02;
 
 struct MessageQueue {
     BITMAP* msg;

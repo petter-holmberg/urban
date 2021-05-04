@@ -35,16 +35,16 @@
 #include <cstring>
 
 /****************************************************************************/
-#define STATE_NONE 0x00
-#define STATE_FIRE 0x01
-#define STATE_FIRING 0x02
-#define FIRE_STRENGTH 3
+inline constexpr auto STATE_NONE = 0x00;
+inline constexpr auto STATE_FIRE = 0x01;
+inline constexpr auto STATE_FIRING = 0x02;
+inline constexpr auto FIRE_STRENGTH = 3;
 
 /****************************************************************************/
 FloorGun_o::FloorGun_o(int X, int Y, int Z)
     : Object(X, Y, Z)
 {
-    RGB pal[256];
+    PALETTE pal;
     char filename[512];
 
     images = new BITMAP*[2];

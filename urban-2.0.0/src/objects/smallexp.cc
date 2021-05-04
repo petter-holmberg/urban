@@ -36,7 +36,7 @@
 SmallExplosion_o::SmallExplosion_o(int X, int Y, int Z)
     : Object(X, Y, Z)
 {
-    RGB pal[256];
+    PALETTE pal;
     char filename[512];
     int i = 0;
 

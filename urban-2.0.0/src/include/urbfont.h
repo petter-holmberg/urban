@@ -3,17 +3,14 @@
 
 #include <allegro.h>
 
-#define FONT_MAGIC 0x55464e54
+inline constexpr auto FONT_MAGIC = 0x55464e54;
 
-#define FONT_FLAG_BITMAP 0x01
-#define FONT_FLAG_TRANSPARENT 0x02
+inline constexpr auto FONT_FLAG_BITMAP = 0x01;
+inline constexpr auto FONT_FLAG_TRANSPARENT = 0x02;
 
-#define IS_FONT_BITMAP(x) (x & FONT_FLAG_BITMAP)
-#define IS_FONT_TRANSPARENT(x) (x & FONT_FLAG_TRANSPARENT)
-
-#define SMALL_FONT 0
-#define LARGE_FONT 1
-#define SMALL_FONT2 2
+inline constexpr auto SMALL_FONT = 0;
+inline constexpr auto LARGE_FONT = 1;
+inline constexpr auto SMALL_FONT2 = 2;
 
 struct urban_font_header {
     unsigned long magic;
@@ -52,7 +49,7 @@ public:
     void print(const char* text, int x, int y, BITMAP* dest = screen);
     void print_centre(const char* text, int x, int y, BITMAP* dest = screen);
     BITMAP* print(const char* text);
-    RGB* GetPal() { return pal; };
+    PALETTE& GetPal() { return pal; };
 
 private:
     BITMAP* create_textbitmap(const char* text) const;

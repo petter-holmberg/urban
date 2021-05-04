@@ -35,12 +35,10 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
-#ifndef DJGPP
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
-#endif
 /***************************************************************************/
 
 /***************************************************************************/
@@ -90,7 +88,6 @@ HighScore::HighScore()
 auto HighScore::GetName() -> char*
 {
     static char Name[64] = "";
-    int key = 0;
     int pos = 0;
     PALETTE pal;
     BITMAP* backg = icache.GetImage("ibild.pcx", pal);
@@ -98,15 +95,11 @@ auto HighScore::GetName() -> char*
     UrbanFont fnt(SMALL_FONT2);
 
     if (strlen(Name) == 0) {
-#ifdef DJGPP
-        strcpy(Name, "Unknown");
-#else
         if (getenv("USER") != nullptr) {
             strcpy(Name, getenv("USER"));
         } else {
             strcpy(Name, "Unknown");
         }
-#endif
     }
 
     pos = strlen(Name);
@@ -131,33 +124,34 @@ auto HighScore::GetName() -> char*
 
         masked_blit(textbmp, screen, 0, 0, 50, 60, 220, 55);
 
-        key = readkey();
+        auto key = readkey();
 
-        if ((key >> 8) == KEY_ENTER) {
+        if (key == scan_code::KEY_ENTER) {
 
             Name[pos] = 0;
             destroy_bitmap(textbmp);
             return Name;
         }
-        if ((key >> 8) == KEY_ESC) {
+        if (key == scan_code::KEY_ESC) {
 
             destroy_bitmap(textbmp);
             strcpy(Name, "Unknown");
             return Name;
         }
-        if ((key >> 8) == KEY_BACKSPACE) {
+        if (key == scan_code::KEY_BACKSPACE) {
             if (pos == 0) {
                 continue;
             }
             pos--;
             Name[pos] = 0;
         } else if (pos < 10) {
-
+            /*
             if (!((key & 0xff) < 'A' || (key & 0xff) > 'z') || ((key & 0xff) == ' ')) {
 
                 Name[pos++] = (key & 0xff);
                 Name[pos] = 0;
             }
+*/
         }
     } while (1);
 
@@ -191,35 +185,32 @@ void HighScore::Open()
 {
     // Reset Score
     memset(highscore, 0, sizeof(Score_t) * NUM_HIGHSCORES);
-#ifdef DJGPP
-    if ((fd = fopen("hs.dat", "rb")) == NULL)
-#else
 #ifdef HSFILENAME
-    if ((fd = fopen(HSFILENAME, "rb")) == NULL)
+    if ((fd = fopen(HSFILENAME, "rb")) == nullptr) {
+        return;
+    }
 #else
     char filename[1024];
 
     sprintf(filename, "%s/.urban/hs.dat", getenv("HOME"));
 
     if ((fd = fopen(filename, "rb")) == nullptr) {
-#endif
-#endif
         return;
-}
+    }
+#endif
 
-auto err = fread(highscore, sizeof(Score_t), NUM_HIGHSCORES, fd);
+    auto err = fread(highscore, sizeof(Score_t), NUM_HIGHSCORES, fd);
 
-fclose(fd);
+    fclose(fd);
 }
 /***************************************************************************/
 void HighScore::Save()
 {
 
-#ifdef DJGPP
-    if ((fd = fopen("hs.dat", "wb")) == NULL)
-#else
 #ifdef HSFILENAME
-    if ((fd = fopen(HSFILENAME, "wb")) == NULL)
+    if ((fd = fopen(HSFILENAME, "wb")) == nullptr) {
+        return;
+    }
 #else
     char filename[1024];
 
@@ -230,42 +221,12 @@ void HighScore::Save()
     sprintf(filename, "%s/.urban/hs.dat", getenv("HOME"));
 
     if ((fd = fopen(filename, "wb")) == nullptr) {
-#endif
-#endif
         return;
-}
-
-fwrite(highscore, sizeof(Score_t), NUM_HIGHSCORES, fd);
-
-fclose(fd);
-}
-/***************************************************************************/
-#if 0
-void main() {
-	int Score = 5000;
-        int Level = 55;
-        HighScore *test;
-        PALETTE pal;
-	BITMAP *backg = load_bitmap("../gfx/ibild.pcx", pal);
-
-	// Init Graphics
-	allegro_init();
-	install_keyboard();
-
-	set_gfx_mode(GFX_MODEX, 320, 240, 0, 0);
-	set_palette(pal);
-	blit(backg, screen, 0, 0, 0, 0, 320, 240);
-
-	test = new HighScore(Score, Level);
-        delete test;
-
-	blit(backg, screen, 0, 0, 0, 0, 320, 240);
-
-	test = new HighScore();
-        readkey();
-        delete test;
-
-        readkey();
-}
+    }
 #endif
+
+    fwrite(highscore, sizeof(Score_t), NUM_HIGHSCORES, fd);
+
+    fclose(fd);
+}
 /***************************************************************************/

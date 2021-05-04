@@ -35,11 +35,11 @@
 
 #ifndef __DISTRIBUTION__
 #ifndef DATPATH
-#define DATPATH "../data"
+inline constexpr auto DATPATH = "../data";
 #endif
 #else
 #ifndef DATPATH
-#define DATPATH "."
+inline constexpr auto DATPATH = ".";
 #endif
 #endif
 
@@ -60,38 +60,103 @@ struct SaveGameData {
 extern struct SaveGameData SavedGames[5];
 extern struct PlayerData DefaultPData;
 
-extern unsigned long _flags;
+extern uint32_t flags_;
 
-#define FLAG_VERT_RETRACE	0x01
-#define FLAG_SOUND		0x02
-#define FLAG_BACKGROUND		0x04
-#define FLAG_SOUNDFX		0x08
-#define FLAG_LEVEL		0x10
-#define FLAG_NO_INTRO		0x20
+inline constexpr auto FLAG_VERT_RETRACE	= 0x01;
+inline constexpr auto FLAG_SOUND		= 0x02;
+inline constexpr auto FLAG_BACKGROUND		= 0x04;
+inline constexpr auto FLAG_SOUNDFX		= 0x08;
+inline constexpr auto FLAG_LEVEL		= 0x10;
+inline constexpr auto FLAG_NO_INTRO		= 0x20;
 
-#define IS_SOUND_ON (_flags & FLAG_SOUND)
-#define IS_SOUND_OFF (!IS_SOUND_ON)
-#define IS_VERT_RETRACE_ON (_flags & FLAG_VERT_RETRACE)
-#define IS_VERT_RETRACE_OFF (!IS_VERT_RETRACE_ON)
-#define IS_BACKGROUND_ON (_flags & FLAG_BACKGROUND)
-#define IS_BACKGROUND_OFF (!IS_BACKGROUND_ON)
-#define IS_SOUNDFX_ON (_flags & FLAG_SOUNDFX)
-#define IS_SOUNDFX_OFF (!IS_SOUNDFX_ON)
-#define IS_SPEC_LEVEL (_flags & FLAG_LEVEL)
-#define IS_INTRO_ON (_flags & FLAG_NO_INTRO)
+inline bool is_sound_on () {
+    return flags_ & FLAG_SOUND;
+}
 
-#define _SET_SOUND_ON (_flags |= FLAG_SOUND)
-#define _SET_SOUND_OFF (_flags &= ~FLAG_SOUND)
-#define _SET_VERT_RETRACE_ON (_flags |= FLAG_VERT_RETRACE)
-#define _SET_VERT_RETRACE_OFF (_flags &= ~FLAG_VERT_RETRACE)
-#define _SET_BACKGROUND_ON (_flags |= FLAG_SOUNDFX)
-#define _SET_BACKGROUND_OFF (_flags &= ~FLAG_SOUNDFX)
-#define _SET_SOUNDFX_ON (_flags |= FLAG_SOUNDFX)
-#define _SET_SOUNDFX_OFF (_flags &= ~FLAG_SOUNDFX)
-#define _SET_INTRO_OFF (_flags &= ~FLAG_NO_INTRO)
-#define _SET_INTRO_ON (_flags |= FLAG_NO_INTRO)
-#define _SET_SPEC_LEVEL_ON (_flags |= FLAG_LEVEL)
-#define _SET_SPEC_LEVEL_OFF (_flags &= ~FLAG_LEVEL)
+inline bool is_sound_off () {
+    return !is_sound_on();
+}
+
+inline bool is_vert_retrace_on () {
+    return flags_ & FLAG_VERT_RETRACE;
+}
+
+inline bool is_vert_retrace_off() {
+    return !is_vert_retrace_on();
+}
+
+inline bool is_background_on () {
+    return flags_ & FLAG_BACKGROUND;
+}
+
+inline bool is_background_off () {
+    return !is_background_on();
+}
+
+inline bool is_soundfx_on () {
+    return flags_ & FLAG_SOUNDFX;
+}
+
+inline bool is_soundfx_off () {
+    return !is_soundfx_on();
+}
+
+inline bool is_spec_level () {
+    return flags_ & FLAG_LEVEL;
+}
+
+inline bool is_intro_on () {
+    return flags_ & FLAG_NO_INTRO;
+}
+
+inline void set_sound_on () {
+    flags_ |= FLAG_SOUND;
+}
+
+inline void set_sound_off () {
+    flags_ &= ~FLAG_SOUND;
+}
+
+inline void set_vert_retrace_on () {
+    flags_ |= FLAG_VERT_RETRACE;
+}
+
+inline void set_vert_retrace_off () {
+    flags_ &= ~FLAG_VERT_RETRACE;
+}
+
+inline void set_background_on () {
+    flags_ |= FLAG_SOUNDFX;
+}
+
+inline void set_background_off () {
+    flags_ &= ~FLAG_SOUNDFX;
+}
+
+inline void set_soundfx_on() {
+    flags_ |= FLAG_SOUNDFX;
+}
+
+inline void set_soundfx_off () {
+    flags_ &= ~FLAG_SOUNDFX;
+}
+
+inline void set_intro_off () {
+    flags_ &= ~FLAG_NO_INTRO;
+}
+
+inline void set_intro_on () {
+    flags_ |= FLAG_NO_INTRO;
+}
+
+inline void set_spec_level_on() {
+    flags_ |= FLAG_LEVEL;
+}
+
+inline void set_spec_level_off () {
+    flags_ &= ~FLAG_LEVEL;
+}
+
 
 
 

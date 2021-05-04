@@ -5,28 +5,22 @@
 #include <cstdio>
 #include <cstring>
 
-//#ifdef DJGPP
-typedef unsigned char uint8;
-using uint32 = unsigned long;
-using sint32 = long;
-//#endif
-
 struct pcx_header {
-    uint8 manufacturer;
-    uint8 version;
-    uint8 encoding;
-    uint8 bits_per_pixel;
-    uint8 xmin[2], ymin[2];
-    uint8 xmax[2], ymax[2];
-    uint8 hres[2];
-    uint8 vres[2];
+    uint8_t manufacturer;
+    uint8_t version;
+    uint8_t encoding;
+    uint8_t bits_per_pixel;
+    uint8_t xmin[2], ymin[2];
+    uint8_t xmax[2], ymax[2];
+    uint8_t hres[2];
+    uint8_t vres[2];
 
-    uint8 palette16[48];
-    uint8 reserved;
-    uint8 color_planes;
-    uint8 bytes_per_line[2];
-    uint8 palette_type[2];
-    uint8 filler[58];
+    uint8_t palette16[48];
+    uint8_t reserved;
+    uint8_t color_planes;
+    uint8_t bytes_per_line[2];
+    uint8_t palette_type[2];
+    uint8_t filler[58];
 } __attribute__((packed));
 
 /***************************************************************************/
@@ -80,21 +74,21 @@ auto datfile::open_file(const char* filename) -> FILE*
     return datfd;
 }
 /***************************************************************************/
-auto datfile::load_pcx(const char* filename, RGB* pal) -> BITMAP*
+auto datfile::load_pcx(const char* filename, PALETTE& pal) -> BITMAP*
 {
     struct pcx_header header {
     };
-    uint32 bpp = 0;
-    sint32 i = 0;
-    sint32 j = 0;
-    sint32 c = 0;
-    sint32 err = 0;
-    uint32 width = 0;
-    uint32 height = 0;
-    uint32 cpl = 0;
-    uint8* lptr = nullptr;
-    uint8* nextlptr = nullptr;
-    uint8 palbuf[4];
+    uint32_t bpp = 0;
+    int32_t i = 0;
+    int32_t j = 0;
+    int32_t c = 0;
+    int32_t err = 0;
+    uint32_t width = 0;
+    uint32_t height = 0;
+    uint32_t cpl = 0;
+    uint8_t* lptr = nullptr;
+    uint8_t* nextlptr = nullptr;
+    uint8_t palbuf[4];
     BITMAP* bmp = nullptr;
     char found = 0;
 
@@ -124,7 +118,7 @@ auto datfile::load_pcx(const char* filename, RGB* pal) -> BITMAP*
     if ((err == 0) && ((bmp = create_bitmap(width, height)) != nullptr)) {
         //	if ((!err) && (fbuf = (uint8 *) malloc (width * height * bpp)) ) {
         //        	bmp = create_bitmap(width, height);
-        lptr = (uint8*)bmp->dat;
+        lptr = (uint8_t*)bmp->dat;
 
         for (i = 0; i < (signed)height; i++) {
             nextlptr = lptr + width;
@@ -200,79 +194,3 @@ datfile::~datfile()
     }
     fclose(datfd);
 }
-/***************************************************************************/
-//#define __TEST__
-#ifdef __TEST__
-#define _main main
-#endif
-#ifdef __TEST__
-
-void _main()
-{
-    ImageCache icache;
-    char buffer[512];
-    int i, oi;
-    //datfile dat("../urban.dat");
-    allegro_init();
-    install_keyboard();
-    install_timer();
-    set_gfx_mode(GFX_MODEX, 320, 240, 0, 0);
-    PALETTE pal;
-    BITMAP* test;
-    FILE* f;
-    char* urk;
-    /*
-	f = fopen("cp.pcx", "wb");
-	for(i = 0; i < test_num_entries; i++) {
-		if(!strcmp("gfx/items/xlife.pcx", test_ent[i]->filename)) {
-                	fseek(f123, test_ent[i]->offset, SEEK_SET);
-                        urk = (char *)malloc(test_ent[i]->size);
-                        fread(urk, test_ent[i]->size, 1, f123);
-                        fwrite(urk, test_ent[i]->size, 1, f);
-			fclose(f);
-                        exit(129);
-
-                	break;
-		}
-        }
-*/
-
-    test = icache.GetImage("items/xlife.pcx", pal);
-    set_palette(pal);
-    clear(screen);
-    blit(test, screen, 0, 0, 0, 0, test->w, test->h);
-    while (!key[KEY_ESC])
-        ;
-    _exit(0);
-
-    i = 0;
-    oi = -1;
-    while (!key[KEY_ESC]) {
-        if (key[KEY_UP] && i < test_num_entries)
-            i++;
-        if (key[KEY_DOWN] && i > 0)
-            i--;
-        if (oi != i) {
-            oi = i;
-            test = icache.GetImage(test_ent[i]->filename + 4, pal);
-            set_palette(pal);
-            clear(screen);
-            blit(test, screen, 0, 0, 0, 0, test->w, test->h);
-        }
-        rest(50);
-    }
-    //        for (int i = test_num_entries - 1;i;i--) {
-    //        	sprintf(buffer, "../%s", test_ent[i]->filename);
-    //	}
-    /*        for(int i = 0; i < test_num_entries; i++) {
-		test = dat.load_pcx(test_ent[i]->filename, pal);
-	        set_palette(pal);
-
-		blit(test, screen, 0, 0, 0, 0, test->w, test->h);
-//	        rest(500);
-//	        destroy_bitmap(test);
-	}*/
-
-    set_gfx_mode(GFX_TEXT, 80, 25, 0, 0);
-}
-#endif

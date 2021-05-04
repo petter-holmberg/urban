@@ -33,19 +33,16 @@
 #include <allegro.h>
 #include <cstring>
 
-//#define EXPLOSION_SAMPLE "samples/heart_1.wav"
-#define FIRE_SAMPLE "samples/missile1.wav"
+inline constexpr auto FIRE_SAMPLE = "samples/missile1.wav";
 /****************************************************************************/
-//#define GRENADE_SPEED 4
-#define MISSILE_SPEED 10
-//#define ACCEL_COUNTER 3
+inline constexpr auto MISSILE_SPEED = 10;
 /****************************************************************************/
 
 Missile_o::Missile_o(int X, int Y, int Z, int Speed)
     : Object(X, Y, Z)
 {
     int i = 0;
-    RGB pal[256];
+    PALETTE pal;
     char filename[512];
 
     images = new BITMAP*[2];

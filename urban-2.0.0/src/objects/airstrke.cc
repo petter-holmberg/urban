@@ -35,32 +35,32 @@
 #include <cstring>
 
 /****************************************************************************/
-#define STATE_NONE 0x00
-#define STATE_WAIT 0x01
-#define STATE_STRIKE 0x02
-#define STATE_DONE 0x03
+inline constexpr auto STATE_NONE = 0x00;
+inline constexpr auto STATE_WAIT = 0x01;
+inline constexpr auto STATE_STRIKE = 0x02;
+inline constexpr auto STATE_DONE = 0x03;
 
-#define NUM_NUKES 90
-#define NUKE_MULTI 10
+inline constexpr auto NUM_NUKES = 90;
+inline constexpr auto NUKE_MULTI = 10;
 
-#define AREA_START (-300)
-#define AREA_END 300
-#define AREA_WIDTH 600
-#define AREA_MUL (AREA_WIDTH / NUM_NUKES)
+inline constexpr auto AREA_START = -300;
+inline constexpr auto AREA_END = 300;
+inline constexpr auto AREA_WIDTH = 600;
+inline constexpr auto AREA_MUL = AREA_WIDTH / NUM_NUKES;
 
-#define STRIKE_DELAY 600
+inline constexpr auto STRIKE_DELAY = 600;
 
-#define STRIKE_START (-20)
-#define STRIKE_END 20
+inline constexpr auto STRIKE_START = -20;
+inline constexpr auto STRIKE_END = 20;
 
-#define STRIKE_SAMPLE "samples/hellfire.wav"
-#define WARNING_SAMPLE "samples/airnuke.wav"
+inline constexpr auto STRIKE_SAMPLE = "samples/hellfire.wav";
+inline constexpr auto WARNING_SAMPLE = "samples/airnuke.wav";
 
 /****************************************************************************/
 Airstrike_o::Airstrike_o(int X, int Y, int Z)
     : Object(X, Y, Z)
 {
-    RGB pal[256];
+    PALETTE pal;
     char filename[512];
 
     /*

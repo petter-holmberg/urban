@@ -39,13 +39,10 @@
 #include <cctype>
 #include <cstdio>
 #include <cstring>
-#include <unistd.h>
-#ifndef DJGPP
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
-#endif
 /**************************************************************************/
 // Global ImageCache
 ImageCache icache;
@@ -53,7 +50,7 @@ ImageCache icache;
 void showcredits();
 /**************************************************************************/
 Engine* engine = nullptr;
-unsigned long _flags = 0xffffffff;
+uint32_t flags_ = 0xffffffff;
 
 extern char lock_frame_count_to_60hz;
 
@@ -85,8 +82,7 @@ const char* extra_maps[] = { "",
     "",
     "", nullptr };
 
-//#define	NUM_LEVELS 1
-#define NUM_LEVELS 18
+inline constexpr auto NUM_LEVELS = 18;
 
 int MaxLevelNum = 1;
 
@@ -157,7 +153,7 @@ void display_level_info(int level)
             // Run Outtro
             auto* outtro = new Outtro;
 
-            outtro->RunOuttro();
+            Outtro::RunOuttro();
             delete outtro;
 
             // Show credits
@@ -180,7 +176,6 @@ void display_level_info(int level)
 auto GetLevelName(char* text) -> int
 {
     char message[50];
-    int key = 0;
     int pos = 1;
     UrbanFont fnt(SMALL_FONT2);
 
@@ -215,38 +210,40 @@ auto GetLevelName(char* text) -> int
 
         masked_blit(textbmp, screen, 0, 0, 50, 60, 220, 55);
 
-        key = readkey();
+        auto key = readkey();
 
-        if ((key >> 8) == KEY_ENTER) {
+        if (key == scan_code::KEY_ENTER) {
 
             text[pos] = 0;
             /*                        strupr(text);*/
             return 1;
         }
-        if ((key >> 8) == KEY_ESC) {
+        if (key == scan_code::KEY_ESC) {
 
             destroy_bitmap(textbmp);
             return 0;
         }
-        if ((key >> 8) == KEY_BACKSPACE) {
+        if (key == scan_code::KEY_BACKSPACE) {
             if (pos == 0) {
                 continue;
             }
             pos--;
             text[pos] = 0;
         }
-        if ((key >> 8) == KEY_SPACE) {
+        if (key == scan_code::KEY_SPACE) {
             if (pos > 9) {
                 continue;
             }
             text[pos++] = ' ';
         } else if (pos < 9) {
 
+            /*
             if (!((key & 0xff) < 'A' || (key & 0xff) > 'z') || ((key & 0xff) == ' ')) {
 
                 text[pos++] = toupper((key & 0xff));
                 text[pos] = 0;
             }
+*/
         }
     } while (1);
 
@@ -271,11 +268,7 @@ auto NewGame(int slot) -> int
 
     display_level_info(level);
 
-#ifdef DJGPP
-    sprintf(filename, "savegame.dat");
-#else
     sprintf(filename, "%s/.urban/savegame.dat", getenv("HOME"));
-#endif
 
     if ((fs = fopen(filename, "rb")) == nullptr) {
 
@@ -284,13 +277,11 @@ auto NewGame(int slot) -> int
             SavedGame.name[0] = 0;
             memcpy(&SavedGame.dat, &DefaultPData, sizeof(struct PlayerData));
         }
-#ifndef DJGPP
         /* Create dir */
         sprintf(filename, "%s/.urban", getenv("HOME"));
         mkdir(filename, S_IRUSR | S_IWUSR | S_IXUSR);
 
         sprintf(filename, "%s/.urban/savegame.dat", getenv("HOME"));
-#endif
         if ((fs = fopen(filename, "wb")) != nullptr) {
             fwrite(SavedGames, 1, 5 * sizeof(struct SaveGameData), fs);
         }
@@ -349,15 +340,11 @@ auto NewGame(int slot) -> int
                     SavedGames[slot - 1].level = level;
                     strcpy(SavedGames[slot - 1].name, name);
 
-#ifdef DJGPP
-                    sprintf(filename, "savegame.dat");
-#else
                     /* Create dir */
                     sprintf(filename, "%s/.urban", getenv("HOME"));
                     mkdir(filename, S_IRUSR | S_IWUSR | S_IXUSR);
 
                     sprintf(filename, "%s/.urban/savegame.dat", getenv("HOME"));
-#endif
                     if ((fs = fopen(filename, "wb")) != nullptr) {
                         auto err = fwrite(SavedGames, 1, 5 * sizeof(struct SaveGameData), fs);
                         fclose(fs);

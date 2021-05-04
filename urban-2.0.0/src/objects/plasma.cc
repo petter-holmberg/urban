@@ -33,14 +33,14 @@
 #include <allegro.h>
 #include <cstring>
 /***************************************************************************/
-#define PLASMA_SPEED 10
+inline constexpr auto PLASMA_SPEED = 10;
 
 /***************************************************************************/
 Plasma_o::Plasma_o(int X, int Y, int Z, int Dir, int friendship, int Damage)
     : Object(X, Y, Z)
 {
     char filename[512];
-    RGB pal[256];
+    PALETTE pal;
 
     width = 1;
     height = 1;

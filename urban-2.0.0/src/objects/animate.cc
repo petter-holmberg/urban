@@ -32,14 +32,14 @@
 #include "object.h"
 #include <allegro.h>
 
-#define MAX_Y_SPEED 4
-#define Y_ACCEL 1
+inline constexpr auto MAX_Y_SPEED = 4;
+inline constexpr auto Y_ACCEL = 1;
 /****************************************************************************/
 Animation_o::Animation_o(int X, int Y, int Z, const char* name, int num_pics, int dek_frame, int Speed_X, int Speed_Y, int Speed_Z)
     : Object(X, Y, Z)
 {
     int i = 0;
-    RGB pal[256];
+    PALETTE pal;
     char filename[512];
 
     images = new BITMAP*[num_pics];

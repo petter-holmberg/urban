@@ -34,23 +34,14 @@
 #include <cstdlib>
 #include <cstring>
 
-//#define X_FRICTION	1
-//#define Z_FRICTION	X_FRICTION
-//#define MAX_X_SPEED	2 //4
-//#define MIN_X_SPEED	-MAX_X_SPEED //-4
-#define MAX_Y_SPEED 8
-//#define MIN_Y_SPEED	-12
-//#define	MAX_Z_SPEED	MAX_X_SPEED
-//#define MIN_Z_SPEED	-MAX_Z_SPEED
-//#define X_ACCEL		2 //2
-#define Y_ACCEL 1
-//#define Z_ACCEL         2
+inline constexpr auto MAX_Y_SPEED = 8;
+inline constexpr auto Y_ACCEL = 1;
 
 blood_o::blood_o(int X, int Y, int Z, int Speed_X, int Speed_Y, int Speed_Z)
     : Object(X, Y, Z)
 {
     int i = 0;
-    RGB pal[256];
+    PALETTE pal;
     char filename[512];
 
     images = (BITMAP**)malloc(3 * sizeof(BITMAP*));

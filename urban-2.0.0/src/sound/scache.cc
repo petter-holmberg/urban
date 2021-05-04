@@ -28,17 +28,13 @@
 
     thomas.nyberg@usa.net				jonas_b@bitsmart.com
 *****************************************************************************/
-#include <allegro.h>
-#ifdef DJGPP
-#include <jgmod.h>
-#else
-#include <mikmod.h>
-#endif
-#include "game.h"
 #include "scache.h"
+#include "game.h"
+#include <allegro.h>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <mikmod.h>
 #include <unistd.h>
 
 /***************************************************************************/
@@ -100,11 +96,7 @@ auto SoundCache::GetSample(const char* filename) -> SAMPLE*
             realloc(cache, max_samples * sizeof(SCacheEntry));
     }
     entry = &cache[num_samples++];
-#ifdef DJGPP
-    entry->sample = load_wav(pathname);
-#else
     entry->sample = Sample_Load(pathname);
-#endif
     entry->filename = strdup(pathname);
     entry->count = 1;
 

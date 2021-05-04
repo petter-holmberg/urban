@@ -34,14 +34,14 @@
 #include <cstdlib>
 #include <cstring>
 
-#define STATE_NONE 0x00
-#define STATE_FIND 0x01
-#define STATE_DESTROY 0x02
+inline constexpr auto STATE_NONE = 0x00;
+inline constexpr auto STATE_FIND = 0x01;
+inline constexpr auto STATE_DESTROY = 0x02;
 /****************************************************************************/
 ElevatorWire_o::ElevatorWire_o(int X, int Y, int Z)
     : Object(X, Y, Z)
 {
-    RGB pal[256];
+    PALETTE pal;
     char filename[512];
 
     images = new BITMAP*;

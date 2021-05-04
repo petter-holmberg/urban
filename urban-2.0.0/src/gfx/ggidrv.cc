@@ -33,6 +33,7 @@
 #include <SFML/Window.hpp>
 #include <algorithm>
 #include <allegro.h>
+#include <array>
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
@@ -45,7 +46,7 @@ sf::RenderWindow* window;
 BITMAP* screen;
 FONT* font;
 PALETTE black_palette;
-unsigned char key[128];
+bool key[128];
 /**************************************************************************/
 static int screen_offset_x, screen_offset_y;
 static int num_keypressed;
@@ -67,187 +68,187 @@ void keyboard_update()
         switch (event.type) {
         case sf::Event::KeyPressed:
         case sf::Event::KeyReleased: {
-            unsigned char is_pressed = (event.type == sf::Event::KeyPressed ? 1 : 0);
+            bool is_pressed = (event.type == sf::Event::KeyPressed);
             switch (event.key.code) {
             case sf::Keyboard::Key::A:
-                key[KEY_A] = is_pressed;
+                key[static_cast<size_t>(scan_code::KEY_A)] = is_pressed;
                 break;
             case sf::Keyboard::Key::B:
-                key[KEY_B] = is_pressed;
+                key[static_cast<size_t>(scan_code::KEY_B)] = is_pressed;
                 break;
             case sf::Keyboard::Key::C:
-                key[KEY_C] = is_pressed;
+                key[static_cast<size_t>(scan_code::KEY_C)] = is_pressed;
                 break;
             case sf::Keyboard::Key::D:
-                key[KEY_D] = is_pressed;
+                key[static_cast<size_t>(scan_code::KEY_D)] = is_pressed;
                 break;
             case sf::Keyboard::Key::E:
-                key[KEY_E] = is_pressed;
+                key[static_cast<size_t>(scan_code::KEY_E)] = is_pressed;
                 break;
             case sf::Keyboard::Key::F:
-                key[KEY_F] = is_pressed;
+                key[static_cast<size_t>(scan_code::KEY_F)] = is_pressed;
                 break;
             case sf::Keyboard::Key::G:
-                key[KEY_G] = is_pressed;
+                key[static_cast<size_t>(scan_code::KEY_G)] = is_pressed;
                 break;
             case sf::Keyboard::Key::H:
-                key[KEY_H] = is_pressed;
+                key[static_cast<size_t>(scan_code::KEY_H)] = is_pressed;
                 break;
             case sf::Keyboard::Key::I:
-                key[KEY_I] = is_pressed;
+                key[static_cast<size_t>(scan_code::KEY_I)] = is_pressed;
                 break;
             case sf::Keyboard::Key::J:
-                key[KEY_J] = is_pressed;
+                key[static_cast<size_t>(scan_code::KEY_J)] = is_pressed;
                 break;
             case sf::Keyboard::Key::K:
-                key[KEY_K] = is_pressed;
+                key[static_cast<size_t>(scan_code::KEY_K)] = is_pressed;
                 break;
             case sf::Keyboard::Key::L:
-                key[KEY_L] = is_pressed;
+                key[static_cast<size_t>(scan_code::KEY_L)] = is_pressed;
                 break;
             case sf::Keyboard::Key::M:
-                key[KEY_M] = is_pressed;
+                key[static_cast<size_t>(scan_code::KEY_M)] = is_pressed;
                 break;
             case sf::Keyboard::Key::N:
-                key[KEY_N] = is_pressed;
+                key[static_cast<size_t>(scan_code::KEY_N)] = is_pressed;
                 break;
             case sf::Keyboard::Key::O:
-                key[KEY_O] = is_pressed;
+                key[static_cast<size_t>(scan_code::KEY_O)] = is_pressed;
                 break;
             case sf::Keyboard::Key::P:
-                key[KEY_P] = is_pressed;
+                key[static_cast<size_t>(scan_code::KEY_P)] = is_pressed;
                 break;
             case sf::Keyboard::Key::Q:
-                key[KEY_Q] = is_pressed;
+                key[static_cast<size_t>(scan_code::KEY_Q)] = is_pressed;
                 break;
             case sf::Keyboard::Key::R:
-                key[KEY_R] = is_pressed;
+                key[static_cast<size_t>(scan_code::KEY_R)] = is_pressed;
                 break;
             case sf::Keyboard::Key::S:
-                key[KEY_S] = is_pressed;
+                key[static_cast<size_t>(scan_code::KEY_S)] = is_pressed;
                 break;
             case sf::Keyboard::Key::T:
-                key[KEY_T] = is_pressed;
+                key[static_cast<size_t>(scan_code::KEY_T)] = is_pressed;
                 break;
             case sf::Keyboard::Key::U:
-                key[KEY_U] = is_pressed;
+                key[static_cast<size_t>(scan_code::KEY_U)] = is_pressed;
                 break;
             case sf::Keyboard::Key::V:
-                key[KEY_V] = is_pressed;
+                key[static_cast<size_t>(scan_code::KEY_V)] = is_pressed;
                 break;
             case sf::Keyboard::Key::W:
-                key[KEY_W] = is_pressed;
+                key[static_cast<size_t>(scan_code::KEY_W)] = is_pressed;
                 break;
             case sf::Keyboard::Key::X:
-                key[KEY_X] = is_pressed;
+                key[static_cast<size_t>(scan_code::KEY_X)] = is_pressed;
                 break;
             case sf::Keyboard::Key::Y:
-                key[KEY_Y] = is_pressed;
+                key[static_cast<size_t>(scan_code::KEY_Y)] = is_pressed;
                 break;
             case sf::Keyboard::Key::Z:
-                key[KEY_Z] = is_pressed;
+                key[static_cast<size_t>(scan_code::KEY_Z)] = is_pressed;
                 break;
             case sf::Keyboard::Key::LControl:
-                key[KEY_LCONTROL] = is_pressed;
+                key[static_cast<size_t>(scan_code::KEY_LCONTROL)] = is_pressed;
                 break;
             case sf::Keyboard::Key::RControl:
-                key[KEY_RCONTROL] = is_pressed;
+                key[static_cast<size_t>(scan_code::KEY_RCONTROL)] = is_pressed;
                 break;
             case sf::Keyboard::Key::LShift:
-                key[KEY_LSHIFT] = is_pressed;
+                key[static_cast<size_t>(scan_code::KEY_LSHIFT)] = is_pressed;
                 break;
             case sf::Keyboard::Key::RShift:
-                key[KEY_RSHIFT] = is_pressed;
+                key[static_cast<size_t>(scan_code::KEY_RSHIFT)] = is_pressed;
                 break;
             case sf::Keyboard::Key::LAlt:
-                key[KEY_ALT] = is_pressed;
+                key[static_cast<size_t>(scan_code::KEY_ALT)] = is_pressed;
                 break;
             case sf::Keyboard::Key::RAlt:
-                key[KEY_ALTGR] = 1;
+                key[static_cast<size_t>(scan_code::KEY_ALTGR)] = 1;
                 break;
             case sf::Keyboard::Key::F1:
-                key[KEY_F1] = is_pressed;
+                key[static_cast<size_t>(scan_code::KEY_F1)] = is_pressed;
                 break;
             case sf::Keyboard::Key::F2:
-                key[KEY_F2] = is_pressed;
+                key[static_cast<size_t>(scan_code::KEY_F2)] = is_pressed;
                 break;
             case sf::Keyboard::Key::F3:
-                key[KEY_F3] = is_pressed;
+                key[static_cast<size_t>(scan_code::KEY_F3)] = is_pressed;
                 break;
             case sf::Keyboard::Key::F4:
-                key[KEY_F4] = is_pressed;
+                key[static_cast<size_t>(scan_code::KEY_F4)] = is_pressed;
                 break;
             case sf::Keyboard::Key::F5:
-                key[KEY_F5] = is_pressed;
+                key[static_cast<size_t>(scan_code::KEY_F5)] = is_pressed;
                 break;
             case sf::Keyboard::Key::F6:
-                key[KEY_F6] = is_pressed;
+                key[static_cast<size_t>(scan_code::KEY_F6)] = is_pressed;
                 break;
             case sf::Keyboard::Key::F7:
-                key[KEY_F7] = is_pressed;
+                key[static_cast<size_t>(scan_code::KEY_F7)] = is_pressed;
                 break;
             case sf::Keyboard::Key::F8:
-                key[KEY_F8] = is_pressed;
+                key[static_cast<size_t>(scan_code::KEY_F8)] = is_pressed;
                 break;
             case sf::Keyboard::Key::F9:
-                key[KEY_F9] = is_pressed;
+                key[static_cast<size_t>(scan_code::KEY_F9)] = is_pressed;
                 break;
             case sf::Keyboard::Key::F10:
-                key[KEY_F10] = is_pressed;
+                key[static_cast<size_t>(scan_code::KEY_F10)] = is_pressed;
                 break;
             case sf::Keyboard::Key::F11:
-                key[KEY_F11] = is_pressed;
+                key[static_cast<size_t>(scan_code::KEY_F11)] = is_pressed;
                 break;
             case sf::Keyboard::Key::F12:
-                key[KEY_F12] = is_pressed;
+                key[static_cast<size_t>(scan_code::KEY_F12)] = is_pressed;
                 break;
             case sf::Keyboard::Key::Num1:
-                key[KEY_1] = is_pressed;
+                key[static_cast<size_t>(scan_code::KEY_1)] = is_pressed;
                 break;
             case sf::Keyboard::Key::Num2:
-                key[KEY_2] = is_pressed;
+                key[static_cast<size_t>(scan_code::KEY_2)] = is_pressed;
                 break;
             case sf::Keyboard::Key::Num3:
-                key[KEY_3] = is_pressed;
+                key[static_cast<size_t>(scan_code::KEY_3)] = is_pressed;
                 break;
             case sf::Keyboard::Key::Num4:
-                key[KEY_4] = is_pressed;
+                key[static_cast<size_t>(scan_code::KEY_4)] = is_pressed;
                 break;
             case sf::Keyboard::Key::Num5:
-                key[KEY_5] = is_pressed;
+                key[static_cast<size_t>(scan_code::KEY_5)] = is_pressed;
                 break;
             case sf::Keyboard::Key::Num6:
-                key[KEY_6] = is_pressed;
+                key[static_cast<size_t>(scan_code::KEY_6)] = is_pressed;
                 break;
             case sf::Keyboard::Key::Num7:
-                key[KEY_7] = is_pressed;
+                key[static_cast<size_t>(scan_code::KEY_7)] = is_pressed;
                 break;
             case sf::Keyboard::Key::Num8:
-                key[KEY_8] = is_pressed;
+                key[static_cast<size_t>(scan_code::KEY_8)] = is_pressed;
                 break;
             case sf::Keyboard::Key::Num9:
-                key[KEY_9] = is_pressed;
+                key[static_cast<size_t>(scan_code::KEY_9)] = is_pressed;
                 break;
             case sf::Keyboard::Key::Num0:
-                key[KEY_0] = is_pressed;
+                key[static_cast<size_t>(scan_code::KEY_0)] = is_pressed;
                 break;
             case sf::Keyboard::Key::Escape:
-                key[KEY_ESC] = is_pressed;
+                key[static_cast<size_t>(scan_code::KEY_ESC)] = is_pressed;
                 break;
             case sf::Keyboard::Key::Space:
-                key[KEY_SPACE] = is_pressed;
+                key[static_cast<size_t>(scan_code::KEY_SPACE)] = is_pressed;
                 break;
             case sf::Keyboard::Key::Up:
-                key[KEY_UP] = is_pressed;
+                key[static_cast<size_t>(scan_code::KEY_UP)] = is_pressed;
                 break;
             case sf::Keyboard::Key::Down:
-                key[KEY_DOWN] = is_pressed;
+                key[static_cast<size_t>(scan_code::KEY_DOWN)] = is_pressed;
                 break;
             case sf::Keyboard::Key::Left:
-                key[KEY_LEFT] = is_pressed;
+                key[static_cast<size_t>(scan_code::KEY_LEFT)] = is_pressed;
                 break;
             case sf::Keyboard::Key::Right:
-                key[KEY_RIGHT] = is_pressed;
+                key[static_cast<size_t>(scan_code::KEY_RIGHT)] = is_pressed;
                 break;
             }
         }
@@ -271,7 +272,7 @@ auto keypressed() -> int
     return 1;
 }
 /**************************************************************************/
-auto readkey() -> int
+auto readkey() -> scan_code
 {
     sf::Event event {};
     while (window->pollEvent(event) && event.type != sf::Event::KeyPressed) { }
@@ -282,127 +283,127 @@ auto readkey() -> int
 
     switch (event.key.code) {
     case sf::Keyboard::Key::A:
-        return KEY_A << 8;
+        return scan_code::KEY_A;
     case sf::Keyboard::Key::B:
-        return KEY_B << 8;
+        return scan_code::KEY_B;
     case sf::Keyboard::Key::C:
-        return KEY_C << 8;
+        return scan_code::KEY_C;
     case sf::Keyboard::Key::D:
-        return KEY_D << 8;
+        return scan_code::KEY_D;
     case sf::Keyboard::Key::E:
-        return KEY_E << 8;
+        return scan_code::KEY_E;
     case sf::Keyboard::Key::F:
-        return KEY_F << 8;
+        return scan_code::KEY_F;
     case sf::Keyboard::Key::G:
-        return KEY_G << 8;
+        return scan_code::KEY_G;
     case sf::Keyboard::Key::H:
-        return KEY_H << 8;
+        return scan_code::KEY_H;
     case sf::Keyboard::Key::I:
-        return KEY_I << 8;
+        return scan_code::KEY_I;
     case sf::Keyboard::Key::J:
-        return KEY_J << 8;
+        return scan_code::KEY_J;
     case sf::Keyboard::Key::K:
-        return KEY_K << 8;
+        return scan_code::KEY_K;
     case sf::Keyboard::Key::L:
-        return KEY_L << 8;
+        return scan_code::KEY_L;
     case sf::Keyboard::Key::M:
-        return KEY_M << 8;
+        return scan_code::KEY_M;
     case sf::Keyboard::Key::N:
-        return KEY_N << 8;
+        return scan_code::KEY_N;
     case sf::Keyboard::Key::O:
-        return KEY_O << 8;
+        return scan_code::KEY_O;
     case sf::Keyboard::Key::P:
-        return KEY_P << 8;
+        return scan_code::KEY_P;
     case sf::Keyboard::Key::Q:
-        return KEY_Q << 8;
+        return scan_code::KEY_Q;
     case sf::Keyboard::Key::R:
-        return KEY_R << 8;
+        return scan_code::KEY_R;
     case sf::Keyboard::Key::S:
-        return KEY_S << 8;
+        return scan_code::KEY_S;
     case sf::Keyboard::Key::T:
-        return KEY_T << 8;
+        return scan_code::KEY_T;
     case sf::Keyboard::Key::U:
-        return KEY_U << 8;
+        return scan_code::KEY_U;
     case sf::Keyboard::Key::V:
-        return KEY_V << 8;
+        return scan_code::KEY_V;
     case sf::Keyboard::Key::W:
-        return KEY_W << 8;
+        return scan_code::KEY_W;
     case sf::Keyboard::Key::X:
-        return KEY_X << 8;
+        return scan_code::KEY_X;
     case sf::Keyboard::Key::Y:
-        return KEY_Y << 8;
+        return scan_code::KEY_Y;
     case sf::Keyboard::Key::Z:
-        return KEY_Z << 8;
+        return scan_code::KEY_Z;
     case sf::Keyboard::Key::LControl:
-        return KEY_LCONTROL << 8;
+        return scan_code::KEY_LCONTROL;
     case sf::Keyboard::Key::RControl:
-        return KEY_RCONTROL << 8;
+        return scan_code::KEY_RCONTROL;
     case sf::Keyboard::Key::LShift:
-        return KEY_LSHIFT << 8;
+        return scan_code::KEY_LSHIFT;
     case sf::Keyboard::Key::RShift:
-        return KEY_RSHIFT << 8;
+        return scan_code::KEY_RSHIFT;
     case sf::Keyboard::Key::LAlt:
-        return KEY_ALT << 8;
+        return scan_code::KEY_ALT;
     case sf::Keyboard::Key::RAlt:
-        return KEY_ALTGR << 8;
+        return scan_code::KEY_ALTGR;
     case sf::Keyboard::Key::F1:
-        return KEY_F1 << 8;
+        return scan_code::KEY_F1;
     case sf::Keyboard::Key::F2:
-        return KEY_F2 << 8;
+        return scan_code::KEY_F2;
     case sf::Keyboard::Key::F3:
-        return KEY_F3 << 8;
+        return scan_code::KEY_F3;
     case sf::Keyboard::Key::F4:
-        return KEY_F4 << 8;
+        return scan_code::KEY_F4;
     case sf::Keyboard::Key::F5:
-        return KEY_F5 << 8;
+        return scan_code::KEY_F5;
     case sf::Keyboard::Key::F6:
-        return KEY_F6 << 8;
+        return scan_code::KEY_F6;
     case sf::Keyboard::Key::F7:
-        return KEY_F7 << 8;
+        return scan_code::KEY_F7;
     case sf::Keyboard::Key::F8:
-        return KEY_F8 << 8;
+        return scan_code::KEY_F8;
     case sf::Keyboard::Key::F9:
-        return KEY_F9 << 8;
+        return scan_code::KEY_F9;
     case sf::Keyboard::Key::F10:
-        return KEY_F10 << 8;
+        return scan_code::KEY_F10;
     case sf::Keyboard::Key::F11:
-        return KEY_F11 << 8;
+        return scan_code::KEY_F11;
     case sf::Keyboard::Key::F12:
-        return KEY_F12 << 8;
+        return scan_code::KEY_F12;
     case sf::Keyboard::Key::Num1:
-        return KEY_1 << 8;
+        return scan_code::KEY_1;
     case sf::Keyboard::Key::Num2:
-        return KEY_2 << 8;
+        return scan_code::KEY_2;
     case sf::Keyboard::Key::Num3:
-        return KEY_3 << 8;
+        return scan_code::KEY_3;
     case sf::Keyboard::Key::Num4:
-        return KEY_4 << 8;
+        return scan_code::KEY_4;
     case sf::Keyboard::Key::Num5:
-        return KEY_5 << 8;
+        return scan_code::KEY_5;
     case sf::Keyboard::Key::Num6:
-        return KEY_6 << 8;
+        return scan_code::KEY_6;
     case sf::Keyboard::Key::Num7:
-        return KEY_7 << 8;
+        return scan_code::KEY_7;
     case sf::Keyboard::Key::Num8:
-        return KEY_8 << 8;
+        return scan_code::KEY_8;
     case sf::Keyboard::Key::Num9:
-        return KEY_9 << 8;
+        return scan_code::KEY_9;
     case sf::Keyboard::Key::Num0:
-        return KEY_0 << 8;
+        return scan_code::KEY_0;
     case sf::Keyboard::Key::Escape:
-        return KEY_ESC << 8;
+        return scan_code::KEY_ESC;
     case sf::Keyboard::Key::Space:
-        return KEY_SPACE << 8;
+        return scan_code::KEY_SPACE;
     case sf::Keyboard::Key::Up:
-        return KEY_UP << 8;
+        return scan_code::KEY_UP;
     case sf::Keyboard::Key::Down:
-        return KEY_DOWN << 8;
+        return scan_code::KEY_DOWN;
     case sf::Keyboard::Key::Left:
-        return KEY_LEFT << 8;
+        return scan_code::KEY_LEFT;
     case sf::Keyboard::Key::Right:
-        return KEY_RIGHT << 8;
+        return scan_code::KEY_RIGHT;
     }
-    return 0;
+    return scan_code::NONE;
 }
 /**************************************************************************/
 static int first = 1;
@@ -446,7 +447,6 @@ void close_gfx()
         return;
     }
 
-    fprintf(stderr, "Closing ggi...");
     window->close();
     delete window;
     screen->vis = nullptr;
@@ -497,7 +497,7 @@ auto linear2srgb(float x) -> float
     return std::clamp(0.662002687F * s0 + 0.684122060F * s1 - 0.323583601F * s2 - 0.0225411470F * x, 0.0F, 1.0F);
 }
 /**************************************************************************/
-auto set_palette(PALETTE p) -> int
+auto set_palette(const PALETTE& p) -> int
 {
     int i = 0;
 
@@ -511,7 +511,7 @@ auto set_palette(PALETTE p) -> int
     return 0;
 };
 /**************************************************************************/
-void get_palette(PALETTE p)
+void get_palette(PALETTE& p)
 {
     int i = 0;
 
@@ -910,7 +910,7 @@ auto vsync() -> int
     return 0;
 };
 /**************************************************************************/
-void fade_interpolate(PALLETE src, PALETTE dest, PALETTE out, int pos, int start, int end)
+void fade_interpolate(const PALETTE& src, const PALETTE& dest, PALETTE& out, int pos, int start, int end)
 {
     for (int i = start; i < end; i++) {
 
@@ -920,7 +920,7 @@ void fade_interpolate(PALLETE src, PALETTE dest, PALETTE out, int pos, int start
     }
 }
 /**************************************************************************/
-void fade_in(PALLETE p, int speed)
+void fade_in(const PALETTE& p, int speed)
 {
     PALETTE pal;
     PALETTE tmp_pal;

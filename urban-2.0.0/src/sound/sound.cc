@@ -28,21 +28,16 @@
 
     thomas.nyberg@usa.net				jonas_b@bitsmart.com
 *****************************************************************************/
-#include <allegro.h>
-#ifdef DJGPP
-#include <jgmod.h>
-#else
-#include <mikmod.h>
-#include <pthread.h>
-#endif
+#include "sound.h"
 #include "config.h"
 #include "scache.h"
-#include "sound.h"
+#include <allegro.h>
 #include <cstdio>
+#include <mikmod.h>
+#include <pthread.h>
 #include <unistd.h>
 
 extern Config* config;
-#ifndef DJGPP
 
 static pthread_t playthread;
 
@@ -56,29 +51,15 @@ auto module_thread(void* /*arg*/) -> void*
     return nullptr;
 };
 }
-#endif
 
-#define NUM_VOICES 32
-#define NUM_MOD_VOICES 12
-#define NUM_SFX_VOICES (NUM_VOICES - NUM_MOD_VOICES)
+inline constexpr auto NUM_VOICES = 32;
+inline constexpr auto NUM_MOD_VOICES = 12;
+inline constexpr auto NUM_SFX_VOICES = NUM_VOICES - NUM_MOD_VOICES;
 
 Sound::Sound()
 {
     current_mod = nullptr;
 
-#ifdef DJGPP
-    soundcard = 1;
-    reserve_voices(NUM_VOICES, -1);
-
-    if (install_sound(DIGI_AUTODETECT, MIDI_NONE, NULL) < 0) {
-
-        soundcard = 0;
-    }
-    if (install_mod(NUM_MOD_VOICES) < 0) {
-
-        soundcard = 0;
-    }
-#else
     soundcard = 1;
     /* register all the drivers */
     MikMod_RegisterAllDrivers();
@@ -104,33 +85,18 @@ Sound::Sound()
     MikMod_EnableOutput();
 
     pthread_create(&playthread, nullptr, module_thread, nullptr);
-#endif
 }
 
 Sound::~Sound()
 {
     if (current_mod != nullptr) {
-#ifdef DJGPP
-        destroy_mod(current_mod);
-#else
         Player_Free(current_mod);
     }
-#endif
-    }
+}
 
-    auto Sound::PlayMusic(char* filename)->int
-    {
-        if (soundcard != 0) {
-#ifdef DJGPP
-            if (current_mod)
-                destroy_mod(current_mod);
-
-            if ((current_mod = load_mod(filename)) == NULL)
-                return -3;
-
-            play_mod(current_mod, 1);
-            set_mod_volume(config->keyconf.music_vol);
-#else
+auto Sound::PlayMusic(char* filename) -> int
+{
+    if (soundcard != 0) {
         if (current_mod != nullptr) {
             Player_Free(current_mod);
         }
@@ -140,67 +106,54 @@ Sound::~Sound()
         }
         current_mod->wrap = 1;
         Player_Start(current_mod);
-#endif
-        }
-        return 1;
     }
+    return 1;
+}
 
-    void Sound::StopMusic()
-    {
-        if (soundcard != 0) {
-#ifdef DJGPP
-            stop_mod();
-#else
+void Sound::StopMusic()
+{
+    if (soundcard != 0) {
         Player_Stop();
-#endif
-            current_mod = nullptr;
+        current_mod = nullptr;
+    }
+}
+
+void Sound::LoadSFX(const char* filename)
+{
+    SAMPLE* s = nullptr;
+
+    if (soundcard != 0) {
+
+        s = scache.GetSample(filename);
+        if (s != nullptr) {
+            scache.FreeSample(s);
         }
     }
+}
 
-    void Sound::LoadSFX(const char* filename)
-    {
-        SAMPLE* s = nullptr;
+void Sound::PlaySFX_Critical(const char* filename)
+{
+    SAMPLE* s = nullptr;
 
-        if (soundcard != 0) {
+    if (soundcard != 0) {
 
-            s = scache.GetSample(filename);
-            if (s != nullptr) {
-                scache.FreeSample(s);
-            }
-        }
-    }
-
-    void Sound::PlaySFX_Critical(const char* filename)
-    {
-        SAMPLE* s = nullptr;
-
-        if (soundcard != 0) {
-
-            s = scache.GetSample(filename);
-            if (s != nullptr) {
-#ifdef DJGPP
-                play_sample(s, config->keyconf.sfx_vol, 128, 1000, 0);
-#else
+        s = scache.GetSample(filename);
+        if (s != nullptr) {
             md_sndfxvolume = config->keyconf.sfx_vol;
             Sample_Play(s, 0, SFX_CRITICAL);
-#endif
-            }
         }
     }
-    void Sound::PlaySFX(const char* filename)
-    {
-        SAMPLE* s = nullptr;
+}
+void Sound::PlaySFX(const char* filename)
+{
+    SAMPLE* s = nullptr;
 
-        if (soundcard != 0) {
+    if (soundcard != 0) {
 
-            s = scache.GetSample(filename);
-            if (s != nullptr) {
-#ifdef DJGPP
-                play_sample(s, config->keyconf.sfx_vol, 128, 1000, 0);
-#else
+        s = scache.GetSample(filename);
+        if (s != nullptr) {
             md_sndfxvolume = config->keyconf.sfx_vol;
             Sample_Play(s, 0, 0);
-#endif
-            }
         }
     }
+}

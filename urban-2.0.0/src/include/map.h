@@ -31,16 +31,16 @@
 #ifndef __MAP_H__
 #define __MAP_H__
 
-#define MAX_TILES 300
-#define MAX_OPTIONS 50
-#define BG_TILE_WIDTH 120
-#define BG_TILE_HEIGHT 120
-#define PAL_AIR 0
-#define PAL_WATER 1
-
 #include "datfile.h"
 #include <allegro.h>
 #include <stdio.h>
+
+inline constexpr auto MAX_TILES = 300;
+inline constexpr auto MAX_OPTIONS = 50;
+inline constexpr auto BG_TILE_WIDTH = 120;
+inline constexpr auto BG_TILE_HEIGHT = 120;
+inline constexpr auto PAL_AIR = 0;
+inline constexpr auto PAL_WATER = 1;
 
 typedef int maptype;
 
@@ -50,13 +50,13 @@ public:
     ~Map();
     int LoadMap(const char* filename);
     int SaveMap(const char* filename);
-    static int GetDekor(int x, int y, int z);
-    static int GetEffect(int x, int y, int z);
+    int GetDekor(int x, int y, int z);
+    int GetEffect(int x, int y, int z);
     int GetBackGround(int x, int y);
     int GetBG(int x, int y, int z);
     int GetObj(int x, int y, int z);
-    static int SetDekor(int x, int y, int z, int v);
-    static int SetEffect(int x, int y, int z, int v);
+    int SetDekor(int x, int y, int z, int v);
+    int SetEffect(int x, int y, int z, int v);
     int SetBackGround(int x, int y, int v);
     int SetObj(int x, int y, int z, int v);
     int SetBG(int x, int y, int z, int v); //<- ta bort
@@ -65,10 +65,10 @@ public:
     int GetNumTiles() { return num_tiles; }
     int GetBGNumTiles() { return bg_num_tiles; }
     BITMAP* GetTile(int num);
-    int GetTileInfo(int num) { return TileInfo[num]; };
+    int GetTileInfo(int num) const { return TileInfo[num]; };
     BITMAP* GetTile(int x, int y, int z);
     BITMAP* GetBGTile(int num);
-    RGB* GetPal();
+    PALETTE& GetPal();
     void SetPal(int type);
     void UpdatePal();
     char* GetOption(const char* name);
@@ -94,9 +94,9 @@ private:
     int num_tiles, bg_num_tiles;
     int pal_count;
     int pal_type;
-    RGB Pal[256] {};
-    RGB Pal_water[256] {};
-    RGB Pal_air[256] {};
+    PALETTE Pal {};
+    PALETTE Pal_water {};
+    PALETTE Pal_air {};
 };
 
 #endif

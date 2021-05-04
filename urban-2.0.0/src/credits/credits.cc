@@ -42,12 +42,12 @@
 #include <cstdio>
 #include <cstdlib>
 
-#define SCREEN_HEIGHT 240
+inline constexpr auto LIGHT_SIZE = 128.0;
 
-#define LIGHT_SIZE 128.0
-
-#define cblit(bmp, dest, x, y) \
-    masked_blit(bmp, dest, 0, 0, (x) - (bmp)->w / 2, y, (bmp)->w, (bmp)->h)
+inline void cblit(BITMAP* bmp, BITMAP* dest, int x, int y)
+{
+    masked_blit(bmp, dest, 0, 0, (x) - (bmp)->w / 2, y, (bmp)->w, (bmp)->h);
+}
 
 typedef unsigned char uchar;
 
@@ -65,7 +65,7 @@ struct Lightinfo LI[] = {
     { 160, 120, 0 },
 };
 
-#define NUM_LIGHTS ((signed)(sizeof(LI) / sizeof(LI[0])))
+inline constexpr auto NUM_LIGHTS = (signed)(sizeof(LI) / sizeof(LI[0]));
 
 struct CreditsInfo {
     char title[32];
@@ -90,7 +90,7 @@ struct CreditsInfo {
         "SAMUEL\nPERSSON", 1 },
 };
 
-#define NUMCI ((signed)(sizeof(_ci) / sizeof(_ci[0])))
+inline constexpr auto NUMCI = (signed)(sizeof(_ci) / sizeof(_ci[0]));
 
 const char* special_thanks = "\n"
                              " SPECIAL THANKS\n"
@@ -130,7 +130,7 @@ static void InitLightmap()
         for (int x = 0; x < 256; x++) {
             nx = ((x - 128) / LIGHT_SIZE);
             ny = ((y - 128) / LIGHT_SIZE);
-            nz = 1 - sqrt(nx * nx + ny * ny);
+            nz = 1 - std::sqrt(nx * nx + ny * ny);
 
             if (nz < 0) {
                 nz = 0;
@@ -203,14 +203,10 @@ static auto morf(BITMAP* source, BITMAP* dest, int starty, int stopy, int numfra
 
     tmp = create_bitmap(source->w, source->h);
 
-#define _S (source->line[j][i])
-#define _D (dest->line[j][i])
-#define _T (tmp->line[j][i])
-
     for (k = 1; k <= numframes; k++) {
         for (j = starty; j < stopy; j++) {
             for (i = 0; i < 320; i++) {
-                _T = _S + (int)((float)(_D - _S) * ((float)k / (float)numframes));
+                (tmp->line[j][i]) = (source->line[j][i]) + (int)((float)((dest->line[j][i]) - (source->line[j][i])) * ((float)k / (float)numframes));
             }
         }
         DoBump(tmp, starty + 1, stopy - 1);
@@ -221,20 +217,19 @@ static auto morf(BITMAP* source, BITMAP* dest, int starty, int stopy, int numfra
         }
     }
     return tmp;
-#undef _D
-#undef _S
-#undef _T
 }
 
-#define DELAY(x) ({       \
-    int mul;              \
-    mul = (x) / 10;       \
-    for (; mul; mul--) {  \
-        rest(10);         \
-        if (keypressed()) \
-            break;        \
-    }                     \
-})
+inline void DELAY(int x)
+{
+    int mul = 0;
+    mul = (x) / 10;
+    for (; mul != 0; mul--) {
+        rest(10);
+        if (keypressed() != 0) {
+            break;
+        }
+    }
+}
 
 void showcredits()
 {

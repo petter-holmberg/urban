@@ -37,7 +37,7 @@
 ExplosiveTile_o::ExplosiveTile_o(int X, int Y, int Z, int Type)
     : Object(X, Y, Z)
 {
-    RGB pal[256];
+    PALETTE pal;
     char filename[512];
 
     images = new BITMAP*[2];
