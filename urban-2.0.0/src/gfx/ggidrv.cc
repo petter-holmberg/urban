@@ -34,9 +34,9 @@
 #include <algorithm>
 #include <allegro.h>
 #include <cmath>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 #include <unistd.h>
 /**************************************************************************/
 /* BITMAP *create_bitmap(int w, int h); */
@@ -62,7 +62,7 @@ void rest(long t)
 /**************************************************************************/
 void keyboard_update()
 {
-    sf::Event event;
+    sf::Event event {};
     while (window->pollEvent(event)) {
         switch (event.type) {
         case sf::Event::KeyPressed:
@@ -255,12 +255,13 @@ void keyboard_update()
     }
 }
 /**************************************************************************/
-int keypressed()
+auto keypressed() -> int
 {
-    if (num_keypressed)
+    if (num_keypressed != 0) {
         return 1;
+    }
 
-    sf::Event event;
+    sf::Event event {};
     if (!window->pollEvent(event) || event.type != sf::Event::KeyPressed) {
         return 0;
     }
@@ -270,12 +271,12 @@ int keypressed()
     return 1;
 }
 /**************************************************************************/
-int readkey()
+auto readkey() -> int
 {
-    sf::Event event;
+    sf::Event event {};
     while (window->pollEvent(event) && event.type != sf::Event::KeyPressed) { }
 
-    if (num_keypressed) {
+    if (num_keypressed != 0) {
         num_keypressed--;
     }
 
@@ -405,20 +406,22 @@ int readkey()
 }
 /**************************************************************************/
 static int first = 1;
-int allegro_init()
+auto allegro_init() -> int
 {
     first = 0;
 
-    for (int i = 0; i < 256; i++)
-        black_palette[i].r = black_palette[i].g = black_palette[i].b = 0;
+    for (auto& i : black_palette) {
+        i.r = i.g = i.b = 0;
+    }
 
     return 1;
 }
 /**************************************************************************/
-int install_keyboard()
+auto install_keyboard() -> int
 {
-    if (first)
+    if (first != 0) {
         allegro_init();
+    }
 
     num_keypressed = 0;
 
@@ -430,7 +433,7 @@ void keyboard_reset()
     memset(key, 0, 128);
 }
 /**************************************************************************/
-int install_timer()
+auto install_timer() -> int
 {
     memset(key, 0, 128);
 
@@ -439,20 +442,21 @@ int install_timer()
 /**************************************************************************/
 void close_gfx()
 {
-    if (window == NULL)
+    if (window == nullptr) {
         return;
+    }
 
     fprintf(stderr, "Closing ggi...");
     window->close();
     delete window;
-    screen->vis = NULL;
+    screen->vis = nullptr;
     fprintf(stderr, "done\n");
 }
 /**************************************************************************/
-int set_gfx_mode(int mode, int w, int h, int a, int b)
+auto set_gfx_mode(int /*mode*/, int w, int h, int /*a*/, int /*b*/) -> int
 {
-    int err;
-    char* target;
+    int err = 0;
+    char* target = nullptr;
 
     memset(key, 0, 128);
     screen = new BITMAP;
@@ -468,7 +472,7 @@ int set_gfx_mode(int mode, int w, int h, int a, int b)
     }
     screen->texture.setSrgb(false);
     screen->vis->setTexture(screen->texture);
-    screen->vis->setScale(sf::Vector2f(4.f, 4.f));
+    screen->vis->setScale(sf::Vector2f(4.F, 4.F));
 
     screen->dat = new char[screen->w * screen->h];
     screen->stride = screen->w;
@@ -477,24 +481,25 @@ int set_gfx_mode(int mode, int w, int h, int a, int b)
 
     screen->line = new char*[screen->h];
 
-    for (int i = 0; i < screen->h; i++)
+    for (int i = 0; i < screen->h; i++) {
         screen->line[i] = screen->dat + i * screen->stride;
+    }
 
     have_directbuffer = 0;
     return 0;
 }
 /**************************************************************************/
-float linear2srgb(float x)
+auto linear2srgb(float x) -> float
 {
     float s0 = sqrtf(x);
     float s1 = sqrtf(s0);
     float s2 = sqrtf(s1);
-    return std::clamp(0.662002687f * s0 + 0.684122060f * s1 - 0.323583601f * s2 - 0.0225411470f * x, 0.0f, 1.0f);
+    return std::clamp(0.662002687F * s0 + 0.684122060F * s1 - 0.323583601F * s2 - 0.0225411470F * x, 0.0F, 1.0F);
 }
 /**************************************************************************/
-int set_palette(PALETTE p)
+auto set_palette(PALETTE p) -> int
 {
-    int i;
+    int i = 0;
 
     for (i = 0; i < 256; i++) {
 
@@ -508,7 +513,7 @@ int set_palette(PALETTE p)
 /**************************************************************************/
 void get_palette(PALETTE p)
 {
-    int i;
+    int i = 0;
 
     for (i = 0; i < 256; i++) {
 
@@ -521,7 +526,9 @@ void get_palette(PALETTE p)
 void stretch_line(char* src, char* dst, int s_w, int d_w)
 {
     char* dst_end = dst + d_w;
-    int i1, i2, dd;
+    int i1 = 0;
+    int i2 = 0;
+    int dd = 0;
     int x_inc = s_w / d_w;
 
     s_w %= d_w;
@@ -535,8 +542,9 @@ void stretch_line(char* src, char* dst, int s_w, int d_w)
 
             src++;
             dd += i2;
-        } else
+        } else {
             dd += i1;
+        }
     }
 }
 /**************************************************************************/
@@ -546,7 +554,7 @@ void stretch_blit(BITMAP* source, BITMAP* dest, int source_x, int source_y, int 
     int start_y = dest_y;
     int w = d_w;
     int h = d_h;
-    char* dst;
+    char* dst = nullptr;
     char* src = source->dat + source->stride * source_y + source_x;
     int destwidth = dest->stride;
     int srcwidth = source->stride;
@@ -575,10 +583,12 @@ void stretch_blit(BITMAP* source, BITMAP* dest, int source_x, int source_y, int 
 
         w -= (start_x + w) - dest->w;
     }
-    if (h < 0)
+    if (h < 0) {
         return;
-    if (w < 0)
+    }
+    if (w < 0) {
         return;
+    }
 
     dst = dest->dat + (dest->stride * start_y) + start_x;
 
@@ -588,7 +598,9 @@ void stretch_blit(BITMAP* source, BITMAP* dest, int source_x, int source_y, int 
     /* Stretch blit */
     char* dst_end = dst + (destwidth * h);
     int j = s_h / d_h;
-    int i1, i2, dd;
+    int i1 = 0;
+    int i2 = 0;
+    int dd = 0;
 
     s_h %= d_h;
 
@@ -599,8 +611,9 @@ void stretch_blit(BITMAP* source, BITMAP* dest, int source_x, int source_y, int 
         if (dd >= 0) {
             src += srcwidth;
             dd += i2;
-        } else
+        } else {
             dd += i1;
+        }
     }
     if (dest == screen) {
         window->draw(*screen->vis);
@@ -608,11 +621,11 @@ void stretch_blit(BITMAP* source, BITMAP* dest, int source_x, int source_y, int 
     }
 }
 /**************************************************************************/
-int ggiPutBox(sf::Texture& tex, int x, int y, int w, int h, const void* buf)
+auto ggiPutBox(sf::Texture& tex, int x, int y, int w, int h, const void* buf) -> int
 {
     std::vector<unsigned char> pixels;
     pixels.reserve(w * h * 4);
-    auto col { reinterpret_cast<const unsigned char*>(buf) };
+    const auto* col { reinterpret_cast<const unsigned char*>(buf) };
     for (auto i { 0 }; i != w * h; ++i) {
         pixels.push_back(screen->pal[*col].r);
         pixels.push_back(screen->pal[*col].g);
@@ -630,7 +643,7 @@ void blit(BITMAP* source, BITMAP* dest, int source_x, int source_y, int dest_x, 
     int start_y = dest_y;
     int w = width;
     int h = height;
-    char* dst;
+    char* dst = nullptr;
     char* src = source->dat + source->stride * source_y + source_x;
     int destwidth = dest->stride;
     int srcwidth = source->stride;
@@ -658,10 +671,12 @@ void blit(BITMAP* source, BITMAP* dest, int source_x, int source_y, int dest_x, 
 
         w -= (start_x + w) - dest->w;
     }
-    if (h < 0)
+    if (h < 0) {
         return;
-    if (w < 0)
+    }
+    if (w < 0) {
         return;
+    }
 
     dst = dest->dat + (dest->stride * start_y) + start_x;
 
@@ -669,7 +684,7 @@ void blit(BITMAP* source, BITMAP* dest, int source_x, int source_y, int dest_x, 
         h = dest->h;
     }
     int h2 = h;
-    if (dest == screen && !have_directbuffer) {
+    if (dest == screen && (have_directbuffer == 0)) {
         //		int lx = (int)src - ((int)source->dat + source_y * source->stride);
         int ly = source_y;
         while (h > 0) {
@@ -700,7 +715,7 @@ void masked_blit(BITMAP* source, BITMAP* dest, int source_x, int source_y, int d
     int start_y = dest_y;
     int w = width;
     int h = height;
-    char* dst;
+    char* dst = nullptr;
     char* src = source->dat + source->stride * source_y + source_x;
     int destwidth = dest->stride;
     int srcwidth = source->stride;
@@ -728,10 +743,12 @@ void masked_blit(BITMAP* source, BITMAP* dest, int source_x, int source_y, int d
 
         w -= (start_x + w) - dest->w;
     }
-    if (h < 0)
+    if (h < 0) {
         return;
-    if (w < 0)
+    }
+    if (w < 0) {
         return;
+    }
 
     dst = dest->dat + (dest->stride * start_y) + start_x;
 
@@ -739,14 +756,16 @@ void masked_blit(BITMAP* source, BITMAP* dest, int source_x, int source_y, int d
         h = dest->h;
     }
     int h2 = h;
-    if (dest == screen && !have_directbuffer) {
+    if (dest == screen && (have_directbuffer == 0)) {
         //		int lx = (int)dst - ((int)dest->dat + dest_y * dest->stride);
         int ly = dest_y;
         while (h > 0) {
 
-            for (int i = 0; i < w; i++)
-                if (src[i])
+            for (int i = 0; i < w; i++) {
+                if (src[i] != 0) {
                     dst[i] = src[i];
+                }
+            }
             ggiPutBox(screen->texture, start_x, ly++, w, 1, dst);
             dst += destwidth;
             src += srcwidth;
@@ -754,9 +773,11 @@ void masked_blit(BITMAP* source, BITMAP* dest, int source_x, int source_y, int d
         }
     } else {
         while (h > 0) {
-            for (int i = 0; i < w; i++)
-                if (src[i])
+            for (int i = 0; i < w; i++) {
+                if (src[i] != 0) {
                     dst[i] = src[i];
+                }
+            }
             src += srcwidth;
             dst += destwidth;
             h--;
@@ -768,7 +789,7 @@ void masked_blit(BITMAP* source, BITMAP* dest, int source_x, int source_y, int d
     }
 }
 /**************************************************************************/
-int drawRectangle(sf::Texture& tex, int x, int y, int w, int h, int c)
+auto drawRectangle(sf::Texture& tex, int x, int y, int w, int h, int c) -> int
 {
     std::vector<unsigned char> pixels;
     pixels.reserve(w * h * 4);
@@ -798,36 +819,44 @@ void stretch_sprite(BITMAP* bmp, BITMAP* sprite, int x, int y, int w, int h)
 void rectfill(BITMAP* bmp, int x1, int y1, int x2, int y2, int c)
 {
 
-    if (x1 < 0)
+    if (x1 < 0) {
         x1 = 0;
-    if (x2 < 0)
+    }
+    if (x2 < 0) {
         return;
-    if (x1 >= bmp->w)
+    }
+    if (x1 >= bmp->w) {
         return;
-    if (x2 >= bmp->w)
+    }
+    if (x2 >= bmp->w) {
         x2 = bmp->w - 1;
-    if (y1 < 0)
+    }
+    if (y1 < 0) {
         y1 = 0;
-    if (y2 < 0)
+    }
+    if (y2 < 0) {
         return;
-    if (y1 >= bmp->h)
+    }
+    if (y1 >= bmp->h) {
         return;
-    if (y2 >= bmp->h)
+    }
+    if (y2 >= bmp->h) {
         y2 = bmp->h - 1;
+    }
 
     int w = x2 - x1 + 1;
     int h = y2 - y1 + 1;
     int h2 = h;
 
     char* ptr = bmp->dat + (y1 * bmp->stride) + x1;
-    while (h) {
+    while (h != 0) {
 
         memset(ptr, c, w);
         ptr += bmp->stride;
         h--;
     }
     if (bmp == screen) {
-        if (!have_directbuffer) {
+        if (have_directbuffer == 0) {
             drawRectangle(screen->texture, x1, y1, w, h2, c);
         }
         window->draw(*screen->vis);
@@ -844,7 +873,7 @@ void destroy_bitmap(BITMAP* bmp)
 /**************************************************************************/
 void clear_keybuf()
 {
-    sf::Event event;
+    sf::Event event {};
     while (window->pollEvent(event)) { }
 
     keyboard_reset();
@@ -852,12 +881,12 @@ void clear_keybuf()
     num_keypressed = 0;
 };
 /**************************************************************************/
-int install_int_ex(void (*proc)(), long speed)
+auto install_int_ex(void (*/*proc*/)(), long /*speed*/) -> int
 {
     return 0;
 }
 /**************************************************************************/
-int install_int(void (*proc)(), long speed)
+auto install_int(void (*/*proc*/)(), long /*speed*/) -> int
 {
     return 0;
 }
@@ -866,7 +895,7 @@ void remove_int(void (*proc)())
 {
 }
 /**************************************************************************/
-int set_color(int i, RGB* rgb)
+auto set_color(int i, RGB* rgb) -> int
 {
     screen->pal[i].r = rgb->r;
     screen->pal[i].g = rgb->g;
@@ -876,7 +905,7 @@ int set_color(int i, RGB* rgb)
     return 0;
 }
 /**************************************************************************/
-int vsync()
+auto vsync() -> int
 {
     return 0;
 };
@@ -895,7 +924,7 @@ void fade_in(PALLETE p, int speed)
 {
     PALETTE pal;
     PALETTE tmp_pal;
-    int i;
+    int i = 0;
 
     get_palette(tmp_pal);
 
@@ -916,7 +945,7 @@ void fade_out(int speed)
 {
     PALETTE pal;
     PALETTE tmp_pal;
-    int i;
+    int i = 0;
 
     get_palette(tmp_pal);
 
@@ -933,20 +962,21 @@ void fade_out(int speed)
     window->display();
 }
 /**************************************************************************/
-BITMAP* create_bitmap(int w, int h)
+auto create_bitmap(int w, int h) -> BITMAP*
 {
-    BITMAP* bmp = new BITMAP;
+    auto* bmp = new BITMAP;
     bmp->w = w;
     bmp->h = h;
     bmp->stride = w;
 
-    bmp->vis = NULL;
+    bmp->vis = nullptr;
     bmp->dat = new char[w * h];
 
     bmp->line = new char*[h];
 
-    for (int i = 0; i < bmp->h; i++)
+    for (int i = 0; i < bmp->h; i++) {
         bmp->line[i] = bmp->dat + i * bmp->stride;
+    }
 
     clear(bmp);
 
@@ -968,14 +998,14 @@ void clear(BITMAP* bmp)
     char* ptr = bmp->dat;
     int stride = bmp->stride;
 
-    while (h--) {
+    while ((h--) != 0) {
 
         memset(ptr, 0, stride);
         ptr += stride;
     }
 
     if (bmp == screen) {
-        if (!have_directbuffer) {
+        if (have_directbuffer == 0) {
             drawRectangle(screen->texture, 0, 0, screen->w, screen->h, 0);
         }
         window->draw(*screen->vis);
@@ -989,14 +1019,14 @@ void clear_to_color(BITMAP* bmp, int color)
     char* ptr = bmp->dat;
     int stride = bmp->stride;
 
-    while (h--) {
+    while ((h--) != 0) {
 
         memset(ptr, color, stride);
         ptr += stride;
     }
 
     if (bmp == screen) {
-        if (!have_directbuffer) {
+        if (have_directbuffer == 0) {
             drawRectangle(screen->texture, 0, 0, screen->w, screen->h, color);
         }
         window->draw(*screen->vis);

@@ -34,8 +34,8 @@
 
 *****************************************************************************/
 #include <allegro.h>
-#include <stdio.h>
-#include <string.h>
+#include <cstdio>
+#include <cstring>
 
 //#define DEBUG_FLC_PLAYER
 #ifdef DEBUG_FLC_PLAYER
@@ -114,38 +114,40 @@ struct frame_header {
 #define READ_FLC_FROM_MEMORY 0x03
 
 char flc_status = FLC_NOT_OPEN;
-FILE* flc_file = NULL;
+FILE* flc_file = nullptr;
 long flc_offset = 0;
-char* flc_memory_buffer = NULL;
+char* flc_memory_buffer = nullptr;
 
 struct flc_header flc_h;
 struct prefix_chunk prefix_c;
 struct frame_chunk frame_c;
 struct prefix_chunk chunk;
 struct frame_header frame_h;
-BITMAP* flc_bitmap = NULL;
-BITMAP* target_bitmap = NULL;
+BITMAP* flc_bitmap = nullptr;
+BITMAP* target_bitmap = nullptr;
 volatile unsigned long flc_counter = 0;
-int (*flc_callback)() = NULL;
+int (*flc_callback)() = nullptr;
 
 #define FRAME_SIZE (flc_h.width * flc_h.height)
 #define FRAME_WIDTH (flc_h.width)
 #define FRAME_HEIGHT (flc_h.height)
 
-static int read_flc_data(void* buffer, int count)
+static auto read_flc_data(void* buffer, int count) -> int
 {
-    int ret;
+    int ret = 0;
 
     switch (flc_status) {
     case READ_FLC_FROM_DATFILE:
     case READ_FLC_FROM_FILE:
-        if (flc_file == NULL)
+        if (flc_file == nullptr) {
             return -1;
+        }
         ret = fread(buffer, 1, count, flc_file);
         return ret;
     case READ_FLC_FROM_MEMORY:
-        if (flc_memory_buffer == NULL)
+        if (flc_memory_buffer == nullptr) {
             return -1;
+        }
         memcpy(buffer, flc_memory_buffer + flc_offset, count);
         flc_offset += count;
         break;
@@ -156,17 +158,18 @@ static int read_flc_data(void* buffer, int count)
     return 0;
 }
 
-static int seek_flc_data(int offset, int mode)
+static auto seek_flc_data(int offset, int mode) -> int
 {
     switch (flc_status) {
     case READ_FLC_FROM_DATFILE:
     case READ_FLC_FROM_FILE:
         return fseek(flc_file, offset, mode);
     case READ_FLC_FROM_MEMORY:
-        if (mode == SEEK_SET)
+        if (mode == SEEK_SET) {
             flc_offset = offset;
-        else if (mode == SEEK_CUR)
+        } else if (mode == SEEK_CUR) {
             flc_offset += offset;
+        }
         return flc_offset;
     case FLC_NOT_OPEN:
     default:
@@ -175,7 +178,7 @@ static int seek_flc_data(int offset, int mode)
     return 0;
 }
 
-static int flc_read_header()
+static auto flc_read_header() -> int
 {
     read_flc_data(&flc_h, sizeof(struct flc_header));
 #ifdef SHOW_HEADERS
@@ -203,13 +206,14 @@ static int flc_read_header()
     return 0;
 }
 
-static int read_flc_palette(int type)
+static auto read_flc_palette(int type) -> int
 {
-    short num_packets;
+    short num_packets = 0;
     int cc = 0;
-    int i, j;
-    int num_c;
-    unsigned char skip;
+    int i = 0;
+    int j = 0;
+    int num_c = 0;
+    unsigned char skip = 0;
     RGB rgb;
 
     read_flc_data(&num_packets, 2);
@@ -249,14 +253,14 @@ static int read_flc_palette(int type)
     return 0;
 }
 
-static int read_flc_brun()
+static auto read_flc_brun() -> int
 {
-    int i;
-    int x;
+    int i = 0;
+    int x = 0;
     int cw = 0;
-    unsigned char num_p;
-    char type;
-    unsigned char temp;
+    unsigned char num_p = 0;
+    char type = 0;
+    unsigned char temp = 0;
     for (i = 0; i < FRAME_HEIGHT; i++) {
         read_flc_data(&num_p, 1); //skit-v?rde
         cw = 0;
@@ -278,17 +282,17 @@ static int read_flc_brun()
     return 0;
 }
 
-int read_flc_ss2()
+auto read_flc_ss2() -> int
 {
-    short num_lines;
-    short num_packets;
+    short num_lines = 0;
+    short num_packets = 0;
     int y = 0;
-    int x;
-    int ret;
-    unsigned char temp;
-    char count;
-    short tmp2;
-    int i;
+    int x = 0;
+    int ret = 0;
+    unsigned char temp = 0;
+    char count = 0;
+    short tmp2 = 0;
+    int i = 0;
 
     read_flc_data(&num_lines, 2);
 #ifdef SHOW_CHUNKS
@@ -301,10 +305,11 @@ int read_flc_ss2()
         PRINTF("Num packets: %d\n", num_packets);
 #endif
         while (num_packets < 0) {
-            if (num_packets & 0x4000)
+            if ((num_packets & 0x4000) != 0) {
                 y -= num_packets;
-            else
+            } else {
                 flc_bitmap->dat[(flc_bitmap->w * y) + flc_bitmap->w - 1] = num_packets & 0xff;
+            }
             ret = read_flc_data(&num_packets, 2);
 #ifdef SHOW_CHUNKS
             PRINTF("-Num packets: %d\n", num_packets);
@@ -322,8 +327,9 @@ int read_flc_ss2()
             } else if (count < 0) {
                 read_flc_data(&tmp2, 2);
                 count = -count;
-                for (i = 0; i < count * 2; i++)
+                for (i = 0; i < count * 2; i++) {
                     *((short*)(&flc_bitmap->dat[flc_bitmap->w * y] + x + i)) = tmp2;
+                }
                 x += count * 2;
             }
         }
@@ -332,9 +338,9 @@ int read_flc_ss2()
     return 0;
 }
 
-static int next_frame()
+static auto next_frame() -> int
 {
-    int j;
+    int j = 0;
 
     for (j = 0; j < chunk.n_chunks; j++) {
         read_flc_data(&frame_h, sizeof(struct frame_header));
@@ -366,8 +372,8 @@ static int next_frame()
 
 static void do_flc_play(int loop)
 {
-    int i;
-    int ret;
+    int i = 0;
+    int ret = 0;
 
     for (;;) {
         seek_flc_data(flc_h.oframe1, SEEK_SET);
@@ -378,51 +384,57 @@ static void do_flc_play(int loop)
             next_frame();
             blit(flc_bitmap, target_bitmap, 0, 0, 0, 0, 320, 240);
 
-            if (flc_callback != NULL) {
-                if ((ret = flc_callback()))
+            if (flc_callback != nullptr) {
+                if ((ret = flc_callback()) != 0) {
                     return;
+                }
             }
         }
-        if (!loop)
+        if (loop == 0) {
             break;
+        }
     }
 }
 
-int play_fli(char* filename, BITMAP* bmp, int loop, int (*callback)())
+auto play_fli(char* filename, BITMAP* bmp, int loop, int (*callback)()) -> int
 {
 
     flc_file = fopen(filename, "rb");
     flc_status = READ_FLC_FROM_FILE;
     flc_offset = 0;
     flc_read_header();
-    if (flc_bitmap == NULL)
+    if (flc_bitmap == nullptr) {
         flc_bitmap = create_bitmap(320, 240);
+    }
     LOCK_VARIABLE(flc_counter);
     LOCK_FUNCTION(flc_timer_callback);
     flc_callback = callback;
     target_bitmap = bmp;
-    if (!target_bitmap)
+    if (target_bitmap == nullptr) {
         return -1;
+    }
 
     do_flc_play(loop);
 
     return 0;
 }
 
-int play_memory_fli(void* fli_data, BITMAP* bmp, int loop, int (*callback)())
+auto play_memory_fli(void* fli_data, BITMAP* bmp, int loop, int (*callback)()) -> int
 {
     flc_status = READ_FLC_FROM_MEMORY;
     flc_memory_buffer = (char*)fli_data;
     flc_offset = 0;
 
     flc_read_header();
-    if (flc_bitmap == NULL)
+    if (flc_bitmap == nullptr) {
         flc_bitmap = create_bitmap(320, 240);
+    }
     LOCK_VARIABLE(flc_counter);
     flc_callback = callback;
     target_bitmap = bmp;
-    if (!target_bitmap)
+    if (target_bitmap == nullptr) {
         return -1;
+    }
 
     do_flc_play(loop);
 

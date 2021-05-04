@@ -96,7 +96,7 @@ typedef struct FONT /* can be either */
 #define GFX_AUTODETECT 0
 int vsync();
 int play_memory_fli(void* fli_data, BITMAP* bmp, int loop, int (*callback)());
-int play_fli(char* fli_data, BITMAP* bmp, int loop, int (*callback)());
+int play_fli(char* filename, BITMAP* bmp, int loop, int (*callback)());
 int allegro_init();
 int install_keyboard();
 void keyboard_update();
