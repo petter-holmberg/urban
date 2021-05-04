@@ -29,13 +29,13 @@
     thomas.nyberg@usa.net                               jonas_b@bitsmart.com
 *****************************************************************************/
 #include <allegro.h>
-#include <stdio.h>
-#include <string.h>
+#include <cstdio>
+#include <cstring>
 #include <unistd.h>
 #ifndef DJGPP
+#include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-#include <fcntl.h>
 #include <unistd.h>
 void close_gfx();
 #endif
@@ -59,12 +59,12 @@ void close_gfx();
 /* From credits.cc */
 void showcredits();
 /*****************************************************************************************/
-Config* config = NULL;
+Config* config = nullptr;
 void LoadGame();
 /*****************************************************************************************/
-int MenuChoice(int alternative)
+auto MenuChoice(int alternative) -> int
 {
-    HighScore* hs;
+    HighScore* hs = nullptr;
 
     switch (alternative) {
     case 1:
@@ -125,7 +125,7 @@ int MenuChoice(int alternative)
     return 1;
 }
 /*****************************************************************************************/
-int Do_Menu(const char* text, int num_items, int pos)
+auto Do_Menu(const char* text, int num_items, int pos) -> int
 {
     PALETTE pal;
     UrbanFont m(LARGE_FONT);
@@ -145,7 +145,7 @@ int Do_Menu(const char* text, int num_items, int pos)
 
     clear_keybuf();
 
-    while (looping) {
+    while (looping != 0) {
 
         blit(backg, screen, text_x - 10 - choice->w, text_y - 20, text_x - 10 - choice->w, text_y - 20, choice->w, choice->h * 10);
         masked_blit(choice, screen, 0, 0, text_x - 10 - choice->w, text_y + FONT_H * (pos - 1), choice->w, choice->h);
@@ -163,17 +163,19 @@ int Do_Menu(const char* text, int num_items, int pos)
             break;
 
         case KEY_UP:
-            if (pos > 1)
+            if (pos > 1) {
                 pos--;
-            else
+            } else {
                 pos = num_items;
+            }
             break;
 
         case KEY_DOWN:
-            if (pos < num_items)
+            if (pos < num_items) {
                 pos++;
-            else
+            } else {
                 pos = 1;
+            }
             break;
         }
     }
@@ -191,18 +193,18 @@ void LoadGame()
 {
     char buffer[80];
     char filename[512];
-    FILE* fs;
-    int slot;
+    FILE* fs = nullptr;
+    int slot = 0;
 
 #ifdef DJGPP
     sprintf(filename, "savegame.dat");
 #else
     sprintf(filename, "%s/.urban/savegame.dat", getenv("HOME"));
 #endif
-    if ((fs = fopen(filename, "rb")) == NULL) {
-        for (int i = 0; i < 5; i++) {
-            SavedGames[i].level = 0;
-            memcpy(&SavedGames[i].dat, &DefaultPData, sizeof(struct PlayerData));
+    if ((fs = fopen(filename, "rb")) == nullptr) {
+        for (auto& SavedGame : SavedGames) {
+            SavedGame.level = 0;
+            memcpy(&SavedGame.dat, &DefaultPData, sizeof(struct PlayerData));
         }
 #ifndef DJGPP
         /* Create dir */
@@ -211,7 +213,7 @@ void LoadGame()
 
         sprintf(filename, "%s/.urban/savegame.dat", getenv("HOME"));
 #endif
-        if ((fs = fopen(filename, "wb")) != NULL) {
+        if ((fs = fopen(filename, "wb")) != nullptr) {
 
             fwrite(SavedGames, 1, 5 * sizeof(struct SaveGameData), fs);
             fclose(fs);
@@ -223,17 +225,20 @@ void LoadGame()
 
     buffer[0] = 0;
 
-    for (int i = 0; i < 5; i++) {
-        if (SavedGames[i].level) {
-            strcat(buffer, SavedGames[i].name);
+    for (auto& SavedGame : SavedGames) {
+        if (SavedGame.level != 0) {
+            strcat(buffer, SavedGame.name);
             strcat(buffer, "\n");
-        } else
+        } else {
             strcat(buffer, "EMPTY\n");
+        }
     }
 
-    if ((slot = Do_Menu(buffer, 5)) > 0)
-        if (SavedGames[slot - 1].level)
+    if ((slot = Do_Menu(buffer, 5)) > 0) {
+        if (SavedGames[slot - 1].level != 0) {
             NewGame(slot);
+        }
+    }
 }
 
 void UrbanSetGFXMode()
@@ -246,11 +251,11 @@ void UrbanSetGFXMode()
 extern char* special_thanks;
 
 /*****************************************************************************************/
-int main(int argc, char** argv)
+auto main(int argc, char** argv) -> int
 {
     //	int looping = 1;
     int pos = 1;
-    int c;
+    int c = 0;
     const char* meny_text = "START GAME\nLOAD GAME\nHIGHSCORE\nCREDITS\nCONFIG\nQUIT";
     config = new Config;
 
@@ -317,7 +322,7 @@ Möjliga växlar:
 
     if (IS_INTRO_ON) {
         // Run intro
-        Intro* intro = new Intro;
+        auto* intro = new Intro;
 
         intro->RunIntro();
         delete intro;
@@ -331,8 +336,9 @@ Möjliga växlar:
         SOUND.PlayMusic(buffer);
     }
 
-    while ((pos = Do_Menu(meny_text, 6, pos)) && pos != 6)
+    while (((pos = Do_Menu(meny_text, 6, pos)) != 0) && pos != 6) {
         MenuChoice(pos);
+    }
 
     //        fade_out(6);
     {
@@ -351,8 +357,9 @@ Möjliga växlar:
         S.print_centre("urban.home.dhs.org", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 40, screen);
         int i = 600;
 
-        while (!keypressed() && i)
+        while ((keypressed() == 0) && (i != 0)) {
             rest(100), i--;
+        }
     }
     fade_out(6);
 
