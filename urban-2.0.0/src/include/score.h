@@ -49,7 +49,7 @@ class ScoreBoard {
                 long tmp_score;
                 long BossHealth;
                 long BossMax;
-                BITMAP *face[20];
-                BITMAP *cards[3];
+                BITMAP *face[20]{};
+                BITMAP *cards[3]{};
 };
 #endif

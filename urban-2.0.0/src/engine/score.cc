@@ -71,31 +71,35 @@ ScoreBoard::~ScoreBoard()
     for (int i = 0; i < 12; i++) {
 
         icache.FreeImage(face[i]);
-        face[i] = NULL;
+        face[i] = nullptr;
     }
 }
 /*************************************************************************/
 void ScoreBoard::Display(BITMAP* bitmap)
 {
     PALETTE pal;
-    static UrbanFont* fnt = NULL;
-    static BITMAP* board = NULL;
+    static UrbanFont* fnt = nullptr;
+    static BITMAP* board = nullptr;
     char buffer[80];
 
-    if (board == NULL) {
+    if (board == nullptr) {
         board = icache.GetImage("scoreb.pcx", pal);
     }
-    if (fnt == NULL)
+    if (fnt == nullptr) {
         fnt = new UrbanFont(SMALL_FONT);
+    }
 
-    if ((Score - 99) > tmp_score)
+    if ((Score - 99) > tmp_score) {
         tmp_score += 99;
+    }
 
-    if ((Score - 4) > tmp_score)
+    if ((Score - 4) > tmp_score) {
         tmp_score += 4;
+    }
 
-    if (Score > tmp_score)
+    if (Score > tmp_score) {
         tmp_score++;
+    }
 
     rectfill(bitmap, 26 + (44 * PLAYER->GetEnergy() / 300), 23, 27 + 44, 34, 19);
     rectfill(bitmap, 26, 23, 27 + (44 * PLAYER->GetEnergy() / 300), 34, 36);
@@ -103,30 +107,32 @@ void ScoreBoard::Display(BITMAP* bitmap)
 
     sprintf(buffer, "Score:%6ld", tmp_score);
     fnt->print(buffer, 212, 10, bitmap);
-    if (((player_o*)PLAYER)->HaveCard(blue)) {
+    if ((dynamic_cast<player_o*>(PLAYER))->HaveCard(blue) != 0) {
         blit(cards[0], bitmap, 0, 0, 237, 40, cards[0]->w, cards[0]->h);
     }
-    if (((player_o*)PLAYER)->HaveCard(green)) {
+    if ((dynamic_cast<player_o*>(PLAYER))->HaveCard(green) != 0) {
         blit(cards[1], bitmap, 0, 0, 212, 40, cards[1]->w, cards[1]->h);
     }
-    if (((player_o*)PLAYER)->HaveCard(red)) {
+    if ((dynamic_cast<player_o*>(PLAYER))->HaveCard(red) != 0) {
         blit(cards[2], bitmap, 0, 0, 262, 40, cards[2]->w, cards[2]->h);
     }
 
-    sprintf(buffer, "%d", ((player_o*)PLAYER)->GetLives());
+    sprintf(buffer, "%d", (dynamic_cast<player_o*>(PLAYER))->GetLives());
     fnt->print(buffer, 32, 40, bitmap);
 
-    if (((player_o*)PLAYER)->GetAmmo() < 0)
+    if ((dynamic_cast<player_o*>(PLAYER))->GetAmmo() < 0) {
         sprintf(buffer, "Inf");
-    else
-        sprintf(buffer, "%d", ((player_o*)PLAYER)->GetAmmo());
+    } else {
+        sprintf(buffer, "%d", (dynamic_cast<player_o*>(PLAYER))->GetAmmo());
+    }
 
     fnt->print(buffer, 27, 4, bitmap);
 
     int head = (10 * (300 - PLAYER->GetEnergy()) / 300);
 
-    if (((player_o*)PLAYER)->IsImmortal())
+    if ((dynamic_cast<player_o*>(PLAYER))->IsImmortal() != 0) {
         head = 11;
+    }
 
     masked_blit(face[head], bitmap, 0, 0, SCREEN_WIDTH / 2 - 27, 8, face[head]->w, face[head]->h);
 

@@ -74,7 +74,7 @@ struct Layerinfo {
 class Editor {
 public:
     Editor();
-    ~Editor();
+    ~Editor() = default;
     int EditLevel(char* filename, int, int);
 
 private:

@@ -208,9 +208,6 @@ Editor::Editor()
 
 /**************************************************************************/
 
-Editor::~Editor()
-    = default;
-
 #define TILES_PER_ROW (SCREEN_WIDTH / (_TILE_WIDTH + 2))
 #define TILES_PER_COL (SCREEN_HEIGHT / (_TILE_HEIGHT + 2))
 void Editor::DrawTileSelectionMap(int start_row)
@@ -247,9 +244,9 @@ void Editor::SelectTile()
         36);
 
     blit(buffer, screen, 0, 0, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-    while (key[KEY_ESC] == 0u) {
+    while (key[KEY_ESC] == 0U) {
         rest(50);
-        if ((key[KEY_LEFT] != 0u) && (x != 0)) {
+        if ((key[KEY_LEFT] != 0U) && (x != 0)) {
             rect(buffer, x * (_TILE_WIDTH + 2) - 1, y * (_TILE_HEIGHT + 2) - 1,
                 x * (_TILE_WIDTH + 2) + _TILE_WIDTH, y * (_TILE_HEIGHT + 2) + _TILE_HEIGHT,
                 36);
@@ -258,7 +255,7 @@ void Editor::SelectTile()
                 x * (_TILE_WIDTH + 2) + _TILE_WIDTH, y * (_TILE_HEIGHT + 2) + _TILE_HEIGHT,
                 36);
         }
-        if ((key[KEY_RIGHT] != 0u) && x + 1 < TILES_PER_ROW) {
+        if ((key[KEY_RIGHT] != 0U) && x + 1 < TILES_PER_ROW) {
             rect(buffer, x * (_TILE_WIDTH + 2) - 1, y * (_TILE_HEIGHT + 2) - 1,
                 x * (_TILE_WIDTH + 2) + _TILE_WIDTH, y * (_TILE_HEIGHT + 2) + _TILE_HEIGHT,
                 36);
@@ -267,7 +264,7 @@ void Editor::SelectTile()
                 x * (_TILE_WIDTH + 2) + _TILE_WIDTH, y * (_TILE_HEIGHT + 2) + _TILE_HEIGHT,
                 36);
         }
-        if (key[KEY_DOWN] != 0u) {
+        if (key[KEY_DOWN] != 0U) {
             if (y >= TILES_PER_COL) {
                 if ((row_y + y + 1) * TILES_PER_ROW < map->GetNumTiles()) {
                     row_y++;
@@ -285,7 +282,7 @@ void Editor::SelectTile()
                 x * (_TILE_WIDTH + 2) + _TILE_WIDTH, y * (_TILE_HEIGHT + 2) + _TILE_HEIGHT,
                 36);
         }
-        if (key[KEY_UP] != 0u) {
+        if (key[KEY_UP] != 0U) {
             if ((y == 0) && (row_y != 0)) {
                 row_y--;
                 DrawTileSelectionMap(row_y);
@@ -301,26 +298,26 @@ void Editor::SelectTile()
                 x * (_TILE_WIDTH + 2) + _TILE_WIDTH, y * (_TILE_HEIGHT + 2) + _TILE_HEIGHT,
                 36);
         }
-        if (key[KEY_SPACE] != 0u) {
+        if (key[KEY_SPACE] != 0U) {
             if (mode == MODE_BACKGROUND) {
                 cursor_x = (cursor_x * BG_TILE_WIDTH) / (_TILE_WIDTH - 1);
                 cursor_y = (cursor_y * BG_TILE_HEIGHT) / _TILE_SIDE_HEIGHT;
             }
             mode = MODE_TILES;
             num = (x + (row_y + y) * TILES_PER_ROW);
-            while (key[KEY_SPACE] != 0u) {
+            while (key[KEY_SPACE] != 0U) {
                 ; //se till så att knappen är uppsläppt
             }
             break;
         }
-        if (key[KEY_TAB] != 0u) {
+        if (key[KEY_TAB] != 0U) {
             KEY_OFF(KEY_TAB);
             break;
         }
         blit(buffer, screen, 0, 0, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
     }
     xor_mode(0);
-    while (key[KEY_ESC] != 0u) {
+    while (key[KEY_ESC] != 0U) {
         ;
     }
 }
@@ -364,9 +361,9 @@ void Editor::SelectBackground()
         x * (_BG_TILE_WIDTH + 1) + _BG_TILE_WIDTH + 1,
         y * (_BG_TILE_HEIGHT + 1) + _BG_TILE_HEIGHT + 1,
         36);
-    while (key[KEY_ESC] == 0u) {
+    while (key[KEY_ESC] == 0U) {
         rest(100);
-        if (key[KEY_LEFT] != 0u) {
+        if (key[KEY_LEFT] != 0U) {
             rect(buffer, x * (_BG_TILE_WIDTH + 1), y * (_BG_TILE_HEIGHT + 1),
                 x * (_BG_TILE_WIDTH + 1) + _BG_TILE_WIDTH + 1,
                 y * (_BG_TILE_HEIGHT + 1) + _BG_TILE_HEIGHT + 1,
@@ -379,7 +376,7 @@ void Editor::SelectBackground()
                 y * (_BG_TILE_HEIGHT + 1) + _BG_TILE_HEIGHT + 1,
                 36);
         }
-        if (key[KEY_RIGHT] != 0u) {
+        if (key[KEY_RIGHT] != 0U) {
             rect(buffer, x * (_BG_TILE_WIDTH + 1), y * (_BG_TILE_HEIGHT + 1),
                 x * (_BG_TILE_WIDTH + 1) + _BG_TILE_WIDTH + 1,
                 y * (_BG_TILE_HEIGHT + 1) + _BG_TILE_HEIGHT + 1,
@@ -392,7 +389,7 @@ void Editor::SelectBackground()
                 y * (_BG_TILE_HEIGHT + 1) + _BG_TILE_HEIGHT + 1,
                 36);
         }
-        if (key[KEY_UP] != 0u) {
+        if (key[KEY_UP] != 0U) {
             rect(buffer, x * (_BG_TILE_WIDTH + 1), y * (_BG_TILE_HEIGHT + 1),
                 x * (_BG_TILE_WIDTH + 1) + _BG_TILE_WIDTH + 1,
                 y * (_BG_TILE_HEIGHT + 1) + _BG_TILE_HEIGHT + 1,
@@ -408,7 +405,7 @@ void Editor::SelectBackground()
                 y * (_BG_TILE_HEIGHT + 1) + _BG_TILE_HEIGHT + 1,
                 36);
         }
-        if (key[KEY_DOWN] != 0u) {
+        if (key[KEY_DOWN] != 0U) {
             rect(buffer, x * (_BG_TILE_WIDTH + 1), y * (_BG_TILE_HEIGHT + 1),
                 x * (_BG_TILE_WIDTH + 1) + _BG_TILE_WIDTH + 1,
                 y * (_BG_TILE_HEIGHT + 1) + _BG_TILE_HEIGHT + 1,
@@ -424,7 +421,7 @@ void Editor::SelectBackground()
                 y * (_BG_TILE_HEIGHT + 1) + _BG_TILE_HEIGHT + 1,
                 36);
         }
-        if (key[KEY_SPACE] != 0u) {
+        if (key[KEY_SPACE] != 0U) {
             num = x + (y + start_row) * 2;
             if (num > map->GetBGNumTiles()) {
                 num = map->GetBGNumTiles();
@@ -437,7 +434,7 @@ void Editor::SelectBackground()
             KEY_OFF(KEY_SPACE);
             break;
         }
-        if (key[KEY_TAB] != 0u) {
+        if (key[KEY_TAB] != 0U) {
             KEY_OFF(KEY_TAB);
             break;
         }
@@ -471,14 +468,14 @@ void Editor::SelectObject()
         36);
     textprintf(buffer, font, 0, 0, 36, "%s", Objects[y].description);
     KEY_OFF(KEY_TAB);
-    while (key[KEY_ESC] == 0u) {
-        if ((key[KEY_RSHIFT] != 0u) || (key[KEY_LSHIFT] != 0u)) { //speeda upp scrollningen
+    while (key[KEY_ESC] == 0U) {
+        if ((key[KEY_RSHIFT] != 0U) || (key[KEY_LSHIFT] != 0U)) { //speeda upp scrollningen
             rest(10);
         } else {
             rest(100);
         }
         blit(buffer, screen, 0, 0, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-        if ((key[KEY_DOWN] != 0u) && (*Objects[y + 1].filename != 0)) {
+        if ((key[KEY_DOWN] != 0U) && (*Objects[y + 1].filename != 0)) {
             y++;
             DrawObjectSelectionMap(y);
             rect(buffer, (SCREEN_WIDTH - images[y]->w) >> 1, 0,
@@ -486,7 +483,7 @@ void Editor::SelectObject()
                 36);
             textprintf(buffer, font, 0, 0, 36, "%s", Objects[y].description);
         }
-        if ((key[KEY_UP] != 0u) && (y != 0)) {
+        if ((key[KEY_UP] != 0U) && (y != 0)) {
             y--;
             DrawObjectSelectionMap(y);
             rect(buffer, (SCREEN_WIDTH - images[y]->w) >> 1, 0,
@@ -494,24 +491,24 @@ void Editor::SelectObject()
                 36);
             textprintf(buffer, font, 0, 0, 36, "%s", Objects[y].description);
         }
-        if (key[KEY_SPACE] != 0u) {
+        if (key[KEY_SPACE] != 0U) {
             num = y;
             if (mode == MODE_BACKGROUND) {
                 cursor_x = (cursor_x * BG_TILE_WIDTH) / (TILE_WIDTH - 1);
                 cursor_y = (cursor_y * BG_TILE_HEIGHT) / TILE_SIDE_HEIGHT;
             }
             mode = MODE_OBJECTS;
-            while (key[KEY_SPACE] != 0u) {
+            while (key[KEY_SPACE] != 0U) {
                 ;
             }
             break;
         }
-        if (key[KEY_TAB] != 0u) {
+        if (key[KEY_TAB] != 0U) {
             KEY_OFF(KEY_TAB);
             break;
         }
     }
-    while (key[KEY_ESC] != 0u) {
+    while (key[KEY_ESC] != 0U) {
         ;
     }
 }
@@ -584,7 +581,7 @@ void Editor::ShowMapStatus()
     textprintf(buffer, font, 0, 150, 36, "Num Bosses: %d [%s]", n_boss, n_boss != 1 ? "WARNING!" : "ok");
     blit(buffer, screen, 0, 0, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
-    while (key[KEY_ESC] == 0u) {
+    while (key[KEY_ESC] == 0U) {
         ;
     }
     KEY_OFF(KEY_ESC);
@@ -611,16 +608,16 @@ auto Editor::EditLevel(char* filename, int xs, int ys) -> int
 
     //        draw_level(map_x, map_y, layers, objects);
     DrawScreen();
-    while (key[KEY_ESC] == 0u) {
+    while (key[KEY_ESC] == 0U) {
         rest(50);
-        if ((key[KEY_PGDN] != 0u) && cursor_z < 2) {
+        if ((key[KEY_PGDN] != 0U) && cursor_z < 2) {
             cursor_z++;
         }
-        if ((key[KEY_PGUP] != 0u) && (cursor_z != 0)) {
+        if ((key[KEY_PGUP] != 0U) && (cursor_z != 0)) {
             cursor_z--;
         }
 
-        if (key[KEY_DOWN] != 0u) {
+        if (key[KEY_DOWN] != 0U) {
             if (cursor_y >= _GET_Y_TH - 1) {
                 if (((map_y + _SEL_Y_T_B) / TILE_SIDE_HEIGHT) < (MAP_HEIGHT - NUM_Y_TILES - 2)) {
                     map_y += _SEL_Y_T_B;
@@ -635,7 +632,7 @@ auto Editor::EditLevel(char* filename, int xs, int ys) -> int
                 cursor_y++;
             }
         }
-        if (key[KEY_UP] != 0u) {
+        if (key[KEY_UP] != 0U) {
             if (cursor_y == 0) {
                 map_y -= _SEL_Y_T_B;
                 if (map_y < 0) {
@@ -645,7 +642,7 @@ auto Editor::EditLevel(char* filename, int xs, int ys) -> int
                 cursor_y--;
             }
         }
-        if (key[KEY_RIGHT] != 0u) {
+        if (key[KEY_RIGHT] != 0U) {
             if (cursor_x >= _GET_X_TH - 1) {
                 if (((map_x + _SEL_X_T_B) / TILE_WIDTH) < (MAP_WIDTH - NUM_X_TILES - 4)) {
                     map_x += _SEL_X_T_B;
@@ -654,7 +651,7 @@ auto Editor::EditLevel(char* filename, int xs, int ys) -> int
                 cursor_x++;
             }
         }
-        if (key[KEY_LEFT] != 0u) {
+        if (key[KEY_LEFT] != 0U) {
             if (cursor_x == 0) {
                 map_x -= _SEL_X_T_B;
                 if (map_x < 0) {
@@ -664,7 +661,7 @@ auto Editor::EditLevel(char* filename, int xs, int ys) -> int
                 cursor_x--;
             }
         }
-        if (key[KEY_TAB] != 0u) {
+        if (key[KEY_TAB] != 0U) {
             switch (mode) {
             case MODE_TILES:
                 SelectTile();
@@ -681,21 +678,21 @@ auto Editor::EditLevel(char* filename, int xs, int ys) -> int
                 break;
             }
         }
-        if (key[KEY_HOME] != 0u) {
+        if (key[KEY_HOME] != 0U) {
             map_x = 0;
         }
-        if (key[KEY_F1] != 0u) {
+        if (key[KEY_F1] != 0U) {
             SelectTile();
         }
 
-        if (key[KEY_F2] != 0u) {
+        if (key[KEY_F2] != 0U) {
             SelectBackground();
         }
 
-        if (key[KEY_F3] != 0u) {
+        if (key[KEY_F3] != 0U) {
             SelectObject();
         }
-        if (key[KEY_F6] != 0u) {
+        if (key[KEY_F6] != 0U) {
             draw_zoomed_out ^= 1;
             KEY_OFF(KEY_F6);
         }
@@ -706,15 +703,15 @@ auto Editor::EditLevel(char* filename, int xs, int ys) -> int
                 	SelectDekoration();
                 }
                 */
-        if (key[KEY_F8] != 0u) {
+        if (key[KEY_F8] != 0U) {
             ShowMapStatus();
         }
 
-        if ((key[KEY_F12] != 0u) && (filename != nullptr)) {
+        if ((key[KEY_F12] != 0U) && (filename != nullptr)) {
             map->SaveMap(filename);
         }
 
-        if (key[KEY_SPACE] != 0u) {
+        if (key[KEY_SPACE] != 0U) {
             switch (mode) {
             case MODE_TILES:
                 map->SetBG(cursor_x + (map_x / (TILE_WIDTH - 1)), cursor_y + (map_y / TILE_SIDE_HEIGHT), cursor_z, num + 1);
@@ -731,7 +728,7 @@ auto Editor::EditLevel(char* filename, int xs, int ys) -> int
                 break;
             }
         }
-        if (key[KEY_DEL] != 0u) {
+        if (key[KEY_DEL] != 0U) {
             switch (mode) {
             case MODE_TILES:
                 map->SetBG(cursor_x + (map_x / (TILE_WIDTH - 1)), cursor_y + (map_y / TILE_SIDE_HEIGHT), cursor_z, 0);
@@ -748,7 +745,7 @@ auto Editor::EditLevel(char* filename, int xs, int ys) -> int
                 break;
             }
         }
-        if (key[KEY_PLUS_PAD] != 0u) {
+        if (key[KEY_PLUS_PAD] != 0U) {
             if (draw_zoomed_out != 0) {
                 draw_scale++;
                 if (draw_scale > MAX_ZOOM_LEVEL) {
@@ -769,7 +766,7 @@ auto Editor::EditLevel(char* filename, int xs, int ys) -> int
                 }
             }
         }
-        if (key[KEY_MINUS_PAD] != 0u) {
+        if (key[KEY_MINUS_PAD] != 0U) {
             if (draw_zoomed_out != 0) {
                 draw_scale--;
                 if (draw_scale <= 0) {
@@ -793,37 +790,37 @@ auto Editor::EditLevel(char* filename, int xs, int ys) -> int
             }
             //                        	num = map->GetNumTiles() - 1;
         }
-        if (key[KEY_1] != 0u) { //tile lager 1
+        if (key[KEY_1] != 0U) { //tile lager 1
             layer_info[0].tiles_on ^= 1;
             KEY_OFF(KEY_1);
         }
-        if (key[KEY_2] != 0u) { //tile lager 2
+        if (key[KEY_2] != 0U) { //tile lager 2
             layer_info[1].tiles_on ^= 1;
             KEY_OFF(KEY_2);
         }
-        if (key[KEY_3] != 0u) { //tile lager 3
+        if (key[KEY_3] != 0U) { //tile lager 3
             layer_info[2].tiles_on ^= 1;
             KEY_OFF(KEY_3);
         }
-        if (key[KEY_4] != 0u) { //alla tile lager
+        if (key[KEY_4] != 0U) { //alla tile lager
             layer_info[0].tiles_on ^= 1;
             layer_info[1].tiles_on ^= 1;
             layer_info[2].tiles_on ^= 1;
             KEY_OFF(KEY_4);
         }
-        if (key[KEY_5] != 0u) { //object lager 0
+        if (key[KEY_5] != 0U) { //object lager 0
             layer_info[0].objects_on ^= 1;
             KEY_OFF(KEY_5);
         }
-        if (key[KEY_6] != 0u) { //object lager 1
+        if (key[KEY_6] != 0U) { //object lager 1
             layer_info[1].objects_on ^= 1;
             KEY_OFF(KEY_6);
         }
-        if (key[KEY_7] != 0u) { //object lager 2
+        if (key[KEY_7] != 0U) { //object lager 2
             layer_info[2].objects_on ^= 1;
             KEY_OFF(KEY_7);
         }
-        if (key[KEY_8] != 0u) { //alla object
+        if (key[KEY_8] != 0U) { //alla object
             layer_info[0].objects_on ^= 1;
             layer_info[1].objects_on ^= 1;
             layer_info[2].objects_on ^= 1;
@@ -936,10 +933,10 @@ void Editor::DrawScreen()
     int temp = 0;
     int ki = 0;
     int numosc = 0;
-    int tx = 0 = 0;
-    int ty;
+    int tx = 0;
+    int ty = 0;
     int slut_x = 0;
-    = 0 int slut_y;
+    int slut_y = 0;
     int scale = 0;
     //	BITMAP *buffer = screen;
 

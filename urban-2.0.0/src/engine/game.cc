@@ -36,9 +36,9 @@
 #include "outtro.h"
 #include "urbfont.h"
 #include <allegro.h>
-#include <ctype.h>
-#include <stdio.h>
-#include <string.h>
+#include <cctype>
+#include <cstdio>
+#include <cstring>
 #include <unistd.h>
 #ifndef DJGPP
 #include <fcntl.h>
@@ -52,7 +52,7 @@ ImageCache icache;
 // Credits
 void showcredits();
 /**************************************************************************/
-Engine* engine = 0;
+Engine* engine = nullptr;
 unsigned long _flags = 0xffffffff;
 
 extern char lock_frame_count_to_60hz;
@@ -76,14 +76,14 @@ const char* maps[] = { "gamemaps/level11.map",
     "gamemaps/level53.map",
     "gamemaps/level61.map",
     "gamemaps/level62.map",
-    "gamemaps/level63.map", NULL };
+    "gamemaps/level63.map", nullptr };
 
 const char* extra_maps[] = { "",
     "",
     "",
     "",
     "",
-    "", NULL };
+    "", nullptr };
 
 //#define	NUM_LEVELS 1
 #define NUM_LEVELS 18
@@ -93,44 +93,50 @@ int MaxLevelNum = 1;
 char* demo_filename;
 
 struct PlayerData DefaultPData = {
-    { 3 },
+    3,
     { -1, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
     { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { 300 }, { 0 }
+    300, 0
 };
 
-int GetLevelName(char* text);
+auto GetLevelName(char* text) -> int;
 /**************************************************************************/
-int SaveGame(char* name)
+auto SaveGame(char* name) -> int
 {
     char buffer[80];
-    int pos;
+    int pos = 0;
 
     pos = Do_Menu("CONTINUE\nSAVE GAME", 2);
 
-    if (pos != 2)
+    if (pos != 2) {
         return 0;
+    }
 
     buffer[0] = 0;
 
-    for (int i = 0; i < 5; i++) {
-        if (SavedGames[i].level) {
-            strcat(buffer, SavedGames[i].name);
+    for (auto& SavedGame : SavedGames) {
+        if (SavedGame.level != 0) {
+            strcat(buffer, SavedGame.name);
             strcat(buffer, "\n");
-        } else
+        } else {
             strcat(buffer, "EMPTY\n");
+        }
     }
 
-    if ((pos = Do_Menu(buffer, 5))) {
-        if (SavedGames[pos - 1].level)
+    if ((pos = Do_Menu(buffer, 5)) != 0) {
+        if (SavedGames[pos - 1].level != 0) {
             strcpy(name, SavedGames[pos - 1].name);
+        }
 
-        if (GetLevelName(name))
+        if (GetLevelName(name) != 0) {
             return pos;
-        else
+        }
+        {
             return 0;
-    } else
+        }
+    } else {
         return 0;
+    }
 }
 
 /**************************************************************************/
@@ -143,13 +149,13 @@ void display_level_info(int level)
     BITMAP* bmp = icache.GetImage("ibild.pcx", Pal);
     blit(bmp, screen, 0, 0, 0, 0, bmp->w, bmp->h);
     icache.FreeImage(bmp);
-    if (level == -1)
+    if (level == -1) {
         sprintf(message, "GAME OVER");
-    else if (level > NUM_LEVELS) {
+    } else if (level > NUM_LEVELS) {
 
         {
             // Run Outtro
-            Outtro* outtro = new Outtro;
+            auto* outtro = new Outtro;
 
             outtro->RunOuttro();
             delete outtro;
@@ -161,8 +167,9 @@ void display_level_info(int level)
 		sprintf(message, "MISSION");
 		fnt.print_centre(message, 320 / 2, 190 / 2);
 		sprintf(message, "COMPLETED");*/
-    } else
+    } else {
         return;
+    }
 
     fnt.print_centre(message, 320 / 2, 240 / 2);
     fade_in(Pal, 2);
@@ -170,14 +177,16 @@ void display_level_info(int level)
     clear_keybuf();
 }
 /**************************************************************************/
-int GetLevelName(char* text)
+auto GetLevelName(char* text) -> int
 {
     char message[50];
-    int key, pos = 1;
+    int key = 0;
+    int pos = 1;
     UrbanFont fnt(SMALL_FONT2);
 
-    if (strlen(text) == 0)
+    if (strlen(text) == 0) {
         strcpy(text, "MYLEVEL");
+    }
 
     // Ritar ett rutnär
     for (int x = 0; x < 320; x += 2) {
@@ -220,14 +229,16 @@ int GetLevelName(char* text)
             return 0;
         }
         if ((key >> 8) == KEY_BACKSPACE) {
-            if (pos == 0)
+            if (pos == 0) {
                 continue;
+            }
             pos--;
             text[pos] = 0;
         }
         if ((key >> 8) == KEY_SPACE) {
-            if (pos > 9)
+            if (pos > 9) {
                 continue;
+            }
             text[pos++] = ' ';
         } else if (pos < 9) {
 
@@ -243,17 +254,18 @@ int GetLevelName(char* text)
     return 0;
 }
 /**************************************************************************/
-int NewGame(int slot)
+auto NewGame(int slot) -> int
 {
     int quit = 0;
-    HighScore* hs;
-    const char* map_name = NULL;
+    HighScore* hs = nullptr;
+    const char* map_name = nullptr;
     char name[80];
     char filename[1024];
-    struct PlayerData pdat;
+    struct PlayerData pdat {
+    };
     int level = 1;
 
-    FILE* fs;
+    FILE* fs = nullptr;
 
     ENGINE.NewGame();
 
@@ -265,12 +277,12 @@ int NewGame(int slot)
     sprintf(filename, "%s/.urban/savegame.dat", getenv("HOME"));
 #endif
 
-    if ((fs = fopen(filename, "rb")) == NULL) {
+    if ((fs = fopen(filename, "rb")) == nullptr) {
 
-        for (int i = 0; i < 5; i++) {
-            SavedGames[i].level = 0;
-            SavedGames[i].name[0] = 0;
-            memcpy(&SavedGames[i].dat, &DefaultPData, sizeof(struct PlayerData));
+        for (auto& SavedGame : SavedGames) {
+            SavedGame.level = 0;
+            SavedGame.name[0] = 0;
+            memcpy(&SavedGame.dat, &DefaultPData, sizeof(struct PlayerData));
         }
 #ifndef DJGPP
         /* Create dir */
@@ -279,13 +291,16 @@ int NewGame(int slot)
 
         sprintf(filename, "%s/.urban/savegame.dat", getenv("HOME"));
 #endif
-        if ((fs = fopen(filename, "wb")) != NULL)
+        if ((fs = fopen(filename, "wb")) != nullptr) {
             fwrite(SavedGames, 1, 5 * sizeof(struct SaveGameData), fs);
-    } else
+        }
+    } else {
         auto err = fread(SavedGames, 1, 5 * sizeof(struct SaveGameData), fs);
+    }
 
-    if (fs)
+    if (fs != nullptr) {
         fclose(fs);
+    }
 
     if (slot == 0 || SavedGames[slot - 1].level == 0) {
         memcpy(&pdat, &DefaultPData, sizeof(struct PlayerData));
@@ -296,7 +311,7 @@ int NewGame(int slot)
 
     map_name = maps[level - 1];
 
-    while (!quit) {
+    while (quit == 0) {
         switch (ENGINE.play_level(map_name, &pdat)) {
         case -1: // Game over
             SOUND.PlaySFX("samples/haha.wav");
@@ -315,8 +330,9 @@ int NewGame(int slot)
         case 2: //kör extrabana
             fade_out(5);
             map_name = extra_maps[level - 1];
-            if (*map_name != 0)
+            if (*map_name != 0) {
                 break;
+            }
         case 1: // Level Clear
             level++;
             fade_out(5);
@@ -328,7 +344,7 @@ int NewGame(int slot)
                 delete hs;
             } else {
                 slot = SaveGame(name);
-                if (slot) {
+                if (slot != 0) {
                     memcpy(&SavedGames[slot - 1].dat, &pdat, sizeof(struct PlayerData));
                     SavedGames[slot - 1].level = level;
                     strcpy(SavedGames[slot - 1].name, name);
@@ -342,7 +358,7 @@ int NewGame(int slot)
 
                     sprintf(filename, "%s/.urban/savegame.dat", getenv("HOME"));
 #endif
-                    if ((fs = fopen(filename, "wb")) != NULL) {
+                    if ((fs = fopen(filename, "wb")) != nullptr) {
                         auto err = fwrite(SavedGames, 1, 5 * sizeof(struct SaveGameData), fs);
                         fclose(fs);
                     }

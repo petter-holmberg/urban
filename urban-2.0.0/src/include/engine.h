@@ -128,48 +128,49 @@ public:
     Object* player;
     Sound sound;
     BITMAP* buffer;
-    Buffer buffers[3];
-    int do_shake;
+    Buffer buffers[3] {};
+    int do_shake {};
     ScoreBoard score;
     Map map;
 
 private:
     void UpdateLightening();
 
-    volatile char level_complete;
+    volatile char level_complete {};
 
-    Object* objects[MAX_OBJECTS];
-    Object* alwaysupdate[MAX_OBJECTS];
-    Object* effects[MAX_EFFECTS_OBJECTS];
-    Object* dekorations[MAX_DEKORATION_OBJECTS];
-    Object* shells[MAX_SHELL_OBJECTS]; //Oanvänd?
-    Object* innerlayer[MAX_INNERLAYER];
-    Object* map_effect[MAX_MAP_EFFECT];
-    Object* map_dekor[MAX_MAP_DEKORATION_OBJECTS];
+    Object* objects[MAX_OBJECTS] {};
+    Object* alwaysupdate[MAX_OBJECTS] {};
+    Object* effects[MAX_EFFECTS_OBJECTS] {};
+    Object* dekorations[MAX_DEKORATION_OBJECTS] {};
+    Object* shells[MAX_SHELL_OBJECTS] {}; //Oanvänd?
+    Object* innerlayer[MAX_INNERLAYER] {};
+    Object* map_effect[MAX_MAP_EFFECT] {};
+    Object* map_dekor[MAX_MAP_DEKORATION_OBJECTS] {};
 
     int num_objects;
     int num_effects;
     int num_dekorations;
     int num_innerlayer;
     int num_alwaysupdate;
-    int num_shells;
+    int num_shells {};
     int num_pre_dekor;
     int num_pre_effect;
-    int lightening;
+    int lightening {};
 
-    int map_x, map_y;
-    char* level_name;
+    int map_x {}, map_y {};
+    char* level_name {};
 
     int display_map();
     int ringbuffer;
     int ringbuffer2;
-    int control_type;
+    int control_type {};
 
     int play_loop();
     void PopMessage();
 
     //		BITMAP *messages[MAX_MESSAGES];
-    struct MessageQueue messages[MAX_MESSAGES];
+    struct MessageQueue messages[MAX_MESSAGES] {
+    };
     int num_messages;
     //                friend screen_update();
     /* options till motorn */
