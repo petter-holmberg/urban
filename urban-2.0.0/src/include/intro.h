@@ -10,9 +10,9 @@ public:
     void RunIntro();
 
 private:
-    BITMAP** images;
-    RGB palette[256];
-    RGB black[256];
+    BITMAP** images {};
+    RGB palette[256] {};
+    RGB black[256] {};
 };
 
 #endif

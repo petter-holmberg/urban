@@ -36,8 +36,8 @@
 #include "object.h"
 #include "urbfont.h"
 #include <allegro.h>
-#include <stdio.h>
-#include <string.h>
+#include <cstdio>
+#include <cstring>
 #include <unistd.h>
 /**************************************************************************/
 #define FRAME_DELAY 100
@@ -57,7 +57,7 @@ Intro::~Intro()
 }
 /**************************************************************************/
 extern "C" {
-static int callback()
+static auto callback() -> int
 {
     static unsigned int count = 0;
     unsigned int num_frames = strlen(flctext);
@@ -77,10 +77,11 @@ static int callback()
 
     rest(FRAME_DELAY);
 
-    if (keypressed())
+    if (keypressed() != 0) {
         quit = 1;
+    }
 
-    if ((count == (num_frames - 1)) || quit) {
+    if ((count == (num_frames - 1)) || (quit != 0)) {
 
         count = 0;
 
@@ -145,9 +146,9 @@ static int callback()
 void Intro::RunIntro()
 {
     datfile dat("intro.dat");
-    char* buf = NULL;
-    int i;
-    BITMAP* bmp;
+    char* buf = nullptr;
+    int i = 0;
+    BITMAP* bmp = nullptr;
     quit = 0;
     char text[128];
     char temptext[128];
@@ -156,8 +157,9 @@ void Intro::RunIntro()
     // Warning:
     DISPLAY_IMAGE("warning.pcx");
     // Wait for keypress
-    while (!keypressed())
+    while (keypressed() == 0) {
         ;
+    }
 
     fade_out(5);
 
