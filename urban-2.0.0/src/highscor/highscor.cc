@@ -32,9 +32,9 @@
 #include "engine.h"
 #include "urbfont.h"
 #include <allegro.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 #ifndef DJGPP
 #include <fcntl.h>
 #include <sys/stat.h>
@@ -42,9 +42,7 @@
 #include <unistd.h>
 #endif
 /***************************************************************************/
-HighScore::~HighScore()
-{
-}
+
 /***************************************************************************/
 HighScore::HighScore()
 {
@@ -53,7 +51,8 @@ HighScore::HighScore()
     UrbanFont fnt(SMALL_FONT2);
     BITMAP* textbmp = create_bitmap(220, 210);
     clear(textbmp);
-    int x, y;
+    int x = 0;
+    int y = 0;
 
     // Ritar ett rutnär
     for (x = 0; x < 320; x += 2) {
@@ -75,11 +74,12 @@ HighScore::HighScore()
         sprintf(buffer, "%2d", i + 1);
         fnt.print(buffer, 15, 50 + i * 16, textbmp);
 
-        if (highscore[i].Level)
+        if (highscore[i].Level != 0) {
             sprintf(buffer, " %-10s%6d   %1d:%1d", highscore[i].Name,
                 highscore[i].Score, ((highscore[i].Level - 1) / 3) + 1, ((highscore[i].Level - 1) % 3) + 1);
-        else
+        } else {
             sprintf(buffer, " %-10s%6d   0:0", "Empty", 0);
+        }
 
         fnt.print(buffer, 31, 50 + i * 16, textbmp);
     }
@@ -87,10 +87,11 @@ HighScore::HighScore()
     destroy_bitmap(textbmp);
 }
 /***************************************************************************/
-char* HighScore::GetName()
+auto HighScore::GetName() -> char*
 {
     static char Name[64] = "";
-    int key, pos;
+    int key = 0;
+    int pos = 0;
     PALETTE pal;
     BITMAP* backg = icache.GetImage("ibild.pcx", pal);
     BITMAP* textbmp = create_bitmap(220, 55);
@@ -100,10 +101,11 @@ char* HighScore::GetName()
 #ifdef DJGPP
         strcpy(Name, "Unknown");
 #else
-        if (getenv("USER") != NULL)
+        if (getenv("USER") != nullptr) {
             strcpy(Name, getenv("USER"));
-        else
+        } else {
             strcpy(Name, "Unknown");
+        }
 #endif
     }
 
@@ -144,8 +146,9 @@ char* HighScore::GetName()
             return Name;
         }
         if ((key >> 8) == KEY_BACKSPACE) {
-            if (pos == 0)
+            if (pos == 0) {
                 continue;
+            }
             pos--;
             Name[pos] = 0;
         } else if (pos < 10) {
@@ -198,14 +201,15 @@ void HighScore::Open()
 
     sprintf(filename, "%s/.urban/hs.dat", getenv("HOME"));
 
-    if ((fd = fopen(filename, "rb")) == NULL)
+    if ((fd = fopen(filename, "rb")) == nullptr) {
 #endif
 #endif
         return;
+}
 
-    auto err = fread(highscore, sizeof(Score_t), NUM_HIGHSCORES, fd);
+auto err = fread(highscore, sizeof(Score_t), NUM_HIGHSCORES, fd);
 
-    fclose(fd);
+fclose(fd);
 }
 /***************************************************************************/
 void HighScore::Save()
@@ -225,14 +229,15 @@ void HighScore::Save()
 
     sprintf(filename, "%s/.urban/hs.dat", getenv("HOME"));
 
-    if ((fd = fopen(filename, "wb")) == NULL)
+    if ((fd = fopen(filename, "wb")) == nullptr) {
 #endif
 #endif
         return;
+}
 
-    fwrite(highscore, sizeof(Score_t), NUM_HIGHSCORES, fd);
+fwrite(highscore, sizeof(Score_t), NUM_HIGHSCORES, fd);
 
-    fclose(fd);
+fclose(fd);
 }
 /***************************************************************************/
 #if 0

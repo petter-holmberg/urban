@@ -17,14 +17,14 @@ public:
     HighScore(int score, int level);
     HighScore();
     void Reset();
-    ~HighScore();
+    ~HighScore() = default;
 
 protected:
     void Open();
     void Save();
-    char* GetName();
-    Score_t highscore[NUM_HIGHSCORES];
-    FILE* fd;
+    static char* GetName();
+    Score_t highscore[NUM_HIGHSCORES] {};
+    FILE* fd {};
 };
 /***************************************************************************/
 #endif
