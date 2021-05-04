@@ -31,9 +31,9 @@
 #include "map.h"
 #include "engine.h"
 #include "icache.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
 #define __CHECK_MAP_BOUNDRIES
 #define BLUE_LEVEL 30
@@ -312,17 +312,17 @@ Map::Map()
     PALETTE Blue;
 
     dat = new datfile("levels.dat");
-    sections[0] = sections[1] = sections[2] = NULL;
+    sections[0] = sections[1] = sections[2] = nullptr;
     num_tiles = x_size = y_size = 0;
     bg_num_tiles = bg_x_size = bg_y_size = 0;
-    Tiles = NULL;
-    Filename = NULL;
-    TileInfo = NULL;
-    objects[0] = objects[1] = objects[2] = NULL;
-    effect[0] = effect[1] = effect[2] = NULL;
-    dekor[0] = dekor[1] = dekor[2] = NULL;
-    options = NULL;
-    background = NULL;
+    Tiles = nullptr;
+    Filename = nullptr;
+    TileInfo = nullptr;
+    objects[0] = objects[1] = objects[2] = nullptr;
+    effect[0] = effect[1] = effect[2] = nullptr;
+    dekor[0] = dekor[1] = dekor[2] = nullptr;
+    options = nullptr;
+    background = nullptr;
     pal_type = PAL_AIR;
 
     pal_count = 0;
@@ -333,10 +333,10 @@ Map::Map()
     memcpy(Pal, Pal_air, sizeof(PALETTE));
 
     // Create a blue palette
-    for (int i = 0; i < 256; i++) {
+    for (auto& i : Blue) {
 
-        Blue[i].r = Blue[i].g = 0;
-        Blue[i].b = 63;
+        i.r = i.g = 0;
+        i.b = 63;
     }
     fade_interpolate(Pal_air, Blue, Pal_water, BLUE_LEVEL, 0, 255);
 }
@@ -344,36 +344,45 @@ Map::Map()
 void Map::NewLevel(int width, int height)
 {
 
-    if (sections[0])
+    if (sections[0] != nullptr) {
         delete[] sections[0];
-    if (sections[1])
+    }
+    if (sections[1] != nullptr) {
         delete[] sections[1];
-    if (sections[2])
+    }
+    if (sections[2] != nullptr) {
         delete[] sections[2];
+    }
 
-    if (objects[0])
+    if (objects[0] != nullptr) {
         delete[] objects[0];
-    if (objects[1])
+    }
+    if (objects[1] != nullptr) {
         delete[] objects[1];
-    if (objects[2])
+    }
+    if (objects[2] != nullptr) {
         delete[] objects[2];
+    }
 
-    if (background)
+    if (background != nullptr) {
         delete[] background;
+    }
 
     x_size = width;
     y_size = height;
 
     bg_x_size = ((width * TILE_WIDTH) / BG_TILE_WIDTH) + 1;
     bg_y_size = ((height * TILE_SIDE_HEIGHT) / BG_TILE_HEIGHT) + 1;
-    if (bg_y_size < 4)
+    if (bg_y_size < 4) {
         bg_y_size = 4;
+    }
 
     background = (int*)calloc(bg_x_size * bg_y_size, sizeof(int));
 
     // Default background
-    for (int i = 0; i < (bg_x_size * bg_y_size); i++)
+    for (int i = 0; i < (bg_x_size * bg_y_size); i++) {
         background[i] = 1;
+    }
 
     sections[0] = (int*)calloc(x_size * y_size, sizeof(int));
     sections[1] = (int*)calloc(x_size * y_size, sizeof(int));
@@ -396,21 +405,26 @@ void Map::NewLevel(int width, int height)
 /***************************************************************************/
 Map::~Map()
 {
-    if (sections[0])
+    if (sections[0] != nullptr) {
         delete[] sections[0];
-    if (sections[1])
+    }
+    if (sections[1] != nullptr) {
         delete[] sections[1];
-    if (sections[2])
+    }
+    if (sections[2] != nullptr) {
         delete[] sections[2];
+    }
     /* OBS!!!!!!!!!!!! Fria allt minne, bitte! */
 }
 /***************************************************************************/
-int Map::SaveMap(const char* filename)
+auto Map::SaveMap(const char* filename) -> int
 {
-    FILE* fd;
-    int x = 0, y = 0, z = 0;
+    FILE* fd = nullptr;
+    int x = 0;
+    int y = 0;
+    int z = 0;
 
-    if ((fd = fopen(filename, "w")) == NULL) {
+    if ((fd = fopen(filename, "w")) == nullptr) {
 
         perror(filename);
 
@@ -481,11 +495,12 @@ int Map::SaveMap(const char* filename)
     }
     fprintf(fd, "</BACKGROUND>\n\n");
 
-    if (options) {
+    if (options != nullptr) {
         fprintf(fd, "<OPTIONS>\n");
         x = 0;
-        while (options[x])
+        while (options[x] != nullptr) {
             fprintf(fd, "%s\n", options[x++]);
+        }
         fprintf(fd, "</OPTIONS>\n");
     }
 
@@ -496,54 +511,68 @@ int Map::SaveMap(const char* filename)
     return 1;
 }
 /***************************************************************************/
-int Map::LoadMap(const char* filename)
+auto Map::LoadMap(const char* filename) -> int
 {
-    FILE* fd;
-    char* line;
-    int i;
+    FILE* fd = nullptr;
+    char* line = nullptr;
+    int i = 0;
     PALETTE tmppal;
 
     x_size = y_size = 0;
 
-    if (sections[0])
+    if (sections[0] != nullptr) {
         free(sections[0]);
-    if (sections[1])
+    }
+    if (sections[1] != nullptr) {
         free(sections[1]);
-    if (sections[2])
+    }
+    if (sections[2] != nullptr) {
         free(sections[2]);
-    if (objects[0])
+    }
+    if (objects[0] != nullptr) {
         free(objects[0]);
-    if (objects[1])
+    }
+    if (objects[1] != nullptr) {
         free(objects[1]);
-    if (objects[2])
+    }
+    if (objects[2] != nullptr) {
         free(objects[2]);
+    }
 
-    if (effect[0])
+    if (effect[0] != nullptr) {
         free(effect[0]);
-    if (effect[1])
+    }
+    if (effect[1] != nullptr) {
         free(effect[1]);
-    if (effect[2])
+    }
+    if (effect[2] != nullptr) {
         free(effect[2]);
-    if (dekor[0])
+    }
+    if (dekor[0] != nullptr) {
         free(dekor[0]);
-    if (dekor[1])
+    }
+    if (dekor[1] != nullptr) {
         free(dekor[1]);
-    if (dekor[2])
+    }
+    if (dekor[2] != nullptr) {
         free(dekor[2]);
-    if (background)
+    }
+    if (background != nullptr) {
         free(background);
-    if (options)
+    }
+    if (options != nullptr) {
         free(options);
-    effect[0] = effect[1] = effect[2] = NULL;
-    dekor[0] = dekor[1] = dekor[2] = NULL;
-    background = NULL;
-    options = NULL;
+    }
+    effect[0] = effect[1] = effect[2] = nullptr;
+    dekor[0] = dekor[1] = dekor[2] = nullptr;
+    background = nullptr;
+    options = nullptr;
 
     int using_dat = 1;
 
-    if ((fd = dat->open_file(filename)) == NULL) {
+    if ((fd = dat->open_file(filename)) == nullptr) {
 
-        if ((fd = fopen(filename, "r")) == NULL) {
+        if ((fd = fopen(filename, "r")) == nullptr) {
 
             perror(filename);
 
@@ -553,8 +582,9 @@ int Map::LoadMap(const char* filename)
     }
     line = GetLine(fd);
 
-    if (strncmp(line, "URBAN MAP 1.0", 13))
+    if (strncmp(line, "URBAN MAP 1.0", 13) != 0 != 0) {
         return 0;
+    }
 
     x_size = atoi(GetLine(fd) + 7);
     y_size = atoi(GetLine(fd) + 7);
@@ -562,10 +592,11 @@ int Map::LoadMap(const char* filename)
     bg_x_size = (x_size * TILE_WIDTH / BG_TILE_WIDTH) + 1;
     bg_y_size = (y_size * TILE_SIDE_HEIGHT / BG_TILE_HEIGHT) + 1;
 
-    if (bg_y_size < 4)
+    if (bg_y_size < 4) {
         bg_y_size = 4;
+    }
 
-    if (!(x_size * y_size)) {
+    if ((x_size * y_size) == 0) {
         printf("x_size * y_size == 0\n");
 
         return 0;
@@ -583,12 +614,15 @@ int Map::LoadMap(const char* filename)
         icache.FreeImage(BGTiles[i]);
     }
 
-    if (Tiles)
+    if (Tiles != nullptr) {
         free(Tiles);
-    if (Filename)
+    }
+    if (Filename != nullptr) {
         free(Filename);
-    if (TileInfo)
+    }
+    if (TileInfo != nullptr) {
         free(TileInfo);
+    }
 
     Tiles = (BITMAP**)malloc(MAX_TILES * sizeof(BITMAP*));
     Filename = (char**)malloc(MAX_TILES * sizeof(char*));
@@ -599,7 +633,7 @@ int Map::LoadMap(const char* filename)
 
     i = 0;
     num_tiles = 0;
-    while (strlen(tiles_to_load[i].filename)) {
+    while (strlen(tiles_to_load[i].filename) != 0u) {
 
         Filename[num_tiles] = strdup(tiles_to_load[i].filename);
         Tiles[num_tiles] = icache.GetImage(tiles_to_load[i].filename, tmppal);
@@ -610,7 +644,7 @@ int Map::LoadMap(const char* filename)
 
     i = 0;
     bg_num_tiles = 0;
-    while (strlen(bg_to_load[i].filename)) {
+    while (strlen(bg_to_load[i].filename) != 0u) {
 
         BGFilename[bg_num_tiles] = strdup(bg_to_load[i].filename);
         BGTiles[bg_num_tiles] = icache.GetImage(bg_to_load[i].filename, tmppal);
@@ -618,18 +652,19 @@ int Map::LoadMap(const char* filename)
         i++;
     }
 
-    while ((line = GetLine(fd))) {
-        if (!strcmp(line, "END"))
+    while ((line = GetLine(fd)) != nullptr) {
+        if (strcmp(line, "END") == 0) {
             break;
+        }
 
-        if (!strcmp(line, "<TILES>")) {
-            while (strcmp("</TILES>", (line = GetLine(fd)))) {
+        if (strcmp(line, "<TILES>") == 0) {
+            while (strcmp("</TILES>", (line = GetLine(fd))) != 0 != 0) {
 
                 Tiles[num_tiles] = icache.GetImage(line + 5, tmppal);
                 Filename[num_tiles] = strdup(line + 5);
-                TileInfo[num_tiles] = (int)strtol(line, NULL, 16);
+                TileInfo[num_tiles] = (int)strtol(line, nullptr, 16);
 
-                if (!Tiles[num_tiles]) {
+                if (Tiles[num_tiles] == nullptr) {
 
                     printf("Can't load '%s'\n", line + 5);
                     return 0;
@@ -637,13 +672,13 @@ int Map::LoadMap(const char* filename)
                 num_tiles++;
             };
         }
-        if (!strcmp(line, "<BGTILES>")) {
-            while (strcmp("</BGTILES>", (line = GetLine(fd)))) {
+        if (strcmp(line, "<BGTILES>") == 0) {
+            while (strcmp("</BGTILES>", (line = GetLine(fd))) != 0 != 0) {
 
                 BGTiles[bg_num_tiles] = icache.GetImage(line + 5, tmppal);
                 BGFilename[bg_num_tiles] = strdup(line + 5);
 
-                if (!BGTiles[bg_num_tiles]) {
+                if (BGTiles[bg_num_tiles] == nullptr) {
 
                     printf("Can't load '%s'\n", line + 5);
                     return 0;
@@ -652,128 +687,135 @@ int Map::LoadMap(const char* filename)
             };
         }
 
-        if (!strcmp(line, "<SECTION_0>")) {
+        if (strcmp(line, "<SECTION_0>") == 0) {
             sections[0] = new maptype[x_size * y_size];
 
             for (int i = 0; i < y_size; i++) {
                 int j = 0;
                 line = GetLine(fd);
-                char* tok;
+                char* tok = nullptr;
                 for (tok = strtok(line, " ,");
-                     tok; tok = strtok(NULL, " ,")) {
+                     tok != nullptr; tok = strtok(nullptr, " ,")) {
 
-                    sections[0][(j++) + (i * x_size)] = (int)strtol(tok, NULL, 16);
+                    sections[0][(j++) + (i * x_size)] = (int)strtol(tok, nullptr, 16);
                 }
             }
             line = GetLine(fd);
-            if (strcmp(strtok(line, " \n"), "</SECTION_0>"))
+            if (strcmp(strtok(line, " \n"), "</SECTION_0>") != 0 != 0) {
                 return 0;
+            }
         }
 
-        if (!strcmp(line, "<SECTION_1>")) {
+        if (strcmp(line, "<SECTION_1>") == 0) {
             sections[1] = new maptype[x_size * y_size];
 
             for (int i = 0; i < y_size; i++) {
                 int j = 0;
                 line = GetLine(fd);
-                char* tok;
+                char* tok = nullptr;
                 for (tok = strtok(line, " ,");
-                     tok; tok = strtok(NULL, " ,")) {
+                     tok != nullptr; tok = strtok(nullptr, " ,")) {
 
-                    sections[1][(j++) + (i * x_size)] = (int)strtol(tok, NULL, 16);
+                    sections[1][(j++) + (i * x_size)] = (int)strtol(tok, nullptr, 16);
                 }
             }
             line = GetLine(fd);
-            if (strcmp(strtok(line, " \n"), "</SECTION_1>"))
+            if (strcmp(strtok(line, " \n"), "</SECTION_1>") != 0 != 0) {
                 return 0;
+            }
         }
-        if (!strcmp(line, "<SECTION_2>")) {
+        if (strcmp(line, "<SECTION_2>") == 0) {
             sections[2] = new maptype[x_size * y_size];
 
             for (int i = 0; i < y_size; i++) {
                 int j = 0;
                 line = GetLine(fd);
-                char* tok;
+                char* tok = nullptr;
                 for (tok = strtok(line, " ,");
-                     tok; tok = strtok(NULL, " ,")) {
+                     tok != nullptr; tok = strtok(nullptr, " ,")) {
 
-                    sections[2][(j++) + (i * x_size)] = (int)strtol(tok, NULL, 16);
+                    sections[2][(j++) + (i * x_size)] = (int)strtol(tok, nullptr, 16);
                 }
             }
             line = GetLine(fd);
-            if (strcmp(strtok(line, " \n"), "</SECTION_2>"))
+            if (strcmp(strtok(line, " \n"), "</SECTION_2>") != 0 != 0) {
                 return 0;
+            }
         }
-        if (!strcmp(line, "<OBJECT_0>")) {
+        if (strcmp(line, "<OBJECT_0>") == 0) {
             objects[0] = new maptype[x_size * y_size];
 
             for (int i = 0; i < y_size; i++) {
                 int j = 0;
                 line = GetLine(fd);
-                char* tok;
+                char* tok = nullptr;
                 for (tok = strtok(line, " ,");
-                     tok; tok = strtok(NULL, " ,")) {
+                     tok != nullptr; tok = strtok(nullptr, " ,")) {
 
-                    objects[0][(j++) + (i * x_size)] = (int)strtol(tok, NULL, 16);
+                    objects[0][(j++) + (i * x_size)] = (int)strtol(tok, nullptr, 16);
                 }
             }
             line = GetLine(fd);
-            if (strcmp(strtok(line, " \n"), "</OBJECT_0>"))
+            if (strcmp(strtok(line, " \n"), "</OBJECT_0>") != 0 != 0) {
                 return 0;
+            }
         }
-        if (!strcmp(line, "<OBJECT_1>")) {
+        if (strcmp(line, "<OBJECT_1>") == 0) {
             objects[1] = new maptype[x_size * y_size];
 
             for (int i = 0; i < y_size; i++) {
                 int j = 0;
                 line = GetLine(fd);
-                char* tok;
+                char* tok = nullptr;
                 for (tok = strtok(line, " ,");
-                     tok; tok = strtok(NULL, " ,")) {
+                     tok != nullptr; tok = strtok(nullptr, " ,")) {
 
-                    objects[1][(j++) + (i * x_size)] = (int)strtol(tok, NULL, 16);
+                    objects[1][(j++) + (i * x_size)] = (int)strtol(tok, nullptr, 16);
                 }
             }
             line = GetLine(fd);
-            if (strcmp(strtok(line, " \n"), "</OBJECT_1>"))
+            if (strcmp(strtok(line, " \n"), "</OBJECT_1>") != 0 != 0) {
                 return 0;
+            }
         }
-        if (!strcmp(line, "<OBJECT_2>")) {
+        if (strcmp(line, "<OBJECT_2>") == 0) {
             objects[2] = new maptype[x_size * y_size];
 
             for (int i = 0; i < y_size; i++) {
                 int j = 0;
                 line = GetLine(fd);
-                char* tok;
+                char* tok = nullptr;
                 for (tok = strtok(line, " ,");
-                     tok; tok = strtok(NULL, " ,")) {
+                     tok != nullptr; tok = strtok(nullptr, " ,")) {
 
-                    objects[2][(j++) + (i * x_size)] = (int)strtol(tok, NULL, 16);
+                    objects[2][(j++) + (i * x_size)] = (int)strtol(tok, nullptr, 16);
                     /*                                        if(objects[2][(j-1) + (i * x_size)]) {
                                         	printf("");
                                         }*/
                 }
             }
             line = GetLine(fd);
-            if (strcmp(strtok(line, " \n"), "</OBJECT_2>"))
+            if (strcmp(strtok(line, " \n"), "</OBJECT_2>") != 0 != 0) {
                 return 0;
+            }
         }
-        if (!strcmp(line, "<BACKGROUND>")) {
+        if (strcmp(line, "<BACKGROUND>") == 0) {
             background = new maptype[bg_x_size * bg_y_size];
 
             for (int i = 0; i < bg_y_size; i++) {
                 int j = 0;
                 line = GetLine(fd);
-                char* tok;
+                char* tok = nullptr;
                 for (tok = strtok(line, " ,");
-                     tok; tok = strtok(NULL, " ,")) {
+                     tok != nullptr; tok = strtok(nullptr, " ,")) {
 
-                    background[(j++) + (i * bg_x_size)] = (int)strtol(tok, NULL, 16);
+                    background[(j++) + (i * bg_x_size)] = (int)strtol(tok, nullptr, 16);
                 }
             }
             line = GetLine(fd);
-            if (strcmp(strtok(line, " \n"), "</BACKGROUND>"))
+            if (strcmp(strtok(line, " \n"), "</BACKGROUND>") != 0 != 0) {
                 return 0;
+            }
         }
 #ifdef _USE_DEKORATIONS
         if (!strcmp(line, "<DEKOR_0>")) {
@@ -881,75 +923,85 @@ int Map::LoadMap(const char* filename)
                 return 0;
         }
 #endif
-        if (!strcmp(line, "<OPTIONS>")) {
+        if (strcmp(line, "<OPTIONS>") == 0) {
             options = (char**)calloc(MAX_OPTIONS, sizeof(char*));
             i = 0;
-            char* tok;
+            char* tok = nullptr;
             do {
                 line = GetLine(fd);
                 tok = strtok(line, "\n");
-                if (strcmp(tok, "</OPTIONS>")) {
+                if (strcmp(tok, "</OPTIONS>") != 0 != 0) {
                     options[i++] = strdup(tok);
-                    if (i > MAX_OPTIONS)
+                    if (i > MAX_OPTIONS) {
                         return 0;
-                } else
+                    }
+                } else {
                     break;
-            } while (strcmp(tok, "</OPTIONS>"));
+                }
+            } while (strcmp(tok, "</OPTIONS>") != 0 != 0);
         }
     };
-    if (!using_dat)
+    if (using_dat == 0) {
         fclose(fd);
+    }
 
     return 1;
 }
 /***************************************************************************/
-char* Map::GetLine(FILE* fd)
+auto Map::GetLine(FILE* fd) -> char*
 {
     static char buffer[3000];
 
     do {
-        if (fgets(buffer, 3000, fd) == NULL) {
+        if (fgets(buffer, 3000, fd) == nullptr) {
 
-            return NULL;
+            return nullptr;
         }
     } while ((buffer[0] == '#') || (strlen(buffer) == 1));
 
-    if (buffer[strlen(buffer) - 1] == '\n')
+    if (buffer[strlen(buffer) - 1] == '\n') {
         buffer[strlen(buffer) - 1] = 0;
-    if (buffer[strlen(buffer) - 1] == '\r')
+    }
+    if (buffer[strlen(buffer) - 1] == '\r') {
         buffer[strlen(buffer) - 1] = 0;
+    }
 
     return buffer;
 }
 
 /***************************************************************************/
-int Map::GetBackGround(int x, int y)
+auto Map::GetBackGround(int x, int y) -> int
 {
 #ifdef __CHECK_MAP_BOUNDRIES
-    if (x < 0 || y < 0)
+    if (x < 0 || y < 0) {
         return 0;
-    if (x > bg_x_size || y > bg_y_size)
+    }
+    if (x > bg_x_size || y > bg_y_size) {
         return 0;
+    }
 #endif
-    if (background == NULL)
+    if (background == nullptr) {
         return 0;
+    }
     return background[x + (y * bg_x_size)];
 }
 
 /***************************************************************************/
-int Map::SetBackGround(int x, int y, int v)
+auto Map::SetBackGround(int x, int y, int v) -> int
 {
 #ifdef __CHECK_MAP_BOUNDRIES
-    if (x < 0 || y < 0)
+    if (x < 0 || y < 0) {
         return 0;
-    if (x > bg_x_size || y > bg_y_size)
+    }
+    if (x > bg_x_size || y > bg_y_size) {
         return 0;
+    }
 #endif
     return (background[x + (y * bg_x_size)] = v);
 }
 
 /***************************************************************************/
-int Map::GetEffect(int x, int y, int z)
+auto Map::GetEffect(int /*x*/, int /*y*/, int /*z*/) -> int
 {
 #ifdef _USE_EFFECTS
 #ifdef __CHECK_MAP_BOUNDRIES
@@ -967,7 +1019,7 @@ int Map::GetEffect(int x, int y, int z)
 }
 
 /***************************************************************************/
-int Map::SetEffect(int x, int y, int z, int v)
+auto Map::SetEffect(int /*x*/, int /*y*/, int /*z*/, int /*v*/) -> int
 {
 #ifdef _USE_EFFECTS
 #ifdef __CHECK_MAP_BOUNDRIES
@@ -983,7 +1035,7 @@ int Map::SetEffect(int x, int y, int z, int v)
 }
 
 /***************************************************************************/
-int Map::GetDekor(int x, int y, int z)
+auto Map::GetDekor(int /*x*/, int /*y*/, int /*z*/) -> int
 {
 #ifdef _USE_DEKORATIONS
 #ifdef __CHECK_MAP_BOUNDRIES
@@ -1001,7 +1053,7 @@ int Map::GetDekor(int x, int y, int z)
 }
 
 /***************************************************************************/
-int Map::SetDekor(int x, int y, int z, int v)
+auto Map::SetDekor(int /*x*/, int /*y*/, int /*z*/, int /*v*/) -> int
 {
 #ifdef _USE_DEKORATIONS
 #ifdef __CHECK_MAP_BOUNDRIES
@@ -1017,67 +1069,75 @@ int Map::SetDekor(int x, int y, int z, int v)
 }
 
 /***************************************************************************/
-int Map::GetObj(int x, int y, int z)
+auto Map::GetObj(int x, int y, int z) -> int
 {
 #ifdef __CHECK_MAP_BOUNDRIES
-    if (x < 0 || y < 0 || z < 0)
+    if (x < 0 || y < 0 || z < 0) {
         return 0;
-    if (x >= x_size || y >= y_size || z > 2)
+    }
+    if (x >= x_size || y >= y_size || z > 2) {
         return 0;
+    }
 #endif
     return objects[z][x + (y * x_size)];
 }
 
 /***************************************************************************/
-int Map::SetObj(int x, int y, int z, int v)
+auto Map::SetObj(int x, int y, int z, int v) -> int
 {
 #ifdef __CHECK_MAP_BOUNDRIES
-    if (x < 0 || y < 0 || z < 0)
+    if (x < 0 || y < 0 || z < 0) {
         return 0;
-    if (x >= x_size || y >= y_size || z > 2)
+    }
+    if (x >= x_size || y >= y_size || z > 2) {
         return 0;
+    }
 #endif
     return (objects[z][x + (y * x_size)] = v);
 }
 
 /***************************************************************************/
-int Map::SetBG(int x, int y, int z, int v)
+auto Map::SetBG(int x, int y, int z, int v) -> int
 {
 #ifdef __CHECK_MAP_BOUNDRIES
-    if (x < 0 || y < 0 || z < 0)
+    if (x < 0 || y < 0 || z < 0) {
         return 0;
-    if (x >= x_size || y >= y_size || z > 2)
+    }
+    if (x >= x_size || y >= y_size || z > 2) {
         return 0;
+    }
 #endif
     return (sections[z][x + (y * x_size)] = v);
 }
 
 /***************************************************************************/
-int Map::GetBG(int x, int y, int z)
+auto Map::GetBG(int x, int y, int z) -> int
 {
 #ifdef __CHECK_MAP_BOUNDRIES
-    if (x < 0 || y < 0 || z < 0)
+    if (x < 0 || y < 0 || z < 0) {
         return 0;
-    if (x >= x_size || y >= y_size || z > 2)
+    }
+    if (x >= x_size || y >= y_size || z > 2) {
         return 0;
+    }
 #endif
     return sections[z][x + (y * x_size)];
 }
 /***************************************************************************/
-int Map::GetWidth()
+auto Map::GetWidth() const -> int
 {
 
     return x_size;
 }
 /***************************************************************************/
-int Map::GetHeight()
+auto Map::GetHeight() const -> int
 {
 
     return y_size;
 }
 /***************************************************************************/
 
-BITMAP* Map::GetTile(int num)
+auto Map::GetTile(int num) -> BITMAP*
 {
 
     if (num >= num_tiles) {
@@ -1088,19 +1148,21 @@ BITMAP* Map::GetTile(int num)
     return Tiles[num];
 }
 /***************************************************************************/
-BITMAP* Map::GetTile(int x, int y, int z)
+auto Map::GetTile(int x, int y, int z) -> BITMAP*
 {
 #ifdef __CHECK_MAP_BOUNDRIES
-    if (x < 0 || y < 0 || z < 0)
-        return 0;
-    if (x > x_size || y > y_size || z > 2)
-        return 0;
+    if (x < 0 || y < 0 || z < 0) {
+        return nullptr;
+    }
+    if (x > x_size || y > y_size || z > 2) {
+        return nullptr;
+    }
 #endif
     return Tiles[sections[z][x + (y * x_size)]];
     //	return Tiles[background[x + (y * x_size)]];
 }
 /***************************************************************************/
-BITMAP* Map::GetBGTile(int num)
+auto Map::GetBGTile(int num) -> BITMAP*
 {
     if (num >= bg_num_tiles) {
         num = 0; //OBS! HACK!!!
@@ -1110,7 +1172,7 @@ BITMAP* Map::GetBGTile(int num)
     return BGTiles[num];
 }
 /***************************************************************************/
-RGB* Map::GetPal()
+auto Map::GetPal() -> RGB*
 {
     return Pal;
 }
@@ -1122,7 +1184,7 @@ void Map::SetPal(int type)
 /***************************************************************************/
 void Map::UpdatePal()
 {
-    if ((pal_type == PAL_AIR) && pal_count) {
+    if ((pal_type == PAL_AIR) && (pal_count != 0)) {
 
         fade_interpolate(Pal_air, Pal_water, Pal, pal_count, 0, 255);
         set_palette(Pal);
@@ -1135,38 +1197,43 @@ void Map::UpdatePal()
     }
 }
 /***************************************************************************/
-char* Map::GetOption(const char* name)
+auto Map::GetOption(const char* name) -> char*
 {
-    int i;
-    char* tok;
-    char* temp;
-    if (options == NULL)
-        return NULL;
+    int i = 0;
+    char* tok = nullptr;
+    char* temp = nullptr;
+    if (options == nullptr) {
+        return nullptr;
+    }
 
     for (i = 0; i < MAX_OPTIONS; i++) {
-        if (options[i]) {
+        if (options[i] != nullptr) {
             temp = strdup(options[i]);
             tok = strtok(temp, "=\n");
-            if (!strcmp(tok, name))
-                return strtok(NULL, "=\n");
+            if (strcmp(tok, name) == 0) {
+                return strtok(nullptr, "=\n");
+            }
             free(temp);
-        } else
+        } else {
             break;
+        }
     }
-    return NULL;
+    return nullptr;
 }
 /***************************************************************************/
 void Map::SetOption(const char* name)
 {
-    int i;
+    int i = 0;
 
-    if (options == NULL)
+    if (options == nullptr) {
         options = (char**)calloc(MAX_OPTIONS, sizeof(char*));
+    }
 
-    for (i = 0; i < MAX_OPTIONS; i++)
-        if (options[i] == NULL) {
+    for (i = 0; i < MAX_OPTIONS; i++) {
+        if (options[i] == nullptr) {
             options[i] = strdup(name);
             return;
         }
+    }
 }
 /***************************************************************************/
