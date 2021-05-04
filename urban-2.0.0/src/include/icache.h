@@ -31,33 +31,31 @@
 #ifndef __ICACHE_H__
 #define __ICACHE_H__
 
-#include <allegro.h>
 #include "datfile.h"
+#include <allegro.h>
 
 struct CacheEntry {
-     	char *filename;
-        BITMAP *bitmap;
-        int count;
-        RGB *pal;
+    char* filename;
+    BITMAP* bitmap;
+    int count;
+    RGB* pal;
 };
 
-
 class ImageCache {
-	public:
-        	ImageCache();
-                BITMAP *GetImage(const char *filename, RGB *pal);
-                void FreeImage(BITMAP *bitmap);
-                ~ImageCache();
-        private:
-        	CacheEntry *FindEntry(const char *filename);
-        	int num_images;
-                int max_images;
-                CacheEntry *cache;
-		datfile *dat;
+public:
+    ImageCache();
+    BITMAP* GetImage(const char* filename, RGB* pal);
+    void FreeImage(BITMAP* bitmap);
+    ~ImageCache();
 
+private:
+    CacheEntry* FindEntry(const char* filename);
+    int num_images;
+    int max_images;
+    CacheEntry* cache;
+    datfile* dat;
 };
 
 extern ImageCache icache;
 
 #endif
-

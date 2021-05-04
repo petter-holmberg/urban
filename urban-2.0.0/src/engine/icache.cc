@@ -28,46 +28,49 @@
 
     thomas.nyberg@usa.net				jonas_b@bitsmart.com
 *****************************************************************************/
+#include "icache.h"
+#include "datfile.h"
+#include "object.h"
 #include <allegro.h>
-#include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "icache.h"
-#include "object.h"
-#include "datfile.h"
+#include <string.h>
 
 #define __USE_DATFILE__
 
 /***************************************************************************/
-ImageCache::ImageCache() {
-	num_images = 0;
-        max_images = 5;
+ImageCache::ImageCache()
+{
+    num_images = 0;
+    max_images = 5;
 
-        cache = (CacheEntry *)malloc(max_images * sizeof(CacheEntry));
+    cache = (CacheEntry*)malloc(max_images * sizeof(CacheEntry));
 #ifdef __USE_DATFILE__
-        dat = new datfile("urban.dat");
+    dat = new datfile("urban.dat");
 #endif
 }
 /***************************************************************************/
-void ImageCache::FreeImage(BITMAP *bitmap) {
+void ImageCache::FreeImage(BITMAP* bitmap)
+{
 
-	for(int i=0;i<num_images;i++) {
-		if(bitmap == cache[i].bitmap) {
+    for (int i = 0; i < num_images; i++) {
+        if (bitmap == cache[i].bitmap) {
 
-                	cache[i].count--;
-/*                        if(cache[i].count == 0) {
+            cache[i].count--;
+            /*                        if(cache[i].count == 0) {
                         	destroy_bitmap(cache[i].bitmap);
                                 free(cache[i].filename);
                                 memmove(&cache[i], &cache[i+1], sizeof(CacheEntry) * (num_images - i - 1));
                                 num_images--;
                         }*/
-                        return;
-		}
+            return;
         }
+    }
 }
 /***************************************************************************/
-ImageCache::~ImageCache() {
-/*
+ImageCache::~ImageCache()
+{
+    /*
 	int i;
 	FILE *f;
         f = fopen("icache.txt", "w");
@@ -75,68 +78,68 @@ ImageCache::~ImageCache() {
         for (i = 0;i < num_images;i++)
 	        fprintf(f, "Filename: %s, Num users: %d\n", cache[i].filename, cache[i].count);
 	fclose(f);*/
-/*	for(int i=0;i<num_images;i++) {
+    /*	for(int i=0;i<num_images;i++) {
         	destroy_bitmap(cache[i].bitmap);
                 free(cache[i].filename);
         }*/
 }
 /***************************************************************************/
-CacheEntry *ImageCache::FindEntry(const char *filename) {
-	for(int i=0;i<num_images;i++) {
+CacheEntry* ImageCache::FindEntry(const char* filename)
+{
+    for (int i = 0; i < num_images; i++) {
 
-        	if(!strcmp(filename, cache[i].filename))
-                	return &cache[i];
+        if (!strcmp(filename, cache[i].filename))
+            return &cache[i];
+    }
+    return NULL;
+}
+/***************************************************************************/
+BITMAP* ImageCache::GetImage(const char* filename, RGB* pal)
+{
+    char pathname[512];
+    CacheEntry* entry;
+    // Allready in cache
+#ifndef __USE_DATFILE__
+    sprintf(pathname, "%s/%s", GFX_PATH, filename);
+#else
+    sprintf(pathname, "gfx/%s", filename);
+#endif
+
+    if ((entry = FindEntry(pathname))) {
+
+        entry->count++;
+        memcpy(pal, entry->pal, 256 * sizeof(RGB));
+        return entry->bitmap;
+
+    } else {
+        // Need more entires?
+        if (num_images == max_images) {
+            max_images += 5;
+            cache = (CacheEntry*)
+                realloc(cache, max_images * sizeof(CacheEntry));
         }
-        return NULL;
+        entry = &cache[num_images++];
+        entry->pal = new RGB[256];
+#ifndef __USE_DATFILE__
+        if ((entry->bitmap = load_bitmap(pathname, entry->pal)) == NULL) {
+
+            set_gfx_mode(GFX_TEXT, 160, 25, 0, 0);
+            printf("\nCan't load \"%s\"\n", pathname);
+            exit(1);
+        }
+#else
+        if ((entry->bitmap = dat->load_pcx(pathname, entry->pal)) == NULL) {
+
+            set_gfx_mode(GFX_TEXT, 160, 25, 0, 0);
+            printf("\nCan't load \"%s\"\n", pathname);
+            exit(1);
+        }
+#endif
+        memcpy(pal, entry->pal, 256 * sizeof(RGB));
+        entry->filename = strdup(pathname);
+        entry->count = 1;
+
+        return entry->bitmap;
+    }
 }
 /***************************************************************************/
-BITMAP *ImageCache::GetImage(const char *filename, RGB *pal) {
-	char pathname[512];
-        CacheEntry *entry;
-	// Allready in cache
-#ifndef __USE_DATFILE__
-        sprintf(pathname, "%s/%s", GFX_PATH, filename);
-#else
-        sprintf(pathname, "gfx/%s", filename);
-#endif
-
-        if((entry = FindEntry(pathname))) {
-
-        	entry->count++;
-                memcpy(pal, entry->pal, 256 * sizeof(RGB));
-        	return entry->bitmap;
-
-        } else {
-	        // Need more entires?
-	        if(num_images == max_images) {
-	        	max_images += 5;
-		        cache = (CacheEntry *)
-		        	realloc(cache, max_images * sizeof(CacheEntry));
-	        }
-                entry = &cache[num_images++];
-                entry->pal = new RGB[256];
-#ifndef __USE_DATFILE__
-		if((entry->bitmap = load_bitmap(pathname, entry->pal)) == NULL) {
-
-			set_gfx_mode(GFX_TEXT, 160, 25, 0, 0);
-                        printf("\nCan't load \"%s\"\n", pathname);
-                        exit(1);
-		}
-#else
-		if((entry->bitmap = dat->load_pcx(pathname, entry->pal)) == NULL) {
-
-			set_gfx_mode(GFX_TEXT, 160, 25, 0, 0);
-                        printf("\nCan't load \"%s\"\n", pathname);
-                        exit(1);
-		}
-#endif
-                memcpy(pal, entry->pal, 256 * sizeof(RGB));
-		entry->filename = strdup(pathname);
-                entry->count = 1;
-
-                return entry->bitmap;
-	}
-}
-/***************************************************************************/
-
-

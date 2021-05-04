@@ -33,6 +33,6 @@
 
 #include "object.h"
 
-void sort_shell_metzner(Object **obj, int antal);
+void sort_shell_metzner(Object** obj, int antal);
 
 #endif

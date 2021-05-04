@@ -28,135 +28,131 @@
 
     thomas.nyberg@usa.net				jonas_b@bitsmart.com
 *****************************************************************************/
-#include <allegro.h>
-#include <engine.h>
 #include "score.h"
 #include "urbfont.h"
+#include <allegro.h>
+#include <engine.h>
 
 //#define BOSSHEALTH_HEIGHT 100
 #define BOSSHEALTH_HEIGHT (SCREEN_WIDTH - (2 * 20))
 /*************************************************************************/
-ScoreBoard::ScoreBoard() {
-        char filename[512];
-        PALETTE pal;
+ScoreBoard::ScoreBoard()
+{
+    char filename[512];
+    PALETTE pal;
 
-        for(int i = 0;i<12;i++) {
+    for (int i = 0; i < 12; i++) {
 
-        	sprintf(filename, "head/head%d.pcx", i + 1);
-                face[i] = icache.GetImage(filename, pal);
-	}
-        for (int i = 0;i < 3;i++) {
-	        switch (i) {
-        		case 0:
-			        sprintf(filename, "items/bluecard.pcx");
-                        	break;
-	                case 1:
-			        sprintf(filename, "items/greencar.pcx");
-                	        break;
-	                case 2:
-			        sprintf(filename, "items/redcard.pcx");
-                	        break;
-		}
-                cards[i] = icache.GetImage(filename, pal);
-	}
-	BossHealth = 0;
-        BossMax = -1;
+        sprintf(filename, "head/head%d.pcx", i + 1);
+        face[i] = icache.GetImage(filename, pal);
+    }
+    for (int i = 0; i < 3; i++) {
+        switch (i) {
+        case 0:
+            sprintf(filename, "items/bluecard.pcx");
+            break;
+        case 1:
+            sprintf(filename, "items/greencar.pcx");
+            break;
+        case 2:
+            sprintf(filename, "items/redcard.pcx");
+            break;
+        }
+        cards[i] = icache.GetImage(filename, pal);
+    }
+    BossHealth = 0;
+    BossMax = -1;
 
-	Score = tmp_score = 0;
+    Score = tmp_score = 0;
 }
 /*************************************************************************/
-ScoreBoard::~ScoreBoard() {
-        for(int i = 0;i<12;i++) {
+ScoreBoard::~ScoreBoard()
+{
+    for (int i = 0; i < 12; i++) {
 
-        	icache.FreeImage(face[i]);
-                face[i] = NULL;
-        }
+        icache.FreeImage(face[i]);
+        face[i] = NULL;
+    }
 }
 /*************************************************************************/
-void ScoreBoard::Display(BITMAP *bitmap) {
-        PALETTE pal;
-        static UrbanFont *fnt = NULL;
-        static BITMAP *board = NULL;
-        char buffer[80];
+void ScoreBoard::Display(BITMAP* bitmap)
+{
+    PALETTE pal;
+    static UrbanFont* fnt = NULL;
+    static BITMAP* board = NULL;
+    char buffer[80];
 
-        if(board == NULL) {
-                board = icache.GetImage("scoreb.pcx", pal);
-        }
-        if(fnt == NULL)
-        	fnt = new UrbanFont(SMALL_FONT);
+    if (board == NULL) {
+        board = icache.GetImage("scoreb.pcx", pal);
+    }
+    if (fnt == NULL)
+        fnt = new UrbanFont(SMALL_FONT);
 
-        if((Score - 99)> tmp_score)
-        	tmp_score += 99;
+    if ((Score - 99) > tmp_score)
+        tmp_score += 99;
 
-        if((Score - 4)> tmp_score)
-        	tmp_score += 4;
+    if ((Score - 4) > tmp_score)
+        tmp_score += 4;
 
-        if(Score > tmp_score)
-        	tmp_score ++;
+    if (Score > tmp_score)
+        tmp_score++;
 
-        rectfill(bitmap, 26 + (44 * PLAYER->GetEnergy() / 300), 23, 27 + 44, 34, 19);
-        rectfill(bitmap, 26, 23, 27 + (44 * PLAYER->GetEnergy() / 300), 34, 36);
-	masked_blit(board, bitmap, 0, 0, 0, 0, board->w, board->h);
+    rectfill(bitmap, 26 + (44 * PLAYER->GetEnergy() / 300), 23, 27 + 44, 34, 19);
+    rectfill(bitmap, 26, 23, 27 + (44 * PLAYER->GetEnergy() / 300), 34, 36);
+    masked_blit(board, bitmap, 0, 0, 0, 0, board->w, board->h);
 
-	sprintf(buffer, "Score:%6ld", tmp_score);
-        fnt->print(buffer, 212, 10, bitmap);
-        if (((player_o *)PLAYER)->HaveCard(blue)) {
-        	blit(cards[0], bitmap, 0, 0, 237, 40, cards[0]->w, cards[0]->h);
-        }
-        if (((player_o *)PLAYER)->HaveCard(green)) {
-        	blit(cards[1], bitmap, 0, 0, 212, 40, cards[1]->w, cards[1]->h);
-        }
-        if (((player_o *)PLAYER)->HaveCard(red)) {
-        	blit(cards[2], bitmap, 0, 0, 262, 40, cards[2]->w, cards[2]->h);
-        }
+    sprintf(buffer, "Score:%6ld", tmp_score);
+    fnt->print(buffer, 212, 10, bitmap);
+    if (((player_o*)PLAYER)->HaveCard(blue)) {
+        blit(cards[0], bitmap, 0, 0, 237, 40, cards[0]->w, cards[0]->h);
+    }
+    if (((player_o*)PLAYER)->HaveCard(green)) {
+        blit(cards[1], bitmap, 0, 0, 212, 40, cards[1]->w, cards[1]->h);
+    }
+    if (((player_o*)PLAYER)->HaveCard(red)) {
+        blit(cards[2], bitmap, 0, 0, 262, 40, cards[2]->w, cards[2]->h);
+    }
 
-	sprintf(buffer, "%d", ((player_o *)PLAYER)->GetLives());
-        fnt->print(buffer, 32, 40, bitmap);
+    sprintf(buffer, "%d", ((player_o*)PLAYER)->GetLives());
+    fnt->print(buffer, 32, 40, bitmap);
 
-        if(((player_o *)PLAYER)->GetAmmo() < 0)
-		sprintf(buffer, "Inf");
-	else
-		sprintf(buffer, "%d", ((player_o *)PLAYER)->GetAmmo());
+    if (((player_o*)PLAYER)->GetAmmo() < 0)
+        sprintf(buffer, "Inf");
+    else
+        sprintf(buffer, "%d", ((player_o*)PLAYER)->GetAmmo());
 
-        fnt->print(buffer, 27, 4, bitmap);
+    fnt->print(buffer, 27, 4, bitmap);
 
-        int head = (10 * (300 - PLAYER->GetEnergy()) / 300);
+    int head = (10 * (300 - PLAYER->GetEnergy()) / 300);
 
-        if(((player_o *)PLAYER)->IsImmortal())
-        	head = 11;
+    if (((player_o*)PLAYER)->IsImmortal())
+        head = 11;
 
-        masked_blit(face[head], bitmap, 0, 0, SCREEN_WIDTH / 2 - 27, 8, face[head]->w, face[head]->h);
+    masked_blit(face[head], bitmap, 0, 0, SCREEN_WIDTH / 2 - 27, 8, face[head]->w, face[head]->h);
 
-        if(BossMax != -1) {
-/* Vertical bar on the right */
-/*	        rectfill(bitmap, bitmap->w - 20, 69, bitmap->w - 5, 72 + BOSSHEALTH_HEIGHT, 0);
+    if (BossMax != -1) {
+        /* Vertical bar on the right */
+        /*	        rectfill(bitmap, bitmap->w - 20, 69, bitmap->w - 5, 72 + BOSSHEALTH_HEIGHT, 0);
 	        rectfill(bitmap, bitmap->w - 19, 70 + BOSSHEALTH_HEIGHT - (BossHealth * BOSSHEALTH_HEIGHT / BossMax), bitmap->w - 6, 70 + BOSSHEALTH_HEIGHT, 36);*/
-/* Horizontal bar on the left */
-	        rectfill(bitmap, 20 - 1, 65 - 1, 20 + BOSSHEALTH_HEIGHT + 1, 65 + 7 + 1, 0);
-	        rectfill(bitmap, 20, 65, 20 + (BossHealth * BOSSHEALTH_HEIGHT / BossMax), 65 + 7, 36);
-        }
+        /* Horizontal bar on the left */
+        rectfill(bitmap, 20 - 1, 65 - 1, 20 + BOSSHEALTH_HEIGHT + 1, 65 + 7 + 1, 0);
+        rectfill(bitmap, 20, 65, 20 + (BossHealth * BOSSHEALTH_HEIGHT / BossMax), 65 + 7, 36);
+    }
 }
 /*************************************************************************/
-void ScoreBoard::AddScore(long score) {
+void ScoreBoard::AddScore(long score)
+{
 
-	Score += score;
+    Score += score;
 }
 /*************************************************************************/
-void ScoreBoard::InitBossHealth(int max) {
-        BossMax = max;
+void ScoreBoard::InitBossHealth(int max)
+{
+    BossMax = max;
 }
 /*************************************************************************/
-void ScoreBoard::SetBossHealth(int health) {
-	BossHealth = health;
+void ScoreBoard::SetBossHealth(int health)
+{
+    BossHealth = health;
 }
 /*************************************************************************/
-
-
-
-
-
-
-
-
-
-
