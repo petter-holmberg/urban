@@ -30,80 +30,85 @@
 *****************************************************************************/
 #include <allegro.h>
 #ifdef DJGPP
-	#include <jgmod.h>
+#include <jgmod.h>
 #else
-	#include <mikmod.h>
+#include <mikmod.h>
 #endif
-#include <string.h>
+#include "game.h"
+#include "scache.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
-#include "scache.h"
-#include "game.h"
 
 /***************************************************************************/
-SoundCache::SoundCache() {
-	num_samples = 0;
-        max_samples = 5;
+SoundCache::SoundCache()
+{
+    num_samples = 0;
+    max_samples = 5;
 
-        cache = (SCacheEntry *)malloc(max_samples * sizeof(SCacheEntry));
+    cache = (SCacheEntry*)malloc(max_samples * sizeof(SCacheEntry));
 }
 
 /***************************************************************************/
-void SoundCache::FreeSample(SAMPLE *sample) {
+void SoundCache::FreeSample(SAMPLE* sample)
+{
 
-	for(int i = 0;i < num_samples;i++) {
-		if (sample == cache[i].sample) {
+    for (int i = 0; i < num_samples; i++) {
+        if (sample == cache[i].sample) {
 
-                	cache[i].count--;
-                        return;
-		}
+            cache[i].count--;
+            return;
         }
+    }
 }
 /***************************************************************************/
-SoundCache::~SoundCache() {
-/*	for(int i=0;i<num_images;i++) {
+SoundCache::~SoundCache()
+{
+    /*	for(int i=0;i<num_images;i++) {
         	destroy_bitmap(cache[i].bitmap);
                 free(cache[i].filename);
         }*/
 }
 /***************************************************************************/
-SCacheEntry *SoundCache::FindEntry(const char *filename) {
-	for(int i = 0;i < num_samples;i++) {
+SCacheEntry* SoundCache::FindEntry(const char* filename)
+{
+    for (int i = 0; i < num_samples; i++) {
 
-        	if(!strcmp(filename, cache[i].filename))
-                	return &cache[i];
-        }
-        return NULL;
+        if (!strcmp(filename, cache[i].filename))
+            return &cache[i];
+    }
+    return NULL;
 }
 /***************************************************************************/
-SAMPLE *SoundCache::GetSample(const char *filename) {
-	char pathname[512];
-	// Allready in cache
-        sprintf(pathname, "%s/snd/%s", DATPATH, filename);
-        SCacheEntry *entry;
-	// Allready in cache
-        if((entry = FindEntry(pathname))) {
-        	entry->count++;
-        	return entry->sample;
+SAMPLE* SoundCache::GetSample(const char* filename)
+{
+    char pathname[512];
+    // Allready in cache
+    sprintf(pathname, "%s/snd/%s", DATPATH, filename);
+    SCacheEntry* entry;
+    // Allready in cache
+    if ((entry = FindEntry(pathname))) {
+        entry->count++;
+        return entry->sample;
 
-        } else {
-	        // Need more entires?
-	        if(num_samples == max_samples) {
-	        	max_samples += 5;
-		        cache = (SCacheEntry *)
-		        	realloc(cache, max_samples * sizeof(SCacheEntry));
-	        }
-                entry = &cache[num_samples++];
+    } else {
+        // Need more entires?
+        if (num_samples == max_samples) {
+            max_samples += 5;
+            cache = (SCacheEntry*)
+                realloc(cache, max_samples * sizeof(SCacheEntry));
+        }
+        entry = &cache[num_samples++];
 #ifdef DJGPP
-		entry->sample = load_wav(pathname);
+        entry->sample = load_wav(pathname);
 #else
-		entry->sample = Sample_Load(pathname);
+        entry->sample = Sample_Load(pathname);
 #endif
-		entry->filename = strdup(pathname);
-                entry->count = 1;
+        entry->filename = strdup(pathname);
+        entry->count = 1;
 
-                return entry->sample;
-	}
+        return entry->sample;
+    }
 }
 /***************************************************************************/

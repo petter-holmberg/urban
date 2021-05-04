@@ -34,31 +34,31 @@
 #include <allegro.h>
 
 #ifdef DJGPP
-	#include <jgmod.h>
+#include <jgmod.h>
 #else
-	#include <mikmod.h>
+#include <mikmod.h>
 #endif
 
 struct SCacheEntry {
-	char *filename;
-        SAMPLE *sample;
-        int count;
+    char* filename;
+    SAMPLE* sample;
+    int count;
 };
 
 class SoundCache {
-	public:
-        	SoundCache();
-                SAMPLE *GetSample(const char *filename);
-                void FreeSample(SAMPLE *bitmap);
-                ~SoundCache();
-        private:
-        	SCacheEntry *FindEntry(const char *filename);
-        	int num_samples;
-                int max_samples;
-                SCacheEntry *cache;
+public:
+    SoundCache();
+    SAMPLE* GetSample(const char* filename);
+    void FreeSample(SAMPLE* bitmap);
+    ~SoundCache();
+
+private:
+    SCacheEntry* FindEntry(const char* filename);
+    int num_samples;
+    int max_samples;
+    SCacheEntry* cache;
 };
 
 extern SoundCache scache;
 
 #endif
-
