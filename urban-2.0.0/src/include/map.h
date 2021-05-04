@@ -38,64 +38,65 @@
 #define PAL_AIR 0
 #define PAL_WATER 1
 
-#include <stdio.h>
-#include <allegro.h>
 #include "datfile.h"
+#include <allegro.h>
+#include <stdio.h>
 
 typedef int maptype;
 
 class Map {
-	public:
-		Map();
-		~Map();
-                int LoadMap (const char *filename);
-                int SaveMap (const char *filename);
-                int GetDekor(int x, int y, int z);
-                int GetEffect(int x, int y, int z);
-                int GetBackGround(int x, int y);
-		int GetBG (int x, int y, int z);
-                int GetObj (int x, int y, int z);
-                int SetDekor(int x, int y, int z, int v);
-                int SetEffect(int x, int y, int z, int v);
-                int SetBackGround(int x, int y, int v);
-                int SetObj (int x, int y, int z, int v);
-		int SetBG (int x, int y, int z, int v); //<- ta bort
-                int GetWidth ();
-                int GetHeight ();
-                int GetNumTiles () { return num_tiles;}
-                int GetBGNumTiles() {return bg_num_tiles;}
-                BITMAP *GetTile (int num);
-                int GetTileInfo (int num) {return TileInfo[num];};
-		BITMAP *GetTile (int x, int y, int z);
-		BITMAP *GetBGTile (int num);
-                RGB *GetPal();
-                void SetPal(int pal_mode);
-                void UpdatePal();
-                char *GetOption(const char *name);
-                void SetOption(const char *name);
-		void NewLevel(int width, int height);
-        private:
-        	char *GetLine (FILE *fd);
-                maptype *sections[3];
-                maptype *objects[3];
-                maptype *background;
-                maptype *dekor[3];
-                maptype *effect[3];
-                BITMAP **Tiles;
-                BITMAP **BGTiles;
-                datfile *dat;
-                int *TileInfo;
-                char **Filename;
-                char **BGFilename;
-                char **options;
+public:
+    Map();
+    ~Map();
+    int LoadMap(const char* filename);
+    int SaveMap(const char* filename);
+    int GetDekor(int x, int y, int z);
+    int GetEffect(int x, int y, int z);
+    int GetBackGround(int x, int y);
+    int GetBG(int x, int y, int z);
+    int GetObj(int x, int y, int z);
+    int SetDekor(int x, int y, int z, int v);
+    int SetEffect(int x, int y, int z, int v);
+    int SetBackGround(int x, int y, int v);
+    int SetObj(int x, int y, int z, int v);
+    int SetBG(int x, int y, int z, int v); //<- ta bort
+    int GetWidth();
+    int GetHeight();
+    int GetNumTiles() { return num_tiles; }
+    int GetBGNumTiles() { return bg_num_tiles; }
+    BITMAP* GetTile(int num);
+    int GetTileInfo(int num) { return TileInfo[num]; };
+    BITMAP* GetTile(int x, int y, int z);
+    BITMAP* GetBGTile(int num);
+    RGB* GetPal();
+    void SetPal(int pal_mode);
+    void UpdatePal();
+    char* GetOption(const char* name);
+    void SetOption(const char* name);
+    void NewLevel(int width, int height);
 
-                int x_size, y_size, bg_x_size, bg_y_size;
-                int num_tiles, bg_num_tiles;
-                int pal_count;
-                int pal_type;
-	        RGB Pal[256];
-                RGB Pal_water[256];
-                RGB Pal_air[256];
+private:
+    char* GetLine(FILE* fd);
+    maptype* sections[3];
+    maptype* objects[3];
+    maptype* background;
+    maptype* dekor[3];
+    maptype* effect[3];
+    BITMAP** Tiles;
+    BITMAP** BGTiles;
+    datfile* dat;
+    int* TileInfo;
+    char** Filename;
+    char** BGFilename;
+    char** options;
+
+    int x_size, y_size, bg_x_size, bg_y_size;
+    int num_tiles, bg_num_tiles;
+    int pal_count;
+    int pal_type;
+    RGB Pal[256];
+    RGB Pal_water[256];
+    RGB Pal_air[256];
 };
 
 #endif
