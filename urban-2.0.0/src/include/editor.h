@@ -31,80 +31,81 @@
 #ifndef __EDITOR_H__
 #define __EDITOR_H__
 
-#include <allegro.h>
 #include "icache.h"
-#include "otypes.h"
 #include "map.h"
+#include "otypes.h"
+#include <allegro.h>
 
-#define SCREEN_WIDTH 		320
-#define SCREEN_HEIGHT 		240
-#define TILE_SIZE     		1250
-#define _TILE_WIDTH             26
-#define _TILE_HEIGHT            40
-#define _TILE_SIDE_HEIGHT       24
-#define _TILE_TOP_HEIGHT        (_TILE_HEIGHT - _TILE_SIDE_HEIGHT)
-#define TILE_WIDTH    		(26 / draw_scale)
-#define TILE_HEIGHT   		(40 / draw_scale)
-#define TILE_SIDE_HEIGHT 	(24 / draw_scale)
-#define TILE_TOP_HEIGHT 	(TILE_HEIGHT - TILE_SIDE_HEIGHT)
+#define SCREEN_WIDTH 320
+#define SCREEN_HEIGHT 240
+#define TILE_SIZE 1250
+#define _TILE_WIDTH 26
+#define _TILE_HEIGHT 40
+#define _TILE_SIDE_HEIGHT 24
+#define _TILE_TOP_HEIGHT (_TILE_HEIGHT - _TILE_SIDE_HEIGHT)
+#define TILE_WIDTH (26 / draw_scale)
+#define TILE_HEIGHT (40 / draw_scale)
+#define TILE_SIDE_HEIGHT (24 / draw_scale)
+#define TILE_TOP_HEIGHT (TILE_HEIGHT - TILE_SIDE_HEIGHT)
 #undef BG_TILE_WIDTH
 #undef BG_TILE_HEIGHT
-#define BG_TILE_WIDTH           (120 / draw_scale)
-#define BG_TILE_HEIGHT          (120 / draw_scale)
-#define _BG_TILE_WIDTH          120
-#define _BG_TILE_HEIGHT         120
+#define BG_TILE_WIDTH (120 / draw_scale)
+#define BG_TILE_HEIGHT (120 / draw_scale)
+#define _BG_TILE_WIDTH 120
+#define _BG_TILE_HEIGHT 120
 
-#define MAX_Z			(TILE_TOP_HEIGHT >> 1)
-#define MIN_Z			(3 * TILE_TOP_HEIGHT - 5)
+#define MAX_Z (TILE_TOP_HEIGHT >> 1)
+#define MIN_Z (3 * TILE_TOP_HEIGHT - 5)
 
-#define MODE_NONE		0x00
-#define MODE_TILES		0x01
-#define MODE_OBJECTS		0x02
-#define MODE_BACKGROUND		0x03
-#define MODE_EFFECTS		0x04
-#define MODE_DEKORATIONS	0x05
+#define MODE_NONE 0x00
+#define MODE_TILES 0x01
+#define MODE_OBJECTS 0x02
+#define MODE_BACKGROUND 0x03
+#define MODE_EFFECTS 0x04
+#define MODE_DEKORATIONS 0x05
 
 struct Layerinfo {
-	char tiles_on;
-        char objects_on;
-        char effects_on;
-        char dekorations_on;
+    char tiles_on;
+    char objects_on;
+    char effects_on;
+    char dekorations_on;
 };
 
 class Editor {
-	public:
-        	Editor();
-                ~Editor();
-                int EditLevel(char *filename, int, int);
-	private:
-                void DrawScreen();
-                void DrawCursor(BITMAP *buffer);
-                void SelectTile();
-                void SelectObject();
-                void SelectEffect();
-                void SelectDekor();
-                void SelectBackground();
-                void DrawTileSelectionMap(int start_row);
-                void DrawBackgroundSelectionMap(int start_row);
-                void DrawObjectSelectionMap(int start_row);
-                void ShowMapStatus();
-                int Obj2Num(int o);
-        	Map *map;
-                int map_x, map_y;
-                int x, y, z;
-                int cursor_x, cursor_y, cursor_z;
-                BITMAP **images;
-                BITMAP *buffer;
+public:
+    Editor();
+    ~Editor();
+    int EditLevel(char* filename, int, int);
 
-                char *filename;
+private:
+    void DrawScreen();
+    void DrawCursor(BITMAP* buffer);
+    void SelectTile();
+    void SelectObject();
+    void SelectEffect();
+    void SelectDekor();
+    void SelectBackground();
+    void DrawTileSelectionMap(int start_row);
+    void DrawBackgroundSelectionMap(int start_row);
+    void DrawObjectSelectionMap(int start_row);
+    void ShowMapStatus();
+    int Obj2Num(int o);
+    Map* map;
+    int map_x, map_y;
+    int x, y, z;
+    int cursor_x, cursor_y, cursor_z;
+    BITMAP** images;
+    BITMAP* buffer;
 
-                struct Layerinfo layer_info[3];
+    char* filename;
 
-		long num;
-		long mode;
-                long draw_zoomed_out;
-                long draw_scale;
-                unsigned int num_objects;
+    struct Layerinfo layer_info[3];
+
+    long num;
+    long mode;
+    long draw_zoomed_out;
+    long draw_scale;
+    unsigned int num_objects;
 };
 
 /*
