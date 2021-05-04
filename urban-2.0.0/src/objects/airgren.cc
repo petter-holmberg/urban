@@ -28,97 +28,102 @@
 
     thomas.nyberg@usa.net				jonas_b@bitsmart.com
 *****************************************************************************/
-#include <string.h>
-#include <allegro.h>
 #include "engine.h"
 #include "object2.h"
+#include <allegro.h>
+#include <string.h>
 
 /****************************************************************************/
 #define GRENADE_SPEED 4
 #define ACCEL_COUNTER 3
 /****************************************************************************/
-AirGrenade_o::AirGrenade_o(int X, int Y, int Z, int SpeedX, int SpeedY, int SpeedZ) : Object(X, Y, Z) {
-	RGB pal[256];
-        char filename[512];
+AirGrenade_o::AirGrenade_o(int X, int Y, int Z, int SpeedX, int SpeedY, int SpeedZ)
+    : Object(X, Y, Z)
+{
+    RGB pal[256];
+    char filename[512];
 
-	images = new BITMAP*[1];
+    images = new BITMAP*[1];
 
-//        sprintf(filename, "soldier2/kula.pcx");
-        sprintf(filename, "airgren.pcx");
-        images[0] = icache.GetImage(filename, pal);
-        if (images[0])
-        	num_images++;
+    //        sprintf(filename, "soldier2/kula.pcx");
+    sprintf(filename, "airgren.pcx");
+    images[0] = icache.GetImage(filename, pal);
+    if (images[0])
+        num_images++;
 
-        height = images[0]->h;
-        width = images[0]->w;
-        coll_x = 0;
-        coll_y = 0;
-        coll_width = width;
-        coll_height = height;
+    height = images[0]->h;
+    width = images[0]->w;
+    coll_x = 0;
+    coll_y = 0;
+    coll_width = width;
+    coll_height = height;
 
-       	current_image = 0;
+    current_image = 0;
 
-	friends = (FRIEND_GRENADE | FRIEND_EXPLOSION | FRIEND_DOOR | FRIEND_DEKOR);
-        enemies = ~friends;
-        me = FRIEND_GRENADE;
+    friends = (FRIEND_GRENADE | FRIEND_EXPLOSION | FRIEND_DOOR | FRIEND_DEKOR);
+    enemies = ~friends;
+    me = FRIEND_GRENADE;
 
-        speed_x = SpeedX;
-        speed_z = SpeedZ;
-        speed_y = SpeedY;
+    speed_x = SpeedX;
+    speed_z = SpeedZ;
+    speed_y = SpeedY;
 
-        energy = 10000000;
-//        strength = 100;
-        strength = 0;
-//        speed_y = -(2 + random() % 5);
+    energy = 10000000;
+    //        strength = 100;
+    strength = 0;
+    //        speed_y = -(2 + random() % 5);
 
-        counter = 0;
+    counter = 0;
 }
 /****************************************************************************/
-AirGrenade_o::~AirGrenade_o() {
+AirGrenade_o::~AirGrenade_o()
+{
 }
 
 /****************************************************************************/
-int AirGrenade_o::update() {
-	x += speed_x;
-	y += speed_y;
-	z += speed_z;
+int AirGrenade_o::update()
+{
+    x += speed_x;
+    y += speed_y;
+    z += speed_z;
 
-	if (z > MIN_Z)
-        	z = MIN_Z;
-	if (z < MAX_Z)
-        	z = MAX_Z;
-	layer = z / TILE_TOP_HEIGHT;
+    if (z > MIN_Z)
+        z = MIN_Z;
+    if (z < MAX_Z)
+        z = MAX_Z;
+    layer = z / TILE_TOP_HEIGHT;
 
-        if (counter < 0) {
+    if (counter < 0) {
 
-        	speed_y++;
+        speed_y++;
 
-                counter = ACCEL_COUNTER;
-        }
+        counter = ACCEL_COUNTER;
+    }
 
-        counter--;
-	if (energy <= 0)
-        	return -1;
+    counter--;
+    if (energy <= 0)
+        return -1;
 
-        // Check collision with walls
-	if(ENGINE.check_wall(x, y + TILE_SIDE_HEIGHT, z)
-		|| ENGINE.check_wall(x + width, y + TILE_SIDE_HEIGHT, z)) {
+    // Check collision with walls
+    if (ENGINE.check_wall(x, y + TILE_SIDE_HEIGHT, z)
+        || ENGINE.check_wall(x + width, y + TILE_SIDE_HEIGHT, z)) {
 
-//		        SOUND.PlaySFX(EXPLOSION_SAMPLE);
-		       	ENGINE.create_alwaysupdate(new AirExplosion_o(x, y - TILE_SIDE_HEIGHT + 15, z));
+        //		        SOUND.PlaySFX(EXPLOSION_SAMPLE);
+        ENGINE.create_alwaysupdate(new AirExplosion_o(x, y - TILE_SIDE_HEIGHT + 15, z));
 
-	        	return -1;
-	}
+        return -1;
+    }
 
-	return 0;
+    return 0;
 }
 
-void AirGrenade_o::Collision(Object *o) {
-	if (!energy)
-        	return;
-	if (friends & o->GetWho())
-        	return;
-	energy = 0;
-//        SOUND.PlaySFX(EXPLOSION_SAMPLE);
-       	ENGINE.create_alwaysupdate(new AirExplosion_o(x, y - TILE_SIDE_HEIGHT + 15, z));
+void AirGrenade_o::Collision(Object* o)
+{
+    if (!energy)
+        return;
+    if (friends & o->GetWho())
+        return;
+    energy = 0;
+    //        SOUND.PlaySFX(EXPLOSION_SAMPLE);
+    ENGINE.create_alwaysupdate(new AirExplosion_o(x, y - TILE_SIDE_HEIGHT + 15, z));
 }

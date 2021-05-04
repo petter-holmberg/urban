@@ -28,71 +28,75 @@
 
     thomas.nyberg@usa.net				jonas_b@bitsmart.com
 *****************************************************************************/
-#include <string.h>
-#include <stdlib.h>
-#include <allegro.h>
 #include "engine.h"
 #include "object2.h"
+#include <allegro.h>
+#include <stdlib.h>
+#include <string.h>
 
+ComputerScreen_o::ComputerScreen_o(int X, int Y, int Z, int Type)
+    : Object(X, Y, Z)
+{
+    RGB pal[256];
 
-ComputerScreen_o::ComputerScreen_o(int X, int Y, int Z, int Type) : Object(X, Y, Z) {
-	RGB pal[256];
+    images = new BITMAP*;
 
-        images = new BITMAP *;
+    if (Type == 0)
+        images[0] = icache.GetImage("dekor/skarm1.pcx", pal);
+    else if (Type == 1)
+        images[0] = icache.GetImage("dekor/skarm2.pcx", pal);
 
-        if (Type == 0)
-	        images[0] = icache.GetImage("dekor/skarm1.pcx", pal);
-	else if (Type == 1)
-		images[0] = icache.GetImage("dekor/skarm2.pcx", pal);
+    if (images[0])
+        num_images++;
 
-        if (images[0])
-        	num_images++;
+    current_image = 0;
 
-	current_image = 0;
+    height = images[0]->h;
+    width = images[0]->w;
+    x += TILE_WIDTH / 2;
+    x -= width / 2;
+    //        y -= height;
+    coll_x = 0;
+    coll_y = 0;
+    coll_width = width;
+    coll_height = height;
 
-        height = images[0]->h;
-        width = images[0]->w;
-	x += TILE_WIDTH / 2;
-	x -= width / 2;
-//        y -= height;
-        coll_x = 0;
-        coll_y = 0;
-        coll_width = width;
-        coll_height = height;
+    //	rect(images[0], 0, 0, images[0]->w - 1, images[0]->h - 1, 15);
 
-//	rect(images[0], 0, 0, images[0]->w - 1, images[0]->h - 1, 15);
+    energy = 1;
+    strength = 0;
+    speed_x = 0;
 
-        energy = 1;
-        strength = 0;
-        speed_x = 0;
+    speed_y = 0;
+    speed_z = 0;
 
-        speed_y = 0;
-        speed_z = 0;
-
-        me = 0;
-	friends = 0;
-        enemies = 0;
+    me = 0;
+    friends = 0;
+    enemies = 0;
 }
 /****************************************************************************/
-ComputerScreen_o::~ComputerScreen_o() {
+ComputerScreen_o::~ComputerScreen_o()
+{
 }
 
 /****************************************************************************/
-int ComputerScreen_o::update() {
-	if (!energy)
-        	return -1;
-	return 0;
+int ComputerScreen_o::update()
+{
+    if (!energy)
+        return -1;
+    return 0;
 }
 
-void ComputerScreen_o::Collision(Object *o) {
-	if (!energy)
-        	return;
+void ComputerScreen_o::Collision(Object* o)
+{
+    if (!energy)
+        return;
 
-	if (!(o->GetWho() & (FRIEND_HS_BULLET | FRIEND_EXPLOSION | FRIEND_BEAM)))
-        	return;
+    if (!(o->GetWho() & (FRIEND_HS_BULLET | FRIEND_EXPLOSION | FRIEND_BEAM)))
+        return;
 
-	energy = 0;
-//       	ENGINE.create_object(new explosion_o(x, y, z));
-        ENGINE.create_effect(new SmallExplosion_o(x, y, z));
-//SmallExplosion_o(int X, int Y, int Z)
+    energy = 0;
+    //       	ENGINE.create_object(new explosion_o(x, y, z));
+    ENGINE.create_effect(new SmallExplosion_o(x, y, z));
+    //SmallExplosion_o(int X, int Y, int Z)
 }

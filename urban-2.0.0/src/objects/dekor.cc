@@ -28,62 +28,65 @@
 
     thomas.nyberg@usa.net				jonas_b@bitsmart.com
 *****************************************************************************/
-#include <string.h>
-#include <stdlib.h>
-#include <allegro.h>
 #include "engine.h"
 #include "object2.h"
+#include <allegro.h>
+#include <stdlib.h>
+#include <string.h>
 
+Dekor_o::Dekor_o(int X, int Y, int Z, const char* filename)
+    : Object(X, Y, Z)
+{
+    RGB pal[256];
 
-Dekor_o::Dekor_o(int X, int Y, int Z, const char *filename) : Object(X, Y, Z) {
-	RGB pal[256];
+    images = new BITMAP*;
 
-        images = new BITMAP *;
+    images[0] = icache.GetImage(filename, pal);
 
+    if (images[0])
+        num_images++;
 
-        images[0] = icache.GetImage(filename, pal);
+    current_image = 0;
 
-        if (images[0])
-        	num_images++;
+    height = images[0]->h;
+    width = images[0]->w;
+    x += TILE_WIDTH / 2;
+    x -= width / 2;
+    y -= height;
+    y += (TILE_TOP_HEIGHT);
+    coll_x = 0;
+    coll_y = 0;
+    coll_width = width;
+    coll_height = height;
 
-	current_image = 0;
+    energy = 1;
+    strength = 0;
+    speed_x = 0;
 
-        height = images[0]->h;
-        width = images[0]->w;
-	x += TILE_WIDTH / 2;
-	x -= width / 2;
-        y -= height;
-        y += (TILE_TOP_HEIGHT);
-        coll_x = 0;
-        coll_y = 0;
-        coll_width = width;
-        coll_height = height;
+    speed_y = 5;
+    speed_z = 0;
 
-        energy = 1;
-        strength = 0;
-        speed_x = 0;
-
-        speed_y = 5;
-        speed_z = 0;
-
-        me = FRIEND_DEKOR;
-	friends = 0;
-        enemies = 0;
+    me = FRIEND_DEKOR;
+    friends = 0;
+    enemies = 0;
 }
 /****************************************************************************/
-Dekor_o::~Dekor_o() {
+Dekor_o::~Dekor_o()
+{
 }
 
 /****************************************************************************/
-int Dekor_o::update() {
-       // Fall or Stop
-//	while (ENGINE.check_floor(x, y + height + speed_y, z) && speed_y)
-//		speed_y--;
+int Dekor_o::update()
+{
+    // Fall or Stop
+    //	while (ENGINE.check_floor(x, y + height + speed_y, z) && speed_y)
+    //		speed_y--;
 
-//	y += speed_y;
+    //	y += speed_y;
 
-	return 0;
+    return 0;
 }
 
-void Dekor_o::Collision(Object *o) {
+void Dekor_o::Collision(Object* o)
+{
 }

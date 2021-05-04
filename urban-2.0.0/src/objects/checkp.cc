@@ -28,80 +28,85 @@
 
     thomas.nyberg@usa.net				jonas_b@bitsmart.com
 *****************************************************************************/
-#include <string.h>
-#include <allegro.h>
 #include "engine.h"
 #include "object.h"
+#include <allegro.h>
+#include <string.h>
 
 /****************************************************************************/
-checkpoint_o::checkpoint_o(int X, int Y, int Z) : Object(X, Y, Z) {
-	RGB pal[256];
-        char filename[512];
+checkpoint_o::checkpoint_o(int X, int Y, int Z)
+    : Object(X, Y, Z)
+{
+    RGB pal[256];
+    char filename[512];
 
-	images = new BITMAP*[2];
-        strcpy(filename, "items/check.pcx");
-        images[0] = icache.GetImage(filename, pal);
-        if (images[0])
-        	num_images++;
-/*        strcpy(filename, "items/check2.pcx");
+    images = new BITMAP*[2];
+    strcpy(filename, "items/check.pcx");
+    images[0] = icache.GetImage(filename, pal);
+    if (images[0])
+        num_images++;
+    /*        strcpy(filename, "items/check2.pcx");
         images[1] = icache.GetImage(filename, pal);
         if (images[1])
         	num_images++;*/
 
-	current_image = 0;
+    current_image = 0;
 
-        height = images[0]->h;
-        width = images[0]->w;
-	x += TILE_WIDTH / 2;
-	x -= width / 2;
-        y -= height;
-        coll_x = 0;
-        coll_y = 0;
-        coll_width = width;
-        coll_height = height;
+    height = images[0]->h;
+    width = images[0]->w;
+    x += TILE_WIDTH / 2;
+    x -= width / 2;
+    y -= height;
+    coll_x = 0;
+    coll_y = 0;
+    coll_width = width;
+    coll_height = height;
 
-        energy = 1;
-        strength = 0;
-        speed_x = 0;
-        // Fall to the floor
-        speed_y = 5;
-        speed_z = 0;
-        counter = 0;
+    energy = 1;
+    strength = 0;
+    speed_x = 0;
+    // Fall to the floor
+    speed_y = 5;
+    speed_z = 0;
+    counter = 0;
 
-	friends = FRIEND_PLAYER;
-        enemies = ~friends;
-        me = FRIEND_CHECKPOINT;
+    friends = FRIEND_PLAYER;
+    enemies = ~friends;
+    me = FRIEND_CHECKPOINT;
 }
 /****************************************************************************/
-checkpoint_o::~checkpoint_o() {
+checkpoint_o::~checkpoint_o()
+{
 }
 /****************************************************************************/
-int checkpoint_o::update() {
-/*	if (counter)
+int checkpoint_o::update()
+{
+    /*	if (counter)
         	counter--;
 	if (!counter) {
         	current_image = current_image == 0 ? 1 : 0;
                 counter = 10;
 	}*/
-        // Fall or Stop
-	if (ENGINE.check_floor(x, y + height, z) || ENGINE.check_floor(x + width, y + height, z))
-        	speed_y = 0;
-	else
-	        y += speed_y;
+    // Fall or Stop
+    if (ENGINE.check_floor(x, y + height, z) || ENGINE.check_floor(x + width, y + height, z))
+        speed_y = 0;
+    else
+        y += speed_y;
 
-	// Delete if already used
-	if (!energy)
-        	return - 1;
-	return 0;
+    // Delete if already used
+    if (!energy)
+        return -1;
+    return 0;
 }
 /****************************************************************************/
-void checkpoint_o::Collision(Object *o) {
-	if (!energy)
-        	return;
+void checkpoint_o::Collision(Object* o)
+{
+    if (!energy)
+        return;
 
-	if (!(friends & o->GetWho()))
-        	return;
-	energy = 0;
-	ENGINE.PushMessage("Checkpoint");
-//        ENGINE.ClearLevel();
+    if (!(friends & o->GetWho()))
+        return;
+    energy = 0;
+    ENGINE.PushMessage("Checkpoint");
+    //        ENGINE.ClearLevel();
 }

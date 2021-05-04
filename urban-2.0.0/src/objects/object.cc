@@ -28,48 +28,52 @@
 
     thomas.nyberg@usa.net				jonas_b@bitsmart.com
 *****************************************************************************/
-#include <allegro.h>
-#include "icache.h"
 #include "object.h"
 #include "engine.h"
+#include "icache.h"
+#include <allegro.h>
 
-
-Object::Object(int X, int Y, int Z, int Mode) {
-	images = 0;
-        num_images = current_image = 0;
-        speed_z = speed_x = speed_y = 0;
-	direction = 0;
-        layer = (Z / TILE_TOP_HEIGHT);
-        x = X;
-        y = Y;
-        z = Z;
-        score = 0;
-        mode = Mode;
+Object::Object(int X, int Y, int Z, int Mode)
+{
+    images = 0;
+    num_images = current_image = 0;
+    speed_z = speed_x = speed_y = 0;
+    direction = 0;
+    layer = (Z / TILE_TOP_HEIGHT);
+    x = X;
+    y = Y;
+    z = Z;
+    score = 0;
+    mode = Mode;
 }
 
-Object::~Object() {
-	int i;
-        for (i = 0;i < num_images;i++)
-        	if (images[i])
-                	icache.FreeImage(images[i]);
+Object::~Object()
+{
+    int i;
+    for (i = 0; i < num_images; i++)
+        if (images[i])
+            icache.FreeImage(images[i]);
 }
 
-BITMAP *Object::GetImage() {
-	if(current_image < num_images)
-		return images[current_image];
-	else
-		return images[0];
+BITMAP* Object::GetImage()
+{
+    if (current_image < num_images)
+        return images[current_image];
+    else
+        return images[0];
 }
 
-int Object::update() {
-	return 0;
+int Object::update()
+{
+    return 0;
 }
 
-void Object::Collision(Object *o) {
+void Object::Collision(Object* o)
+{
 
-	if(o->GetEnemies() & me)
-		energy -= o->GetStrength();
+    if (o->GetEnemies() & me)
+        energy -= o->GetStrength();
 
-        if (energy < 0)
-        	energy = 0;
+    if (energy < 0)
+        energy = 0;
 }

@@ -28,70 +28,73 @@
 
     thomas.nyberg@usa.net				jonas_b@bitsmart.com
 *****************************************************************************/
-#include <string.h>
-#include <stdlib.h>
-#include <allegro.h>
 #include "engine.h"
 #include "object2.h"
+#include <allegro.h>
+#include <stdlib.h>
+#include <string.h>
 
-
-#define STATE_NONE	0x00
-#define STATE_FIND	0x01
-#define STATE_DESTROY	0x02
+#define STATE_NONE 0x00
+#define STATE_FIND 0x01
+#define STATE_DESTROY 0x02
 /****************************************************************************/
-ElevatorWire_o::ElevatorWire_o(int X, int Y, int Z) : Object(X, Y, Z) {
-	RGB pal[256];
-        char filename[512];
+ElevatorWire_o::ElevatorWire_o(int X, int Y, int Z)
+    : Object(X, Y, Z)
+{
+    RGB pal[256];
+    char filename[512];
 
-	images = new BITMAP*;
-        sprintf(filename, "connect.pcx");
-        images[0] = icache.GetImage(filename, pal);
-        if (images[0])
-        	num_images++;
+    images = new BITMAP*;
+    sprintf(filename, "connect.pcx");
+    images[0] = icache.GetImage(filename, pal);
+    if (images[0])
+        num_images++;
 
-	current_image = 0;
+    current_image = 0;
 
-        height = images[0]->h;
-        width = images[0]->w;
-//	x += TILE_WIDTH / 2;
-//	x -= width / 2;
-	x += TILE_WIDTH;
-        y -= height;
-        coll_x = 0;
-        coll_y = 0;
-        coll_width = width;
-        coll_height = height;
-        energy = 1;
-        strength = 0;
+    height = images[0]->h;
+    width = images[0]->w;
+    //	x += TILE_WIDTH / 2;
+    //	x -= width / 2;
+    x += TILE_WIDTH;
+    y -= height;
+    coll_x = 0;
+    coll_y = 0;
+    coll_width = width;
+    coll_height = height;
+    energy = 1;
+    strength = 0;
 
-        speed_x = 0;
-        speed_y = 0;
-        speed_z = 0;
-	counter = 0;
+    speed_x = 0;
+    speed_y = 0;
+    speed_z = 0;
+    counter = 0;
 
-        me = FRIEND_ELEVWIRE;
-	friends = 0;
-        enemies = 0;
+    me = FRIEND_ELEVWIRE;
+    friends = 0;
+    enemies = 0;
 
-	anim.reset();
+    anim.reset();
 
-	counter2 = 0;
-	counter3 = 0;
-        state = STATE_NONE;
-	elev_controller = NULL;
-        wire_up = wire_down = NULL;
+    counter2 = 0;
+    counter3 = 0;
+    state = STATE_NONE;
+    elev_controller = NULL;
+    wire_up = wire_down = NULL;
 }
 
 /****************************************************************************/
-ElevatorWire_o::~ElevatorWire_o() {
+ElevatorWire_o::~ElevatorWire_o()
+{
 }
 
 /****************************************************************************/
-int ElevatorWire_o::update() {
-	if (state == STATE_DESTROY)
-        	return -1;
+int ElevatorWire_o::update()
+{
+    if (state == STATE_DESTROY)
+        return -1;
 
-	return 0;
+    return 0;
 }
 
 #if 0
@@ -134,23 +137,25 @@ void ElevatorWire_o::FindElevator(int dir, Object *w) {
 }
 #endif
 
-void ElevatorWire_o::FindElevatorStation(Object *w, Object *sender) {
-	if (elev_controller && elev_controller != sender)
-        	((ElevatorStation_o *)elev_controller)->SetElevatorStation(w);
-	else if (wire_down)
-        	((ElevatorWire_o *)wire_down)->FindElevatorStation(w, this);
+void ElevatorWire_o::FindElevatorStation(Object* w, Object* sender)
+{
+    if (elev_controller && elev_controller != sender)
+        ((ElevatorStation_o*)elev_controller)->SetElevatorStation(w);
+    else if (wire_down)
+        ((ElevatorWire_o*)wire_down)->FindElevatorStation(w, this);
 
-	state = STATE_DESTROY;
+    state = STATE_DESTROY;
 }
 
-void ElevatorWire_o::Collision(Object *o) {
-	if (o->GetWho() == FRIEND_ELEVSTAT)
-        	elev_controller = o;
+void ElevatorWire_o::Collision(Object* o)
+{
+    if (o->GetWho() == FRIEND_ELEVSTAT)
+        elev_controller = o;
 
-	if (o->GetWho() == FRIEND_ELEVWIRE) {
-        	if (o->GetY() > y)
-                	wire_down = o;
-		else if (o->GetY() < y)
-                	wire_up = o;
-	}
+    if (o->GetWho() == FRIEND_ELEVWIRE) {
+        if (o->GetY() > y)
+            wire_down = o;
+        else if (o->GetY() < y)
+            wire_up = o;
+    }
 }

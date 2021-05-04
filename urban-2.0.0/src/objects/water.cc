@@ -28,78 +28,82 @@
 
     thomas.nyberg@usa.net				jonas_b@bitsmart.com
 *****************************************************************************/
-#include <string.h>
-#include <stdlib.h>
-#include <allegro.h>
 #include "engine.h"
 #include "object2.h"
+#include <allegro.h>
+#include <stdlib.h>
+#include <string.h>
 
 /****************************************************************************/
-Water_o::Water_o(int X, int Y, int Z) : Object(X, Y, Z) {
-	RGB pal[256];
-        char filename[512];
+Water_o::Water_o(int X, int Y, int Z)
+    : Object(X, Y, Z)
+{
+    RGB pal[256];
+    char filename[512];
 
-	images = new BITMAP*[2];
-	for (int i = 0;i < 2;i++) {
-	        sprintf(filename, "water%d.pcx", i + 1);
-	        images[i] = icache.GetImage(filename, pal);
-	        if (images[i])
-        		num_images++;
-	}
-	current_image = 0;
+    images = new BITMAP*[2];
+    for (int i = 0; i < 2; i++) {
+        sprintf(filename, "water%d.pcx", i + 1);
+        images[i] = icache.GetImage(filename, pal);
+        if (images[i])
+            num_images++;
+    }
+    current_image = 0;
 
-        height = images[0]->h;
-        width = images[0]->w;
-//	x += TILE_WIDTH / 2;
-//	x -= width / 2;
-//	x += TILE_WIDTH;
-        y -= height;
-        y += 10;
-        coll_x = 0;
-        coll_y = 0;
-        coll_width = width;
-        coll_height = height;
-        energy = 1;
-        strength = 0;
+    height = images[0]->h;
+    width = images[0]->w;
+    //	x += TILE_WIDTH / 2;
+    //	x -= width / 2;
+    //	x += TILE_WIDTH;
+    y -= height;
+    y += 10;
+    coll_x = 0;
+    coll_y = 0;
+    coll_width = width;
+    coll_height = height;
+    energy = 1;
+    strength = 0;
 
-        speed_x = 0;
-        speed_y = 0;
-        speed_z = 0;
-	counter = 0;
+    speed_x = 0;
+    speed_y = 0;
+    speed_z = 0;
+    counter = 0;
 
-        me = FRIEND_WATER;
-	friends = 0;
-        enemies = 0;
+    me = FRIEND_WATER;
+    friends = 0;
+    enemies = 0;
 
-	anim.reset();
+    anim.reset();
 
-	counter2 = 0;
-	counter3 = 0;
-        counter = 0;
+    counter2 = 0;
+    counter3 = 0;
+    counter = 0;
 }
 /****************************************************************************/
-Water_o::~Water_o() {
+Water_o::~Water_o()
+{
 }
 
 /****************************************************************************/
-int Water_o::update() {
-	current_image = anim.next_frame(1, 60);
-	return 0;
+int Water_o::update()
+{
+    current_image = anim.next_frame(1, 60);
+    return 0;
 }
 
-void Water_o::Collision(Object *o) {
+void Water_o::Collision(Object* o)
+{
 
+    if (o->GetSpeedY() > 0 && o->GetY() > y) {
+        o->SetMode(MODE_WATER);
+        ENGINE.map.SetPal(PAL_WATER);
+    } //else if (o->GetY() + o->GetHeight() < y + 10) {
+    else if (o->GetMode() == MODE_WATER && o->GetY() <= y) {
+        o->SetMode(MODE_NORMAL);
+        ENGINE.map.SetPal(PAL_AIR);
+    }
 
-	if (o->GetSpeedY() > 0 && o->GetY() > y) {
-        	o->SetMode(MODE_WATER);
-                ENGINE.map.SetPal(PAL_WATER);
-	} //else if (o->GetY() + o->GetHeight() < y + 10) {
-        else if (o->GetMode() == MODE_WATER && o->GetY() <= y) {
-        	o->SetMode(MODE_NORMAL);
-                ENGINE.map.SetPal(PAL_AIR);
-        }
-
-/*	if (o->GetSpeedY() < 0 &&
+    /*	if (o->GetSpeedY() < 0 &&
         	o->GetY() + o->GetHeight() - y <= 10)
 
 	if (o->GetSpeedY() > 0 &&

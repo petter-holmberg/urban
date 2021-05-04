@@ -28,59 +28,64 @@
 
     thomas.nyberg@usa.net				jonas_b@bitsmart.com
 *****************************************************************************/
-#include <allegro.h>
-#include "object.h"
 #include "engine.h"
+#include "object.h"
+#include <allegro.h>
 
-gnistor_o::gnistor_o(int X, int Y, int Z, int Speed_X, int Speed_Y, int Speed_Z, int Direction) : Object(X, Y, Z) {
-	RGB pal[256];
-        char filename[512];
-        int i;
+gnistor_o::gnistor_o(int X, int Y, int Z, int Speed_X, int Speed_Y, int Speed_Z, int Direction)
+    : Object(X, Y, Z)
+{
+    RGB pal[256];
+    char filename[512];
+    int i;
 
-        anim.reset();
-	images = new BITMAP*[3];
+    anim.reset();
+    images = new BITMAP*[3];
 
-        for (i = 0;i < 3;i++) {
-		sprintf(filename, "gnist/%s/%d.pcx", Direction == LEFT_DIR ? "v":"h", i + 1);
-                images[i] = icache.GetImage(filename, pal);
-                if (images[i])
-                	num_images++;
-	}
-        height = images[0]->h;
-        width = images[0]->w;
+    for (i = 0; i < 3; i++) {
+        sprintf(filename, "gnist/%s/%d.pcx", Direction == LEFT_DIR ? "v" : "h", i + 1);
+        images[i] = icache.GetImage(filename, pal);
+        if (images[i])
+            num_images++;
+    }
+    height = images[0]->h;
+    width = images[0]->w;
 
-        current_image = 0;
-        //stå med fötterna
-        y -= (height / 2);
+    current_image = 0;
+    //stå med fötterna
+    y -= (height / 2);
 
-        x -= (width / 2);
-        coll_x = 0;
-        coll_y = 0;
-        coll_width = width;
-        coll_height = height;
+    x -= (width / 2);
+    coll_x = 0;
+    coll_y = 0;
+    coll_width = width;
+    coll_height = height;
 
-        energy = 0;
-        strength = 10;
-        speed_x = 0;
-        speed_y = 0;
-        score = 0;
-        friends = ~0;
-	enemies = 0;
-        counter = 0;
-	me = 3;
+    energy = 0;
+    strength = 10;
+    speed_x = 0;
+    speed_y = 0;
+    score = 0;
+    friends = ~0;
+    enemies = 0;
+    counter = 0;
+    me = 3;
 }
 
-gnistor_o::~gnistor_o() {
+gnistor_o::~gnistor_o()
+{
 }
 
-int gnistor_o::update() {
-	counter++;
-	current_image = anim.next_frame(3, 3);
+int gnistor_o::update()
+{
+    counter++;
+    current_image = anim.next_frame(3, 3);
 
-        if (current_image >= 3)
-        	return -1;
-	return 0;
+    if (current_image >= 3)
+        return -1;
+    return 0;
 }
 
-void gnistor_o::Collision(Object *) {
+void gnistor_o::Collision(Object*)
+{
 }

@@ -28,11 +28,11 @@
 
     thomas.nyberg@usa.net				jonas_b@bitsmart.com
 *****************************************************************************/
-#include <string.h>
-#include <allegro.h>
 #include "engine.h"
 #include "object.h"
 #include "object2.h"
+#include <allegro.h>
+#include <string.h>
 
 #define EXPLOSION_SAMPLE "samples/heart_1.wav"
 #define FIRE_SAMPLE "samples/grenade.wav"
@@ -41,98 +41,102 @@
 #define ACCEL_COUNTER 3
 /****************************************************************************/
 
-rocket_o::rocket_o(int X, int Y, int Z, int Speed, int Mode) : Object(X, Y, Z, Mode) {
-	RGB pal[256];
-        char filename[512];
+rocket_o::rocket_o(int X, int Y, int Z, int Speed, int Mode)
+    : Object(X, Y, Z, Mode)
+{
+    RGB pal[256];
+    char filename[512];
 
-	images = new BITMAP*[1];
+    images = new BITMAP*[1];
 
-        SOUND.PlaySFX(FIRE_SAMPLE);
-        if (Speed > 0)
-	        sprintf(filename, "grenade.pcx");
-	else
-		sprintf(filename, "grenade2.pcx");
+    SOUND.PlaySFX(FIRE_SAMPLE);
+    if (Speed > 0)
+        sprintf(filename, "grenade.pcx");
+    else
+        sprintf(filename, "grenade2.pcx");
 
-        images[0] = icache.GetImage(filename, pal);
-        if (images[0])
-        	num_images++;
+    images[0] = icache.GetImage(filename, pal);
+    if (images[0])
+        num_images++;
 
-        height = images[0]->h;
-        width = images[0]->w;
-        coll_x = 0;
-        coll_y = 0;
-        coll_width = width;
-        coll_height = height;
+    height = images[0]->h;
+    width = images[0]->w;
+    coll_x = 0;
+    coll_y = 0;
+    coll_width = width;
+    coll_height = height;
 
-       	current_image = 0;
+    current_image = 0;
 
-        me = FRIEND_GRENADE;
-	friends = (me | FRIEND_GRENADE | FRIEND_FIREBALL | FRIEND_EXPLOSION | FRIEND_DOOR);
-        enemies = ~friends;
+    me = FRIEND_GRENADE;
+    friends = (me | FRIEND_GRENADE | FRIEND_FIREBALL | FRIEND_EXPLOSION | FRIEND_DOOR);
+    enemies = ~friends;
 
-        speed_x = mode == MODE_NORMAL ? Speed : Speed / 2;
-	speed_y = 0;
-        speed_z = 0;
-        direction = (Speed < 0 ? RIGHT_DIR : LEFT_DIR);
+    speed_x = mode == MODE_NORMAL ? Speed : Speed / 2;
+    speed_y = 0;
+    speed_z = 0;
+    direction = (Speed < 0 ? RIGHT_DIR : LEFT_DIR);
 
-        counter = 0;
+    counter = 0;
 
-        energy = 10000000;
-        strength = 0;
+    energy = 10000000;
+    strength = 0;
 
-        counter = 0;
+    counter = 0;
 }
 /****************************************************************************/
-rocket_o::~rocket_o() {
+rocket_o::~rocket_o()
+{
 }
 
 /****************************************************************************/
-int rocket_o::update() {
-	x += speed_x;
+int rocket_o::update()
+{
+    x += speed_x;
 
-        if (x < 0) //out of range
-                return -1;
+    if (x < 0) //out of range
+        return -1;
 
-	if (energy <= 0)
-        	return -1;
+    if (energy <= 0)
+        return -1;
 
-        counter += speed_x;
+    counter += speed_x;
 
-        if(counter > 600)
-        	return -1;
+    if (counter > 600)
+        return -1;
 
-        // Check collision with walls
-	if(ENGINE.check_wall(x, y, z)
-		|| ENGINE.check_wall(x + width, y, z)) {
+    // Check collision with walls
+    if (ENGINE.check_wall(x, y, z)
+        || ENGINE.check_wall(x + width, y, z)) {
 
-		        SOUND.PlaySFX(EXPLOSION_SAMPLE);
-		       	ENGINE.create_object(new explosion_o(x, y - TILE_SIDE_HEIGHT + 15, z));
-//		       	ENGINE.create_object(new explosion_o(x + 15, y - TILE_SIDE_HEIGHT, z));
-//		       	ENGINE.create_object(new explosion_o(x - 15, y - TILE_SIDE_HEIGHT, z));
-
-	        	return -1;
-	}
-        if (mode == MODE_WATER) {
-        	if(speed_x < 0) {
-	        	if (!(random() % 10))
-	                	ENGINE.create_object(new Bubble_o(x - 20, y, z));
-		} else {
-	        	if (!(random() % 10))
-	                	ENGINE.create_object(new Bubble_o(x - 30, y, z));
-                }
-        }
-	return 0;
-}
-
-void rocket_o::Collision(Object *o) {
-	if (!energy)
-        	return;
-	if (friends & o->GetWho())
-        	return;
-	energy = 0;
         SOUND.PlaySFX(EXPLOSION_SAMPLE);
-	ENGINE.create_object(new explosion_o(x, y - TILE_SIDE_HEIGHT + 15, z));
-//       	ENGINE.create_object(new explosion_o(x + 15, y - TILE_SIDE_HEIGHT, z));
-//       	ENGINE.create_object(new explosion_o(x - 15, y - TILE_SIDE_HEIGHT, z));
+        ENGINE.create_object(new explosion_o(x, y - TILE_SIDE_HEIGHT + 15, z));
+        //		       	ENGINE.create_object(new explosion_o(x + 15, y - TILE_SIDE_HEIGHT, z));
+        //		       	ENGINE.create_object(new explosion_o(x - 15, y - TILE_SIDE_HEIGHT, z));
+
+        return -1;
+    }
+    if (mode == MODE_WATER) {
+        if (speed_x < 0) {
+            if (!(random() % 10))
+                ENGINE.create_object(new Bubble_o(x - 20, y, z));
+        } else {
+            if (!(random() % 10))
+                ENGINE.create_object(new Bubble_o(x - 30, y, z));
+        }
+    }
+    return 0;
 }
 
+void rocket_o::Collision(Object* o)
+{
+    if (!energy)
+        return;
+    if (friends & o->GetWho())
+        return;
+    energy = 0;
+    SOUND.PlaySFX(EXPLOSION_SAMPLE);
+    ENGINE.create_object(new explosion_o(x, y - TILE_SIDE_HEIGHT + 15, z));
+    //       	ENGINE.create_object(new explosion_o(x + 15, y - TILE_SIDE_HEIGHT, z));
+    //       	ENGINE.create_object(new explosion_o(x - 15, y - TILE_SIDE_HEIGHT, z));
+}

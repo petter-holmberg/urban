@@ -28,153 +28,153 @@
 
     thomas.nyberg@usa.net				jonas_b@bitsmart.com
 *****************************************************************************/
-#include <string.h>
-#include <stdlib.h>
-#include <allegro.h>
 #include "engine.h"
 #include "object2.h"
+#include <allegro.h>
+#include <stdlib.h>
+#include <string.h>
 
-#define STATE_NONE	0
+#define STATE_NONE 0
 
-#define MAX_X_SPEED	2 //4
-#define X_FRICTION	1
-#define MIN_X_SPEED	-MAX_X_SPEED //-4
-#define MAX_Y_SPEED	16
-#define MIN_Y_SPEED	-12
-#define X_ACCEL		2 //2
-#define Y_ACCEL		1
-#define Z_ACCEL		2
-#define MAX_Z_SPEED	2
-#define MIN_Z_SPEED	-MAX_Z_SPEED
-#define Z_FRICTION	1
+#define MAX_X_SPEED 2 //4
+#define X_FRICTION 1
+#define MIN_X_SPEED -MAX_X_SPEED //-4
+#define MAX_Y_SPEED 16
+#define MIN_Y_SPEED -12
+#define X_ACCEL 2 //2
+#define Y_ACCEL 1
+#define Z_ACCEL 2
+#define MAX_Z_SPEED 2
+#define MIN_Z_SPEED -MAX_Z_SPEED
+#define Z_FRICTION 1
 
 #define COLL_X (coll_x + coll_width)
 #define COLL_Y (coll_y + coll_height)
 
 /**************************************************************************/
-TankWheel_o::TankWheel_o(int X, int Y, int Z) : Object(X, Y, Z) {
-	RGB pal[256];
-        char filename[512];
-        int i;
+TankWheel_o::TankWheel_o(int X, int Y, int Z)
+    : Object(X, Y, Z)
+{
+    RGB pal[256];
+    char filename[512];
+    int i;
 
-        anim.reset();
+    anim.reset();
 
-	images = new BITMAP*[6];
+    images = new BITMAP*[6];
 
-        for (i = 0;i < 3;i++) {
-        	sprintf(filename, "boss/v/band%d.pcx", i + 1);
-                images[i] = icache.GetImage(filename, pal);
-                if (images[i])
-                	num_images++;
-	}
-        for (i = 3;i < 6;i++) {
-        	sprintf(filename, "boss/h/band%d.pcx", i - 2);
-                images[i] = icache.GetImage(filename, pal);
-                if (images[i])
-                	num_images++;
-	}
-        current_image = 0;
+    for (i = 0; i < 3; i++) {
+        sprintf(filename, "boss/v/band%d.pcx", i + 1);
+        images[i] = icache.GetImage(filename, pal);
+        if (images[i])
+            num_images++;
+    }
+    for (i = 3; i < 6; i++) {
+        sprintf(filename, "boss/h/band%d.pcx", i - 2);
+        images[i] = icache.GetImage(filename, pal);
+        if (images[i])
+            num_images++;
+    }
+    current_image = 0;
 
-        height = images[0]->h;
-        width = images[0]->w;
-        coll_x = 0;
-        coll_y = 0;
-        coll_width = width;
-        coll_height = height;
-//        for (i = 0;i < num_images;i++)
-//		rect(images[i], coll_x, coll_y, COLL_X, COLL_Y, 15);
+    height = images[0]->h;
+    width = images[0]->w;
+    coll_x = 0;
+    coll_y = 0;
+    coll_width = width;
+    coll_height = height;
+    //        for (i = 0;i < num_images;i++)
+    //		rect(images[i], coll_x, coll_y, COLL_X, COLL_Y, 15);
 
-        //stå med fötterna
-        y -= images[0]->h;
-        energy = 10;
-        strength = 10;
-        speed_x = 0;
+    //stå med fötterna
+    y -= images[0]->h;
+    energy = 10;
+    strength = 10;
+    speed_x = 0;
+    speed_y = 0;
+    speed_z = 0;
+    direction = RIGHT_DIR;
+    state = STATE_NONE;
+    counter = 0;
+    score = 0;
+    friends = ~FRIEND_PLAYER;
+    enemies = ENEMY_PLAYER;
+    me = 0;
+}
+
+int TankWheel_o::update()
+{
+    //	int r;
+
+    if (energy <= 0)
+        return -1;
+
+    if (counter)
+        counter--;
+
+    if (!counter) {
+    }
+
+    // Fall or Stop
+    if (ENGINE.check_floor(x, y + height, z) || ENGINE.check_floor(x + width, y + height, z)) {
         speed_y = 0;
+    } else if (speed_y < MAX_Y_SPEED) {
+        speed_y += Y_ACCEL;
         speed_z = 0;
-	direction = RIGHT_DIR;
-        state = STATE_NONE;
+    }
+
+    x += speed_x;
+    y += speed_y;
+    z += speed_z;
+
+    if (x < 0)
+        x = 0;
+
+    if (z > MIN_Z) {
+        z = MIN_Z;
+        speed_z = 0;
+        //                state = STATE_STOP;
         counter = 0;
-        score = 0;
-	friends = ~FRIEND_PLAYER;
-        enemies = ENEMY_PLAYER;
-        me = 0;
+    }
+    if (z < MAX_Z) {
+        z = MAX_Z;
+        speed_z = 0;
+        //                state = STATE_STOP;
+        counter = 0;
+    }
+
+    layer = z / TILE_TOP_HEIGHT;
+
+    return 0;
 }
 
-
-int TankWheel_o::update() {
-//	int r;
-
-	if (energy <= 0)
-        	return -1;
-
-	if (counter)
-        	counter--;
-
-	if (!counter) {
-        }
-
-
-        // Fall or Stop
-	if (ENGINE.check_floor(x, y + height, z) ||
-		ENGINE.check_floor(x + width, y + height, z)) {
-        	speed_y = 0;
-        } else if (speed_y < MAX_Y_SPEED) {
-        	speed_y += Y_ACCEL;
-                speed_z = 0;
-        }
-
-        x += speed_x;
-        y += speed_y;
-        z += speed_z;
-
-        if (x < 0)
-        	x = 0;
-
-
-	if (z > MIN_Z) {
-        	z = MIN_Z;
-                speed_z = 0;
-//                state = STATE_STOP;
-                counter = 0;
-	}
-	if (z < MAX_Z) {
-        	z = MAX_Z;
-                speed_z = 0;
-//                state = STATE_STOP;
-                counter = 0;
-	}
-
-
-	layer = z / TILE_TOP_HEIGHT;
-
-
-	return 0;
+void TankWheel_o::DestroyTank()
+{
+    energy = 0;
 }
 
-void TankWheel_o::DestroyTank() {
-	energy = 0;
+void TankWheel_o::MoveLeft(int X)
+{
+    x = X;
+    current_image = anim.next_frame(2, 4);
 }
 
-void TankWheel_o::MoveLeft(int X) {
-	x = X;
-        current_image = anim.next_frame(2, 4);
+void TankWheel_o::MoveRight(int X)
+{
+    x = X;
+    current_image = 2 - anim.next_frame(2, 4);
 }
 
-void TankWheel_o::MoveRight(int X) {
-	x = X;
-        current_image = 2 - anim.next_frame(2, 4);
-}
+void TankWheel_o::Collision(Object* o)
+{
+    //	int i;
 
+    //        if (!energy)
+    //        	return;
 
-void TankWheel_o::Collision(Object *o) {
-//	int i;
+    //        Object::Collision(o);
 
-//        if (!energy)
-//        	return;
-
-//        Object::Collision(o);
-
-/*	if ((o->GetStrength() > 0) && (!(o->GetFriends() & me))) {
+    /*	if ((o->GetStrength() > 0) && (!(o->GetFriends() & me))) {
        		if (direction == RIGHT_DIR) {
                		if (energy <= 0) {
                         	if (o->GetWho() & ENEMY_EXPLOSION)
@@ -211,6 +211,7 @@ void TankWheel_o::Collision(Object *o) {
 }
 
 /**************************************************************************/
-TankWheel_o::~TankWheel_o() {
+TankWheel_o::~TankWheel_o()
+{
 }
 /**************************************************************************/

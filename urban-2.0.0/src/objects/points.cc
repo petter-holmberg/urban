@@ -28,77 +28,81 @@
 
     thomas.nyberg@usa.net				jonas_b@bitsmart.com
 *****************************************************************************/
-#include <string.h>
-#include <stdlib.h>
-#include <allegro.h>
 #include "engine.h"
 #include "object2.h"
+#include <allegro.h>
+#include <stdlib.h>
+#include <string.h>
 
+#define EXIST_DELAY 100
+#define MOVE_DELAY 2
 
-#define EXIST_DELAY	100
-#define MOVE_DELAY	2
+Points_o::Points_o(int X, int Y, int Z, int score)
+    : Object(X, Y, Z)
+{
+    RGB pal[256];
+    char filename[512];
+    int i;
 
-Points_o::Points_o(int X, int Y, int Z, int score) : Object(X, Y, Z) {
-	RGB pal[256];
-        char filename[512];
-	int i;
+    images = new BITMAP*[10];
+    //        sprintf(filename, "xbarrel.pcx");
+    for (i = 0; i < 10; i++) {
+        sprintf(filename, "points/%d00.pcx", i + 1);
+        images[i] = icache.GetImage(filename, pal);
+        if (images[i])
+            num_images++;
+    }
 
-	images = new BITMAP*[10];
-//        sprintf(filename, "xbarrel.pcx");
-        for (i = 0;i < 10;i++) {
-        	sprintf(filename, "points/%d00.pcx", i + 1);
-	        images[i] = icache.GetImage(filename, pal);
-	        if (images[i])
-        		num_images++;
-	}
+    current_image = (score / 100) - 1;
+    if (current_image < 0)
+        current_image = 0;
+    if (current_image > 9)
+        current_image = 9;
 
-	current_image = (score / 100) - 1;
-        if (current_image < 0)
-        	current_image = 0;
-	if (current_image > 9)
-        	current_image = 9;
+    height = images[0]->h;
+    width = images[0]->w;
+    //	x += TILE_WIDTH / 2;
+    //	x -= width / 2;
+    //        y -= height;
+    coll_x = 0;
+    coll_y = 0;
+    coll_width = width;
+    coll_height = height;
 
-        height = images[0]->h;
-        width = images[0]->w;
-//	x += TILE_WIDTH / 2;
-//	x -= width / 2;
-//        y -= height;
-        coll_x = 0;
-        coll_y = 0;
-        coll_width = width;
-        coll_height = height;
+    //	rect(images[0], 0, 0, images[0]->w - 1, images[0]->h - 1, 15);
 
-//	rect(images[0], 0, 0, images[0]->w - 1, images[0]->h - 1, 15);
+    energy = 1;
+    strength = 0;
+    speed_x = 0;
 
-        energy = 1;
-        strength = 0;
-        speed_x = 0;
-
-        speed_y = 0;
-        speed_z = 0;
-        speed_x = 0;
-	counter = EXIST_DELAY;
-        me = 0;
-	friends = 0;
-        enemies = 0;
+    speed_y = 0;
+    speed_z = 0;
+    speed_x = 0;
+    counter = EXIST_DELAY;
+    me = 0;
+    friends = 0;
+    enemies = 0;
 }
 /****************************************************************************/
-Points_o::~Points_o() {
+Points_o::~Points_o()
+{
 }
 
 /****************************************************************************/
-int Points_o::update() {
-	if (counter)
-        	counter--;
+int Points_o::update()
+{
+    if (counter)
+        counter--;
 
-	if (!counter)
-        	return -1;
+    if (!counter)
+        return -1;
 
-	if (!(counter % MOVE_DELAY)) {
-		y--;
-	}
-	return 0;
+    if (!(counter % MOVE_DELAY)) {
+        y--;
+    }
+    return 0;
 }
 
-void Points_o::Collision(Object *o) {
+void Points_o::Collision(Object* o)
+{
 }

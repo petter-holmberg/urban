@@ -28,81 +28,86 @@
 
     thomas.nyberg@usa.net				jonas_b@bitsmart.com
 *****************************************************************************/
-#include <allegro.h>
-#include "object2.h"
 #include "engine.h"
+#include "object2.h"
+#include <allegro.h>
 
-#define X_SPEED		1
-#define FRAME_DELAY 	2
+#define X_SPEED 1
+#define FRAME_DELAY 2
 
-#define LIFE_FRAMES	9
+#define LIFE_FRAMES 9
 
-Beam_o::Beam_o(int X, int Y, int Z, int Friends, int SpeedX, int SpeedY) : Object(X, Y, Z) {
-	RGB pal[256];
-        char filename[512];
-        int i;
+Beam_o::Beam_o(int X, int Y, int Z, int Friends, int SpeedX, int SpeedY)
+    : Object(X, Y, Z)
+{
+    RGB pal[256];
+    char filename[512];
+    int i;
 
-        anim.reset();
-        images = new BITMAP*[5];
+    anim.reset();
+    images = new BITMAP*[5];
 
-        for (i = 0;i < 5;i++) {
-		sprintf(filename, "beam/%d.pcx", i + 1);
-                images[i] = icache.GetImage(filename, pal);
-                if (images[i])
-                	num_images++;
-	}
+    for (i = 0; i < 5; i++) {
+        sprintf(filename, "beam/%d.pcx", i + 1);
+        images[i] = icache.GetImage(filename, pal);
+        if (images[i])
+            num_images++;
+    }
 
-        height = images[0]->h;
-        width = images[0]->w;
-        coll_x = 0;
-        coll_y = 0;
-        coll_width = width;
-        coll_height = height;
+    height = images[0]->h;
+    width = images[0]->w;
+    coll_x = 0;
+    coll_y = 0;
+    coll_width = width;
+    coll_height = height;
 
-        direction = SpeedX < 0 ? LEFT_DIR : RIGHT_DIR;
+    direction = SpeedX < 0 ? LEFT_DIR : RIGHT_DIR;
 
-        current_image = direction == LEFT_DIR ? 0 : 8;
-        //stå med fötterna
-//        y -= (height / 2);
+    current_image = direction == LEFT_DIR ? 0 : 8;
+    //stå med fötterna
+    //        y -= (height / 2);
 
-        x = (direction == LEFT_DIR ? x - width : x);
-        energy = 10000000;
-        strength = 10;
-        speed_x = SpeedX + (direction == LEFT_DIR ? -X_SPEED: X_SPEED);
-        speed_y = SpeedY;
-        speed_z = 0;
-        score = 0;
-        friends = Friends | FRIEND_FIREBALL | FRIEND_HS_BULLET | FRIEND_DEKOR;
-	enemies = ~friends;
-        counter = LIFE_FRAMES;
-        me = FRIEND_BEAM;
+    x = (direction == LEFT_DIR ? x - width : x);
+    energy = 10000000;
+    strength = 10;
+    speed_x = SpeedX + (direction == LEFT_DIR ? -X_SPEED : X_SPEED);
+    speed_y = SpeedY;
+    speed_z = 0;
+    score = 0;
+    friends = Friends | FRIEND_FIREBALL | FRIEND_HS_BULLET | FRIEND_DEKOR;
+    enemies = ~friends;
+    counter = LIFE_FRAMES;
+    me = FRIEND_BEAM;
 }
 
-Beam_o::~Beam_o() {
+Beam_o::~Beam_o()
+{
 }
 
-int Beam_o::update() {
+int Beam_o::update()
+{
 
-	if (counter)
-        	counter--;
+    if (counter)
+        counter--;
 
-	if (counter == 0)
-        	return -1;
+    if (counter == 0)
+        return -1;
 
-        current_image = anim.next_frame(4, FRAME_DELAY);
+    current_image = anim.next_frame(4, FRAME_DELAY);
 
-        x += speed_x;
-        y += speed_y;
-        z += speed_z;
+    x += speed_x;
+    y += speed_y;
+    z += speed_z;
 
-	if (!energy)
-        	return -1;
+    if (!energy)
+        return -1;
 
-	return 0;
+    return 0;
 }
 
-void Beam_o::Collision(Object *o) {
+void Beam_o::Collision(Object* o)
+{
 
-	if (!(o->GetWho() & friends))
-        	strength = 0;
+    if (!(o->GetWho() & friends))
+        strength = 0;
 }

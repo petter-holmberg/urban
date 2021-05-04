@@ -28,68 +28,71 @@
 
     thomas.nyberg@usa.net				jonas_b@bitsmart.com
 *****************************************************************************/
-#include <allegro.h>
-#include "object2.h"
 #include "engine.h"
+#include "object2.h"
+#include <allegro.h>
 
+#define EXPLODE_SAMPLE "samples/ex12.wav"
+#define EXPLODE_SPEED 4
+#define EXPLODE_DAMAGE 30
+#define EXPLODE_FRAMES 4
 
-#define EXPLODE_SAMPLE	"samples/ex12.wav"
-#define EXPLODE_SPEED	4
-#define EXPLODE_DAMAGE	30
-#define EXPLODE_FRAMES	4
+AirExplosion_o::AirExplosion_o(int X, int Y, int Z, int Speed_X, int Speed_Y, int Speed_Z)
+    : Object(X, Y, Z)
+{
+    RGB pal[256];
+    char filename[512];
+    int i;
 
-AirExplosion_o::AirExplosion_o(int X, int Y, int Z, int Speed_X, int Speed_Y, int Speed_Z) : Object(X, Y, Z) {
-	RGB pal[256];
-        char filename[512];
-        int i;
+    anim.reset();
+    images = new BITMAP*[10];
 
-        anim.reset();
-        images = new BITMAP*[10];
+    for (i = 0; i < 10; i++) {
+        sprintf(filename, "expl/%d.pcx", i + 1);
+        images[i] = icache.GetImage(filename, pal);
+        if (images[i])
+            num_images++;
+    }
+    height = images[0]->h;
+    width = images[0]->w;
 
-        for (i = 0;i < 10;i++) {
-		sprintf(filename, "expl/%d.pcx", i + 1);
-                images[i] = icache.GetImage(filename, pal);
-                if (images[i])
-                	num_images++;
-	}
-        height = images[0]->h;
-        width = images[0]->w;
+    current_image = 0;
+    y -= (height / 2);
 
-        current_image = 0;
-        y -= (height / 2);
+    x -= (width / 2);
+    coll_x = 0;
+    coll_y = 0;
+    coll_width = width;
+    coll_height = height;
 
-        x -= (width / 2);
-        coll_x = 0;
-        coll_y = 0;
-        coll_width = width;
-        coll_height = height;
-
-        energy = 1;
-        strength = EXPLODE_DAMAGE;
-        speed_x = 0;
-        speed_y = 0;
-        score = 0;
-        friends = FRIEND_EXPLOSION;
-	enemies = ~friends;
-        counter = EXPLODE_FRAMES;
-//        counter2 = random() % 10;
-	me = FRIEND_EXPLOSION;
-	ENGINE.EnableEarthquake();
-//        SOUND.PlaySFX(EXPLODE_SAMPLE);
+    energy = 1;
+    strength = EXPLODE_DAMAGE;
+    speed_x = 0;
+    speed_y = 0;
+    score = 0;
+    friends = FRIEND_EXPLOSION;
+    enemies = ~friends;
+    counter = EXPLODE_FRAMES;
+    //        counter2 = random() % 10;
+    me = FRIEND_EXPLOSION;
+    ENGINE.EnableEarthquake();
+    //        SOUND.PlaySFX(EXPLODE_SAMPLE);
 }
 
-AirExplosion_o::~AirExplosion_o() {
+AirExplosion_o::~AirExplosion_o()
+{
 }
 
-int AirExplosion_o::update() {
-//        enemies = 0;
+int AirExplosion_o::update()
+{
+    //        enemies = 0;
 
-	if (counter)
-		counter--;
+    if (counter)
+        counter--;
 
-        if (!counter)
-        	strength = 0;
-/*
+    if (!counter)
+        strength = 0;
+    /*
         if(counter2 == 0) {
 
         	counter2 = 30;
@@ -99,18 +102,18 @@ int AirExplosion_o::update() {
         	strength = 0;
                 counter2--;
         }*/
-	current_image = anim.next_frame(10, EXPLODE_SPEED);
+    current_image = anim.next_frame(10, EXPLODE_SPEED);
 
-
-/*        if (current_image > 5)
+    /*        if (current_image > 5)
                 strength = 0;*/
-        if (current_image >= 10)
-        	return -1;
-	return 0;
+    if (current_image >= 10)
+        return -1;
+    return 0;
 }
 
-void AirExplosion_o::Collision(Object *o) {
-/*	if (((o->GetWho() & enemies))) {
+void AirExplosion_o::Collision(Object* o)
+{
+    /*	if (((o->GetWho() & enemies))) {
 
         	counter2 = 100;
         }*/

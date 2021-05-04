@@ -28,108 +28,111 @@
 
     thomas.nyberg@usa.net				jonas_b@bitsmart.com
 *****************************************************************************/
-#include <string.h>
-#include <stdlib.h>
-#include <allegro.h>
 #include "engine.h"
 #include "object2.h"
+#include <allegro.h>
+#include <stdlib.h>
+#include <string.h>
 
-
-#define STATE_DIE	0x01
-#define STATE_NONE	0x00
-#define MAX_LIFE	200
-#define MIN_LIFE	50
-
-/****************************************************************************/
-Bubble_o::Bubble_o(int X, int Y, int Z) : Object(X, Y, Z) {
-	RGB pal[256];
-        char filename[512];
-
-	images = new BITMAP*;
-        switch (random() % 2) {
-        	case 0:
-		        sprintf(filename, "bubble.pcx");
-                        break;
-		case 1:
-                	sprintf(filename, "bubbles.pcx");
-                	break;
-		default:
-                	break;
-	}
-        images[0] = icache.GetImage(filename, pal);
-        if (images[0])
-        	num_images++;
-
-	current_image = 0;
-
-        height = images[0]->h;
-        width = images[0]->w;
-//	x += TILE_WIDTH / 2;
-//	x -= width / 2;
-	x += TILE_WIDTH;
-        y -= height;
-        coll_x = 0;
-        coll_y = 0;
-        coll_width = width;
-        coll_height = height;
-        energy = 1;
-        strength = 0;
-
-        speed_x = 0;
-        speed_y = 0;
-        speed_z = 0;
-	counter = 0;
-
-        me = FRIEND_BUBBLE;
-	friends = 0;
-        enemies = 0;
-
-	anim.reset();
-
-	counter2 = 0;
-	counter3 = 0;
-        counter4 = MIN_LIFE + (random() % MAX_LIFE);
-        counter = 0;
-        state = STATE_NONE;
-}
-/****************************************************************************/
-Bubble_o::~Bubble_o() {
-}
+#define STATE_DIE 0x01
+#define STATE_NONE 0x00
+#define MAX_LIFE 200
+#define MIN_LIFE 50
 
 /****************************************************************************/
-int Bubble_o::update() {
+Bubble_o::Bubble_o(int X, int Y, int Z)
+    : Object(X, Y, Z)
+{
+    RGB pal[256];
+    char filename[512];
 
-	if (state == STATE_DIE)
-        	return -1;
+    images = new BITMAP*;
+    switch (random() % 2) {
+    case 0:
+        sprintf(filename, "bubble.pcx");
+        break;
+    case 1:
+        sprintf(filename, "bubbles.pcx");
+        break;
+    default:
+        break;
+    }
+    images[0] = icache.GetImage(filename, pal);
+    if (images[0])
+        num_images++;
 
-	if (counter4)
-        	counter4--;
-	else
-        	state = STATE_DIE;
+    current_image = 0;
 
-	if (counter)
-        	counter--;
+    height = images[0]->h;
+    width = images[0]->w;
+    //	x += TILE_WIDTH / 2;
+    //	x -= width / 2;
+    x += TILE_WIDTH;
+    y -= height;
+    coll_x = 0;
+    coll_y = 0;
+    coll_width = width;
+    coll_height = height;
+    energy = 1;
+    strength = 0;
 
-	if (counter2)
-        	counter2--;
+    speed_x = 0;
+    speed_y = 0;
+    speed_z = 0;
+    counter = 0;
 
-	if (!counter) {
-        	y--;
-                counter = 2;
-	}
-        if (!counter2) {
-		x += (-1 + random() % 3);
-                counter2 = 8;
-	}
+    me = FRIEND_BUBBLE;
+    friends = 0;
+    enemies = 0;
 
-        if (ENGINE.check_floor(x, y, z))
-        	return -1;
+    anim.reset();
 
-	return 0;
+    counter2 = 0;
+    counter3 = 0;
+    counter4 = MIN_LIFE + (random() % MAX_LIFE);
+    counter = 0;
+    state = STATE_NONE;
+}
+/****************************************************************************/
+Bubble_o::~Bubble_o()
+{
 }
 
-void Bubble_o::Collision(Object *o) {
-	if (o->GetWho() == FRIEND_WATER)
-        	state = STATE_DIE;
+/****************************************************************************/
+int Bubble_o::update()
+{
+
+    if (state == STATE_DIE)
+        return -1;
+
+    if (counter4)
+        counter4--;
+    else
+        state = STATE_DIE;
+
+    if (counter)
+        counter--;
+
+    if (counter2)
+        counter2--;
+
+    if (!counter) {
+        y--;
+        counter = 2;
+    }
+    if (!counter2) {
+        x += (-1 + random() % 3);
+        counter2 = 8;
+    }
+
+    if (ENGINE.check_floor(x, y, z))
+        return -1;
+
+    return 0;
 }
 
+void Bubble_o::Collision(Object* o)
+{
+    if (o->GetWho() == FRIEND_WATER)
+        state = STATE_DIE;
+}

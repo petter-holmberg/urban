@@ -28,114 +28,119 @@
 
     thomas.nyberg@usa.net				jonas_b@bitsmart.com
 *****************************************************************************/
-#include <string.h>
-#include <allegro.h>
 #include "engine.h"
 #include "object.h"
+#include <allegro.h>
+#include <string.h>
 
 /****************************************************************************/
 //#define POWERUP_STRENGTH 1000
 /****************************************************************************/
-card_o::card_o(int X, int Y, int Z, Cardtype Card) : Object(X, Y, Z) {
-	RGB pal[256];
-        char filename[512];
+card_o::card_o(int X, int Y, int Z, Cardtype Card)
+    : Object(X, Y, Z)
+{
+    RGB pal[256];
+    char filename[512];
 
-	images = new BITMAP*[2];
-        card = Card;
-	switch(Card) {
-        	case blue:
-		        sprintf(filename, "items/bluecard.pcx");
-                        break;
-                case green:
-		        sprintf(filename, "items/greencar.pcx");
-                        break;
-                case red:
-		        sprintf(filename, "items/redcard.pcx");
-                        break;
+    images = new BITMAP*[2];
+    card = Card;
+    switch (Card) {
+    case blue:
+        sprintf(filename, "items/bluecard.pcx");
+        break;
+    case green:
+        sprintf(filename, "items/greencar.pcx");
+        break;
+    case red:
+        sprintf(filename, "items/redcard.pcx");
+        break;
 
-                default:
-                	fprintf(stderr, "Unknown Card\n");
-                        exit(1);
-	}
-        images[0] = icache.GetImage(filename, pal);
-        if (images[0])
-        	num_images++;
-        sprintf(filename, "mine2.pcx");
-        images[1] = icache.GetImage(filename, pal);
-        if (images[1])
-        	num_images++;
+    default:
+        fprintf(stderr, "Unknown Card\n");
+        exit(1);
+    }
+    images[0] = icache.GetImage(filename, pal);
+    if (images[0])
+        num_images++;
+    sprintf(filename, "mine2.pcx");
+    images[1] = icache.GetImage(filename, pal);
+    if (images[1])
+        num_images++;
 
-	current_image = 0;
+    current_image = 0;
 
-        height = images[0]->h;
-        width = images[0]->w;
-	x += TILE_WIDTH / 2;
-	x -= width / 2;
-        y -= height;
-        coll_x = 0;
-        coll_y = 0;
-        coll_width = width;
-        coll_height = height;
+    height = images[0]->h;
+    width = images[0]->w;
+    x += TILE_WIDTH / 2;
+    x -= width / 2;
+    y -= height;
+    coll_x = 0;
+    coll_y = 0;
+    coll_width = width;
+    coll_height = height;
 
-        energy = 1;
-        strength = 0;
-        speed_x = 0;
-        // Fall to the floor
-        speed_y = 5;
-        speed_z = 0;
-        counter = 0;
+    energy = 1;
+    strength = 0;
+    speed_x = 0;
+    // Fall to the floor
+    speed_y = 5;
+    speed_z = 0;
+    counter = 0;
 
-	friends = FRIEND_PLAYER;
-        enemies = ~friends;
-        me = FRIEND_CARD;
+    friends = FRIEND_PLAYER;
+    enemies = ~friends;
+    me = FRIEND_CARD;
 }
 /****************************************************************************/
-card_o::~card_o() {
+card_o::~card_o()
+{
 }
 
 /****************************************************************************/
-int card_o::update() {
-	if (counter)
-        	counter--;
-	if (!counter) {
-        	current_image = current_image == 0 ? 1 : 0;
-                counter = 10;
-	}
-        // Fall or Stop
-	if (ENGINE.check_floor(x, y + height, z) || ENGINE.check_floor(x + width, y + height, z))
-        	speed_y = 0;
-	else
-	        y += speed_y;
+int card_o::update()
+{
+    if (counter)
+        counter--;
+    if (!counter) {
+        current_image = current_image == 0 ? 1 : 0;
+        counter = 10;
+    }
+    // Fall or Stop
+    if (ENGINE.check_floor(x, y + height, z) || ENGINE.check_floor(x + width, y + height, z))
+        speed_y = 0;
+    else
+        y += speed_y;
 
-	// Delete if already used
-	if (!energy)
-        	return - 1;
-	return 0;
+    // Delete if already used
+    if (!energy)
+        return -1;
+    return 0;
 }
 
-void card_o::Collision(Object *o) {
-	if (!energy)
-        	return;
+void card_o::Collision(Object* o)
+{
+    if (!energy)
+        return;
 
-	if (!(friends & o->GetWho()))
-        	return;
-	energy = 0;
+    if (!(friends & o->GetWho()))
+        return;
+    energy = 0;
 
-        ((player_o *)o)->GiveCard(card);
-        switch (card) {
-        	case green:
-                	ENGINE.PushMessage("Green access granted");
-                        break;
-		case red:
-			ENGINE.PushMessage("Red access granted");
-                	break;
-                case blue:
-			ENGINE.PushMessage("Blue access granted");
-                	break;
-		case none:
-                default:
-                	break;
-        }
+    ((player_o*)o)->GiveCard(card);
+    switch (card) {
+    case green:
+        ENGINE.PushMessage("Green access granted");
+        break;
+    case red:
+        ENGINE.PushMessage("Red access granted");
+        break;
+    case blue:
+        ENGINE.PushMessage("Blue access granted");
+        break;
+    case none:
+    default:
+        break;
+    }
 
-//        ENGINE.ClearLevel();
+    //        ENGINE.ClearLevel();
 }

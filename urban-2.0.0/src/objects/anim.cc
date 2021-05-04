@@ -31,20 +31,22 @@
 
 #include "anim.h"
 
-int Anim::next_frame(int num_frames, int num_repeats) {
-	int alfa;
-	alfa = current_delay++;
-        if (current_delay > num_repeats) {
-        	current_delay = 0;
-                alfa = current_frame++;
-        }
-        if (current_frame > num_frames)
-        	current_frame = 0;
-        return current_frame;
+int Anim::next_frame(int num_frames, int num_repeats)
+{
+    int alfa;
+    alfa = current_delay++;
+    if (current_delay > num_repeats) {
+        current_delay = 0;
+        alfa = current_frame++;
+    }
+    if (current_frame > num_frames)
+        current_frame = 0;
+    return current_frame;
 }
 
-int Anim::reset() {
-	current_delay = current_frame = 0;
+int Anim::reset()
+{
+    current_delay = current_frame = 0;
 
-        return 0;
+    return 0;
 }
