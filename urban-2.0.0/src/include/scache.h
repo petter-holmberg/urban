@@ -49,7 +49,7 @@ class SoundCache {
 public:
     SoundCache();
     SAMPLE* GetSample(const char* filename);
-    void FreeSample(SAMPLE* bitmap);
+    void FreeSample(SAMPLE* sample);
     ~SoundCache();
 
 private:

@@ -36,9 +36,9 @@
 #endif
 #include "game.h"
 #include "scache.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 #include <unistd.h>
 
 /***************************************************************************/
@@ -71,44 +71,43 @@ SoundCache::~SoundCache()
         }*/
 }
 /***************************************************************************/
-SCacheEntry* SoundCache::FindEntry(const char* filename)
+auto SoundCache::FindEntry(const char* filename) -> SCacheEntry*
 {
     for (int i = 0; i < num_samples; i++) {
 
-        if (!strcmp(filename, cache[i].filename))
+        if (strcmp(filename, cache[i].filename) == 0) {
             return &cache[i];
+        }
     }
-    return NULL;
+    return nullptr;
 }
 /***************************************************************************/
-SAMPLE* SoundCache::GetSample(const char* filename)
+auto SoundCache::GetSample(const char* filename) -> SAMPLE*
 {
     char pathname[512];
     // Allready in cache
     sprintf(pathname, "%s/snd/%s", DATPATH, filename);
-    SCacheEntry* entry;
+    SCacheEntry* entry = nullptr;
     // Allready in cache
-    if ((entry = FindEntry(pathname))) {
+    if ((entry = FindEntry(pathname)) != nullptr) {
         entry->count++;
         return entry->sample;
 
-    } else {
-        // Need more entires?
-        if (num_samples == max_samples) {
-            max_samples += 5;
-            cache = (SCacheEntry*)
-                realloc(cache, max_samples * sizeof(SCacheEntry));
-        }
-        entry = &cache[num_samples++];
-#ifdef DJGPP
-        entry->sample = load_wav(pathname);
-#else
-        entry->sample = Sample_Load(pathname);
-#endif
-        entry->filename = strdup(pathname);
-        entry->count = 1;
-
-        return entry->sample;
+    } // Need more entires?
+    if (num_samples == max_samples) {
+        max_samples += 5;
+        cache = (SCacheEntry*)
+            realloc(cache, max_samples * sizeof(SCacheEntry));
     }
+    entry = &cache[num_samples++];
+#ifdef DJGPP
+    entry->sample = load_wav(pathname);
+#else
+    entry->sample = Sample_Load(pathname);
+#endif
+    entry->filename = strdup(pathname);
+    entry->count = 1;
+
+    return entry->sample;
 }
 /***************************************************************************/
