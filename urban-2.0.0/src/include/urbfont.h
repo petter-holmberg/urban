@@ -45,7 +45,7 @@ public:
     UrbanFont();
     ~UrbanFont();
     int LoadFontPcx(const char* filename);
-    int UnloadFontPcx();
+    static int UnloadFontPcx();
     int LoadFontFile(const char* filename) { return 0; }
     int UnloadFontFile() { return 0; }
     void SetScale(int procent);
@@ -55,13 +55,13 @@ public:
     RGB* GetPal() { return pal; };
 
 private:
-    BITMAP* create_textbitmap(const char* text);
-    BITMAP** Fontimages;
+    BITMAP* create_textbitmap(const char* text) const;
+    BITMAP** Fontimages {};
     BITMAP* font_image;
-    PALETTE pal;
-    int font_nr;
-    int scale;
-    int space_x, space_y, width, height;
+    PALETTE pal {};
+    int font_nr {};
+    int scale {};
+    int space_x {}, space_y {}, width {}, height {};
 };
 
 #endif

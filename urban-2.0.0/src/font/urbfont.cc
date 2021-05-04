@@ -155,7 +155,7 @@ struct CharInfo charinfo_large[] = {
 
 UrbanFont::UrbanFont(int font)
 {
-    font_image = NULL;
+    font_image = nullptr;
     font_nr = font;
 
     charinfo[0] = charinfo_small;
@@ -193,7 +193,7 @@ void UrbanFont::SetScale(int proc)
 
 UrbanFont::UrbanFont()
 {
-    font_image = NULL;
+    font_image = nullptr;
 }
 
 UrbanFont::~UrbanFont()
@@ -201,22 +201,23 @@ UrbanFont::~UrbanFont()
     UnloadFontPcx();
 }
 
-int UrbanFont::LoadFontPcx(const char* filename)
+auto UrbanFont::LoadFontPcx(const char* filename) -> int
 {
     font_image = icache.GetImage(filename, pal);
 
     return 0;
 }
 
-int UrbanFont::UnloadFontPcx()
+auto UrbanFont::UnloadFontPcx() -> int
 {
     return 0;
 }
 
 void UrbanFont::print(const char* text, int x, int y, BITMAP* dest)
 {
-    if (!font_image)
+    if (font_image == nullptr) {
         return;
+    }
 
     BITMAP* bmp = print(text);
 
@@ -227,8 +228,9 @@ void UrbanFont::print(const char* text, int x, int y, BITMAP* dest)
 
 void UrbanFont::print_centre(const char* text, int x, int y, BITMAP* dest)
 {
-    if (!font_image)
+    if (font_image == nullptr) {
         return;
+    }
 
     BITMAP* bmp = print(text);
 
@@ -237,13 +239,15 @@ void UrbanFont::print_centre(const char* text, int x, int y, BITMAP* dest)
     destroy_bitmap(bmp);
 }
 
-BITMAP* UrbanFont::print(const char* text)
+auto UrbanFont::print(const char* text) -> BITMAP*
 {
-    int i;
-    int dest_x = 0, dest_y = 0;
+    int i = 0;
+    int dest_x = 0;
+    int dest_y = 0;
 
-    if (!font_image)
-        return NULL;
+    if (font_image == nullptr) {
+        return nullptr;
+    }
 
     BITMAP* bmp = create_textbitmap(text);
     /*
@@ -257,7 +261,7 @@ BITMAP* UrbanFont::print(const char* text)
 
     clear(bmp);
 
-    while (*text) {
+    while (*text != 0) {
         i = 0;
         switch (*text) {
         case '\n':
@@ -274,22 +278,25 @@ BITMAP* UrbanFont::print(const char* text)
             break;
 
         default:
-            while (charinfo[font_nr][i].token && charinfo[font_nr][i].token != *text)
+            while ((charinfo[font_nr][i].token != 0) && charinfo[font_nr][i].token != *text) {
                 i++;
+            }
 
             text++;
 
-            if (!charinfo[font_nr][i].token)
+            if (charinfo[font_nr][i].token == 0) {
                 continue;
+            }
 
-            if (scale == 100)
+            if (scale == 100) {
                 blit(font_image, bmp, charinfo[font_nr][i].x * UrbFontInfo[font_nr].width,
                     charinfo[font_nr][i].y * UrbFontInfo[font_nr].height, dest_x, dest_y,
                     width, height);
-            else
+            } else {
                 stretch_blit(font_image, bmp, charinfo[font_nr][i].x * UrbFontInfo[font_nr].width,
                     charinfo[font_nr][i].y * UrbFontInfo[font_nr].height, UrbFontInfo[font_nr].width, UrbFontInfo[font_nr].height,
                     dest_x, dest_y, width, height);
+            }
 
             dest_x += space_x;
             /*		              	blit(font_image, bmp, charinfo[font_nr][i].x * UrbFontInfo[font_nr].width,
@@ -301,13 +308,14 @@ BITMAP* UrbanFont::print(const char* text)
     return bmp;
 }
 
-BITMAP* UrbanFont::create_textbitmap(const char* text)
+auto UrbanFont::create_textbitmap(const char* text) const -> BITMAP*
 {
     //        int w = 0, h = UrbFontInfo[font_nr].space_y;
-    int w = 0, h = space_y;
+    int w = 0;
+    int h = space_y;
     int max_w = 0;
 
-    while (*text) {
+    while (*text != 0) {
         if (*text++ == '\n') {
             //                	h += UrbFontInfo[font_nr].space_y;
             h += space_y;
@@ -315,8 +323,9 @@ BITMAP* UrbanFont::create_textbitmap(const char* text)
         } else {
             //                	w += UrbFontInfo[font_nr].space_x;
             w += space_x;
-            if (w > max_w)
+            if (w > max_w) {
                 max_w = w;
+            }
         }
     }
     return create_bitmap(max_w, h);
