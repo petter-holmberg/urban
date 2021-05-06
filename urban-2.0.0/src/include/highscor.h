@@ -1,15 +1,16 @@
 #ifndef __HIGHSCORE_H__
 #define __HIGHSCORE_H__
 
-#include <cstdio>
+#include <array>
+#include <string>
 
 /***************************************************************************/
 inline constexpr auto NUM_HIGHSCORES = 10;
 /***************************************************************************/
 struct Score_t {
-    char Name[64];
-    int Score;
-    int Level;
+    std::array<char, 64> Name {};
+    int Score {};
+    int Level {};
 };
 /***************************************************************************/
 class HighScore {
@@ -22,8 +23,8 @@ public:
 protected:
     void Open();
     void Save();
-    static char* GetName();
-    Score_t highscore[NUM_HIGHSCORES] {};
+    static std::string GetName();
+    std::array<Score_t, NUM_HIGHSCORES> highscore;
     FILE* fd {};
 };
 /***************************************************************************/

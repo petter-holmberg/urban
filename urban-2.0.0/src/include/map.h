@@ -31,9 +31,8 @@
 #ifndef __MAP_H__
 #define __MAP_H__
 
+#include "allegro.h"
 #include "datfile.h"
-#include <allegro.h>
-#include <cstdio>
 
 inline constexpr auto MAX_TILES = 300;
 inline constexpr auto MAX_OPTIONS = 50;

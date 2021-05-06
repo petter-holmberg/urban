@@ -31,12 +31,13 @@
 #ifndef __ICACHE_H__
 #define __ICACHE_H__
 
+#include "allegro.h"
 #include "datfile.h"
-#include <allegro.h>
+#include <array>
 #include <memory>
 
 struct CacheEntry {
-    char* filename;
+    std::array<char, 80> filename;
     BITMAP* bitmap;
     int count;
     PALETTE pal;

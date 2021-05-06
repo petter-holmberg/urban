@@ -1,9 +1,8 @@
 #include "datfile.h"
+#include "allegro.h"
 #include "game.h"
 #include "icache.h"
-#include <allegro.h>
-#include <cstdio>
-#include <cstring>
+#include <string>
 
 struct pcx_header {
     uint8_t manufacturer;
@@ -24,13 +23,13 @@ struct pcx_header {
 } __attribute__((packed));
 
 /***************************************************************************/
-auto datfile::load_file_to_memory(const char* filename) -> char*
+auto datfile::load_file_to_memory(const std::string& filename) -> char*
 {
     int found = 0;
     int i = 0;
 
     for (i = 0; i < num_entries; i++) {
-        if (strcmp(filename, entries[i]->filename) == 0) {
+        if (filename == entries[i]->filename) {
             found = 1;
             fseek(datfd, entries[i]->offset, SEEK_SET);
             break;
@@ -55,12 +54,12 @@ auto datfile::load_file_to_memory(const char* filename) -> char*
     return buf;
 }
 /***************************************************************************/
-auto datfile::open_file(const char* filename) -> FILE*
+auto datfile::open_file(const std::string& filename) -> FILE*
 {
     int found = 0;
 
     for (int i = 0; i < num_entries; i++) {
-        if (strcmp(filename, entries[i]->filename) == 0) {
+        if (filename == entries[i]->filename) {
             found = 1;
             fseek(datfd, entries[i]->offset, SEEK_SET);
             break;
@@ -74,10 +73,9 @@ auto datfile::open_file(const char* filename) -> FILE*
     return datfd;
 }
 /***************************************************************************/
-auto datfile::load_pcx(const char* filename, PALETTE& pal) -> BITMAP*
+auto datfile::load_pcx(const std::string& filename, PALETTE& pal) -> BITMAP*
 {
-    struct pcx_header header {
-    };
+    pcx_header header {};
     uint32_t bpp = 0;
     int32_t i = 0;
     int32_t j = 0;
@@ -95,14 +93,14 @@ auto datfile::load_pcx(const char* filename, PALETTE& pal) -> BITMAP*
     err = 0;
 
     for (i = 0; i < num_entries; i++) {
-        if (strcmp(filename, entries[i]->filename) == 0) {
+        if (filename == entries[i]->filename) {
             found = 1;
             fseek(datfd, entries[i]->offset, SEEK_SET);
             break;
         }
     }
     if (found == 0) {
-        printf("\nFile not found in dat:'%s'\n", filename);
+        printf("\nFile not found in dat:'%s'\n", filename.c_str());
         exit(2);
     }
 

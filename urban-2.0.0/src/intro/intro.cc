@@ -29,21 +29,20 @@
     thomas.nyberg@usa.net				jonas_b@bitsmart.com
 *****************************************************************************/
 #include "intro.h"
+#include "allegro.h"
 #include "datfile.h"
 #include "engine.h"
 #include "game.h"
 #include "icache.h"
 #include "object.h"
 #include "urbfont.h"
-#include <allegro.h>
-#include <cstdio>
-#include <cstring>
+#include <string>
 /**************************************************************************/
 inline constexpr auto FRAME_DELAY = 100;
 /**************************************************************************/
 UrbanFont* lg;
 int quit;
-static char flctext[256];
+static std::string flctext;
 /**************************************************************************/
 Intro::Intro()
 {
@@ -58,20 +57,10 @@ Intro::~Intro()
 static auto callback() -> int
 {
     static unsigned int count = 0;
-    unsigned int num_frames = strlen(flctext);
-    char temptext[200];
+    unsigned int num_frames = flctext.size();
+    std::string temptext { flctext };
 
-    if (count < strlen(flctext)) {
-
-        strncpy(temptext, flctext, count + 1);
-        temptext[count + 1] = 0;
-
-    } else {
-
-        strcpy(temptext, flctext);
-    }
-
-    lg->print(temptext, 20, 170, screen);
+    lg->print(temptext.c_str(), 20, 170, screen);
 
     rest(FRAME_DELAY);
 
@@ -93,7 +82,7 @@ static auto callback() -> int
 inline auto PLAY_FLC(datfile& dat, const char* x, const char* y) -> bool
 {
     char* buf = nullptr;
-    strcpy(flctext, y);
+    flctext = y;
     if ((buf = dat.load_file_to_memory(x)) == nullptr) {
         exit(1);
     }
@@ -108,17 +97,14 @@ inline auto PLAY_FLC(datfile& dat, const char* x, const char* y) -> bool
 
 inline auto ANIM_TEXT(const char* x) -> bool
 {
-    char text[128];
-    char temptext[128];
-    strcpy(text, x);
+    std::string text = x;
+    std::string temptext;
 
     clear_keybuf();
 
-    for (int i = 0; i < (signed)strlen(text); i++) {
-
-        strncpy(temptext, text, i + 1);
-        temptext[i + 1] = 0;
-        lg->print(temptext, 50, 170, screen);
+    for (size_t i = 0; i < text.size(); i++) {
+        temptext = text.substr(0, i + 1);
+        lg->print(temptext.c_str(), 50, 170, screen);
 
         rest(FRAME_DELAY);
 

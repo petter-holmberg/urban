@@ -1,7 +1,7 @@
 #ifndef __URBFONT_H__
 #define __URBFONT_H__
 
-#include <allegro.h>
+#include "allegro.h"
 
 inline constexpr auto FONT_MAGIC = 0x55464e54;
 

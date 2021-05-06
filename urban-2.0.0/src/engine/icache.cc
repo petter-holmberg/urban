@@ -29,12 +29,12 @@
     thomas.nyberg@usa.net				jonas_b@bitsmart.com
 *****************************************************************************/
 #include "icache.h"
+#include "allegro.h"
 #include "datfile.h"
 #include "object.h"
-#include <allegro.h>
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
+#include <algorithm>
+#include <string>
+#include <string_view>
 
 inline constexpr bool USE_DATFILE = true;
 
@@ -88,7 +88,7 @@ auto ImageCache::FindEntry(const char* filename) -> CacheEntry*
 {
     for (int i = 0; i < num_images; i++) {
 
-        if (strcmp(filename, cache[i].filename) == 0) {
+        if (std::string_view(filename) == std::string_view(std::begin(cache[i].filename))) {
             return &cache[i];
         }
     }
@@ -97,18 +97,17 @@ auto ImageCache::FindEntry(const char* filename) -> CacheEntry*
 /***************************************************************************/
 auto ImageCache::GetImage(const char* filename, PALETTE& pal) -> BITMAP*
 {
-    char pathname[512];
     CacheEntry* entry = nullptr;
     // Allready in cache
+    std::string pathname;
     if constexpr (USE_DATFILE) {
         //sprintf(pathname, "%s/%s", GFX_PATH, filename);
-        sprintf(pathname, "gfx/%s", filename);
+        pathname = std::string { "gfx/" } + filename;
     } else {
-        sprintf(pathname, "gfx/%s", filename);
+        pathname = std::string { "gfx/" } + filename;
     }
 
-    if ((entry = FindEntry(pathname)) != nullptr) {
-
+    if ((entry = FindEntry(pathname.c_str())) != nullptr) {
         entry->count++;
         pal = entry->pal;
         return entry->bitmap;
@@ -120,23 +119,23 @@ auto ImageCache::GetImage(const char* filename, PALETTE& pal) -> BITMAP*
             realloc(cache, max_images * sizeof(CacheEntry));
     }
     entry = &cache[num_images++];
-    if constexpr (USE_DATFILE) {
-        if ((entry->bitmap = dat->load_pcx(pathname, entry->pal)) == nullptr) {
 
+    if constexpr (USE_DATFILE) {
+        if ((entry->bitmap = dat->load_pcx(pathname.c_str(), entry->pal)) == nullptr) {
             set_gfx_mode(GFX_TEXT, 160, 25, 0, 0);
-            printf("\nCan't load \"%s\"\n", pathname);
+            printf("\nCan't load \"%s\"\n", pathname.c_str());
             exit(1);
         }
     } else {
-        if ((entry->bitmap = load_bitmap(pathname, entry->pal)) == nullptr) {
-
+        if ((entry->bitmap = load_bitmap(pathname.c_str(), entry->pal)) == nullptr) {
             set_gfx_mode(GFX_TEXT, 160, 25, 0, 0);
-            printf("\nCan't load \"%s\"\n", pathname);
+            printf("\nCan't load \"%s\"\n", pathname.c_str());
             exit(1);
         }
     }
+
     pal = entry->pal;
-    entry->filename = strdup(pathname);
+    std::copy(pathname.c_str(), pathname.c_str() + pathname.size(), std::begin(entry->filename));
     entry->count = 1;
 
     return entry->bitmap;

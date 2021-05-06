@@ -29,9 +29,9 @@
     thomas.nyberg@usa.net				jonas_b@bitsmart.com
 *****************************************************************************/
 #include "score.h"
+#include "allegro.h"
+#include "engine.h"
 #include "urbfont.h"
-#include <allegro.h>
-#include <engine.h>
 
 inline constexpr auto BOSSHEALTH_HEIGHT = SCREEN_WIDTH - (2 * 20);
 /*************************************************************************/

@@ -79,7 +79,7 @@ Sound::Sound()
     MikMod_SetNumVoices(12, 4);
     MikMod_EnableOutput();
 
-    playthread = std::thread{module_thread};
+    playthread = std::thread { module_thread };
 }
 
 Sound::~Sound()

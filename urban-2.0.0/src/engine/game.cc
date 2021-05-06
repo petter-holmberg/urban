@@ -29,17 +29,16 @@
     thomas.nyberg@usa.net				jonas_b@bitsmart.com
 *****************************************************************************/
 #include "game.h"
+#include "allegro.h"
 #include "ctrls.h"
 #include "engine.h"
 #include "highscor.h"
 #include "icache.h"
 #include "outtro.h"
 #include "urbfont.h"
-#include <allegro.h>
-#include <cctype>
-#include <cstdio>
-#include <cstring>
+#include <algorithm>
 #include <filesystem>
+#include <string>
 
 /**************************************************************************/
 // Global ImageCache
@@ -93,11 +92,10 @@ struct PlayerData DefaultPData = {
     300, 0
 };
 
-auto GetLevelName(char* text) -> int;
+auto GetLevelName(std::string text) -> int;
 /**************************************************************************/
-auto SaveGame(char* name) -> int
+auto SaveGame(std::string name) -> int
 {
-    char buffer[80];
     int pos = 0;
 
     pos = Do_Menu("CONTINUE\nSAVE GAME", 2);
@@ -106,20 +104,18 @@ auto SaveGame(char* name) -> int
         return 0;
     }
 
-    buffer[0] = 0;
-
+    std::string buffer;
     for (auto& SavedGame : SavedGames) {
         if (SavedGame.level != 0) {
-            strcat(buffer, SavedGame.name);
-            strcat(buffer, "\n");
+            buffer += std::string { SavedGame.name } + "\n";
         } else {
-            strcat(buffer, "EMPTY\n");
+            buffer += "EMPTY\n";
         }
     }
 
-    if ((pos = Do_Menu(buffer, 5)) != 0) {
+    if ((pos = Do_Menu(buffer.c_str(), 5)) != 0) {
         if (SavedGames[pos - 1].level != 0) {
-            strcpy(name, SavedGames[pos - 1].name);
+            name = SavedGames[pos - 1].name;
         }
 
         if (GetLevelName(name) != 0) {
@@ -171,14 +167,14 @@ void display_level_info(int level)
     clear_keybuf();
 }
 /**************************************************************************/
-auto GetLevelName(char* text) -> int
+auto GetLevelName(std::string text) -> int
 {
     char message[50];
     int pos = 1;
     UrbanFont fnt(SMALL_FONT2);
 
-    if (strlen(text) == 0) {
-        strcpy(text, "MYLEVEL");
+    if (text.empty()) {
+        text = "MYLEVEL";
     }
 
     // Ritar ett rutnär
@@ -190,7 +186,7 @@ auto GetLevelName(char* text) -> int
         }
     }
 
-    pos = strlen(text);
+    pos = text.size();
 
     BITMAP* textbmp = create_bitmap(220, 55);
 
@@ -204,7 +200,7 @@ auto GetLevelName(char* text) -> int
 
         clear(textbmp);
         fnt.print_centre(message, 110, 20, textbmp);
-        fnt.print_centre(text, 110, 40, textbmp);
+        fnt.print_centre(text.c_str(), 110, 40, textbmp);
 
         masked_blit(textbmp, screen, 0, 0, 50, 60, 220, 55);
 
@@ -273,7 +269,7 @@ auto NewGame(int slot) -> int
         for (auto& SavedGame : SavedGames) {
             SavedGame.level = 0;
             SavedGame.name[0] = 0;
-            memcpy(&SavedGame.dat, &DefaultPData, sizeof(struct PlayerData));
+            SavedGame.dat = DefaultPData;
         }
         /* Create dir */
         sprintf(filename, "%s/.urban", getenv("HOME"));
@@ -292,9 +288,9 @@ auto NewGame(int slot) -> int
     }
 
     if (slot == 0 || SavedGames[slot - 1].level == 0) {
-        memcpy(&pdat, &DefaultPData, sizeof(struct PlayerData));
+        pdat = DefaultPData;
     } else {
-        memcpy(&pdat, &SavedGames[slot - 1].dat, sizeof(struct PlayerData));
+        pdat = SavedGames[slot - 1].dat;
         level = SavedGames[slot - 1].level;
     }
 
@@ -334,9 +330,9 @@ auto NewGame(int slot) -> int
             } else {
                 slot = SaveGame(name);
                 if (slot != 0) {
-                    memcpy(&SavedGames[slot - 1].dat, &pdat, sizeof(struct PlayerData));
+                    SavedGames[slot - 1].dat = pdat;
                     SavedGames[slot - 1].level = level;
-                    strcpy(SavedGames[slot - 1].name, name);
+                    std::copy(std::begin(name), std::end(name), std::begin(SavedGames[slot - 1].name));
 
                     /* Create dir */
                     sprintf(filename, "%s/.urban", getenv("HOME"));

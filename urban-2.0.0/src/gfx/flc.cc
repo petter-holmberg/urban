@@ -33,9 +33,8 @@
     in Allegro. He based his work upon Jonathan Tarbox FLI/FLC-player.
 
 *****************************************************************************/
-#include <allegro.h>
-#include <cstdio>
-#include <cstring>
+#include "allegro.h"
+#include <algorithm>
 
 inline constexpr auto FLC_MAGIC = 0xaf12;
 inline constexpr auto HEADER_FLAGS = 0x0003;
@@ -112,7 +111,7 @@ BITMAP* target_bitmap = nullptr;
 volatile unsigned long flc_counter = 0;
 int (*flc_callback)() = nullptr;
 
-static auto read_flc_data(void* buffer, int count) -> int
+static auto read_flc_data(char* buffer, int count) -> int
 {
     int ret = 0;
 
@@ -128,7 +127,7 @@ static auto read_flc_data(void* buffer, int count) -> int
         if (flc_memory_buffer == nullptr) {
             return -1;
         }
-        memcpy(buffer, flc_memory_buffer + flc_offset, count);
+        std::copy(flc_memory_buffer + flc_offset, flc_memory_buffer + flc_offset + count, buffer);
         flc_offset += count;
         break;
     case FLC_NOT_OPEN:
@@ -160,7 +159,7 @@ static auto seek_flc_data(int offset, int mode) -> int
 
 static auto flc_read_header() -> int
 {
-    read_flc_data(&flc_h, sizeof(struct flc_header));
+    read_flc_data(reinterpret_cast<char*>(&flc_h), sizeof(struct flc_header));
     if (flc_h.magic != FLC_MAGIC) {
         return 1;
     }
@@ -177,17 +176,17 @@ static auto read_flc_palette(int type) -> int
     unsigned char skip = 0;
     RGB rgb;
 
-    read_flc_data(&num_packets, 2);
+    read_flc_data(reinterpret_cast<char*>(&num_packets), 2);
     for (i = 0; i < num_packets; i++) {
-        read_flc_data(&skip, 1);
+        read_flc_data(reinterpret_cast<char*>(&skip), 1);
         cc += skip;
         num_c = 0;
-        read_flc_data(&num_c, 1);
+        read_flc_data(reinterpret_cast<char*>(&num_c), 1);
         num_c = num_c == 0 ? 256 : num_c;
         for (j = 0; j < num_c; j++) {
-            read_flc_data(&rgb.r, 1);
-            read_flc_data(&rgb.g, 1);
-            read_flc_data(&rgb.b, 1);
+            read_flc_data(reinterpret_cast<char*>(&rgb.r), 1);
+            read_flc_data(reinterpret_cast<char*>(&rgb.g), 1);
+            read_flc_data(reinterpret_cast<char*>(&rgb.b), 1);
             if (type == FLI_COLOR256) {
                 rgb.r;
                 rgb.g;
@@ -208,18 +207,21 @@ static auto read_flc_brun() -> int
     char type = 0;
     unsigned char temp = 0;
     for (i = 0; i < flc_h.height; i++) {
-        read_flc_data(&num_p, 1); //skit-v?rde
+        read_flc_data(reinterpret_cast<char*>(&num_p), 1); //skit-v?rde
         cw = 0;
         x = 0;
         while (x < flc_h.width) {
             read_flc_data(&type, 1);
             if (type < 0) {
-                read_flc_data(&flc_bitmap->dat[(flc_bitmap->w * i) + x], -type);
+                read_flc_data(reinterpret_cast<char*>(&flc_bitmap->dat[(flc_bitmap->w * i) + x]), -type);
                 x -= type;
             } else if (type > 0) {
-                read_flc_data(&temp, 1);
+                read_flc_data(reinterpret_cast<char*>(&temp), 1);
                 //                                        for (j = 0;j < type;j++, x++)
-                memset(&flc_bitmap->dat[(flc_bitmap->w * i) + x], temp, type);
+                std::fill(
+                    reinterpret_cast<unsigned char*>(&flc_bitmap->dat[(flc_bitmap->w * i) + x]),
+                    reinterpret_cast<unsigned char*>(&flc_bitmap->dat[(flc_bitmap->w * i) + x]) + type,
+                    temp);
                 //                                        	*(flc_bitmap->line[i] + x) = temp;
                 x += type;
             }
@@ -240,27 +242,27 @@ auto read_flc_ss2() -> int
     short tmp2 = 0;
     int i = 0;
 
-    read_flc_data(&num_lines, 2);
+    read_flc_data(reinterpret_cast<char*>(&num_lines), 2);
     while (num_lines-- > 0) {
-        read_flc_data(&num_packets, 2);
+        read_flc_data(reinterpret_cast<char*>(&num_packets), 2);
         while (num_packets < 0) {
             if ((num_packets & 0x4000) != 0) {
                 y -= num_packets;
             } else {
                 flc_bitmap->dat[(flc_bitmap->w * y) + flc_bitmap->w - 1] = num_packets & 0xff;
             }
-            ret = read_flc_data(&num_packets, 2);
+            ret = read_flc_data(reinterpret_cast<char*>(&num_packets), 2);
         }
         x = 0;
         while (num_packets-- > 0) {
-            read_flc_data(&temp, 1);
+            read_flc_data(reinterpret_cast<char*>(&temp), 1);
             x += temp;
-            read_flc_data(&count, 1);
+            read_flc_data(reinterpret_cast<char*>(&count), 1);
             if (count > 0) {
-                read_flc_data(&flc_bitmap->dat[(flc_bitmap->w * y) + x], count * 2);
+                read_flc_data(reinterpret_cast<char*>(&flc_bitmap->dat[(flc_bitmap->w * y) + x]), count * 2);
                 x += count * 2;
             } else if (count < 0) {
-                read_flc_data(&tmp2, 2);
+                read_flc_data(reinterpret_cast<char*>(&tmp2), 2);
                 count = -count;
                 for (i = 0; i < count * 2; i++) {
                     *((short*)(&flc_bitmap->dat[flc_bitmap->w * y] + x + i)) = tmp2;
@@ -278,7 +280,7 @@ static auto next_frame() -> int
     int j = 0;
 
     for (j = 0; j < chunk.n_chunks; j++) {
-        read_flc_data(&frame_h, sizeof(struct frame_header));
+        read_flc_data(reinterpret_cast<char*>(&frame_h), sizeof(struct frame_header));
         switch (frame_h.type) {
         case FLI_COLOR256:
         /* fallthrough */
@@ -315,7 +317,7 @@ static void do_flc_play(int loop)
 
         for (i = 0; i < flc_h.n_frames; i++) {
             flc_counter = 0;
-            read_flc_data(&chunk, sizeof(struct frame_chunk));
+            read_flc_data(reinterpret_cast<char*>(&chunk), sizeof(struct frame_chunk));
             next_frame();
             blit(flc_bitmap, target_bitmap, 0, 0, 0, 0, 320, 240);
 
@@ -352,7 +354,7 @@ auto play_fli(char* filename, BITMAP* bmp, int loop, int (*callback)()) -> int
     return 0;
 }
 
-auto play_memory_fli(void* fli_data, BITMAP* bmp, int loop, int (*callback)()) -> int
+auto play_memory_fli(char* fli_data, BITMAP* bmp, int loop, int (*callback)()) -> int
 {
     flc_status = READ_FLC_FROM_MEMORY;
     flc_memory_buffer = (char*)fli_data;

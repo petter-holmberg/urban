@@ -28,8 +28,8 @@
 
     thomas.nyberg@usa.net				jonas_b@bitsmart.com
 *****************************************************************************/
+#include "allegro.h"
 #include "ctrls.h"
-#include <allegro.h>
 
 Controllers::Controllers()
 {

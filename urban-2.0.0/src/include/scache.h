@@ -31,7 +31,7 @@
 #ifndef __SCACHE_H__
 #define __SCACHE_H__
 
-#include <allegro.h>
+#include "allegro.h"
 
 struct SAMPLE;
 

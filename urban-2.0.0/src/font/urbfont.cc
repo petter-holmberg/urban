@@ -29,9 +29,9 @@
     thomas.nyberg@usa.net				jonas_b@bitsmart.com
 *****************************************************************************/
 #include "urbfont.h"
+#include "allegro.h"
 #include "engine.h"
 #include "icache.h"
-#include <allegro.h>
 
 struct Fontinfo UrbFontInfo[] = {
     { 9, 15, 8, 15 },

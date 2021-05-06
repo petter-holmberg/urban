@@ -29,13 +29,12 @@
     thomas.nyberg@usa.net				jonas_b@bitsmart.com
 *****************************************************************************/
 #include "highscor.h"
+#include "allegro.h"
 #include "engine.h"
 #include "urbfont.h"
-#include <allegro.h>
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
+#include <algorithm>
 #include <filesystem>
+#include <string>
 /***************************************************************************/
 
 /***************************************************************************/
@@ -70,7 +69,7 @@ HighScore::HighScore()
         fnt.print(buffer, 15, 50 + i * 16, textbmp);
 
         if (highscore[i].Level != 0) {
-            sprintf(buffer, " %-10s%6d   %1d:%1d", highscore[i].Name,
+            sprintf(buffer, " %-10s%6d   %1d:%1d", highscore[i].Name.data(),
                 highscore[i].Score, ((highscore[i].Level - 1) / 3) + 1, ((highscore[i].Level - 1) % 3) + 1);
         } else {
             sprintf(buffer, " %-10s%6d   0:0", "Empty", 0);
@@ -82,24 +81,23 @@ HighScore::HighScore()
     destroy_bitmap(textbmp);
 }
 /***************************************************************************/
-auto HighScore::GetName() -> char*
+auto HighScore::GetName() -> std::string
 {
-    static char Name[64] = "";
-    int pos = 0;
+    static std::string Name;
     PALETTE pal;
     BITMAP* backg = icache.GetImage("ibild.pcx", pal);
     BITMAP* textbmp = create_bitmap(220, 55);
     UrbanFont fnt(SMALL_FONT2);
 
-    if (strlen(Name) == 0) {
+    if (Name.empty()) {
         if (getenv("USER") != nullptr) {
-            strcpy(Name, getenv("USER"));
+            Name = ::getenv("USER");
         } else {
-            strcpy(Name, "Unknown");
+            Name = "Unknown";
         }
     }
 
-    pos = strlen(Name);
+    auto pos = Name.size();
 
     set_palette(pal);
     blit(backg, screen, 0, 0, 0, 0, 320, 240);
@@ -117,7 +115,7 @@ auto HighScore::GetName() -> char*
 
         fnt.print_centre("HighScore", 110, 8, textbmp);
         fnt.print_centre("Please Enter Your Name:", 110, 24, textbmp);
-        fnt.print_centre(Name, 110, 43, textbmp);
+        fnt.print_centre(Name.c_str(), 110, 43, textbmp);
 
         masked_blit(textbmp, screen, 0, 0, 50, 60, 220, 55);
 
@@ -132,7 +130,7 @@ auto HighScore::GetName() -> char*
         if (key == scan_code::KEY_ESC) {
 
             destroy_bitmap(textbmp);
-            strcpy(Name, "Unknown");
+            Name = "Unknown";
             return Name;
         }
         if (key == scan_code::KEY_BACKSPACE) {
@@ -153,7 +151,7 @@ auto HighScore::GetName() -> char*
     } while (1);
 
     destroy_bitmap(textbmp);
-    strcpy(Name, "Unknown");
+    Name = "Unknown";
     return Name;
 }
 /***************************************************************************/
@@ -164,11 +162,9 @@ HighScore::HighScore(int score, int level)
     for (int i = 0; i < NUM_HIGHSCORES; i++) {
 
         if (score > highscore[i].Score) {
-
-            memmove(&highscore[i + 1], &highscore[i],
-                sizeof(Score_t) * (NUM_HIGHSCORES - i - 1));
-
-            strcpy(highscore[i].Name, GetName());
+            std::move(std::begin(highscore) + i + 1, std::begin(highscore) + i + 1 + NUM_HIGHSCORES, std::begin(highscore) + i);
+            auto name { GetName() };
+            std::copy(name.c_str(), name.c_str() + name.size(), std::begin(highscore[i].Name));
             highscore[i].Score = score;
             highscore[i].Level = level;
             break;
@@ -181,7 +177,7 @@ HighScore::HighScore(int score, int level)
 void HighScore::Open()
 {
     // Reset Score
-    memset(highscore, 0, sizeof(Score_t) * NUM_HIGHSCORES);
+    highscore.fill({});
 #ifdef HSFILENAME
     if ((fd = fopen(HSFILENAME, "rb")) == nullptr) {
         return;
@@ -196,7 +192,7 @@ void HighScore::Open()
     }
 #endif
 
-    auto err = fread(highscore, sizeof(Score_t), NUM_HIGHSCORES, fd);
+    auto err = fread(highscore.data(), sizeof(Score_t), NUM_HIGHSCORES, fd);
 
     fclose(fd);
 }
@@ -222,7 +218,7 @@ void HighScore::Save()
     }
 #endif
 
-    fwrite(highscore, sizeof(Score_t), NUM_HIGHSCORES, fd);
+    fwrite(highscore.data(), sizeof(Score_t), NUM_HIGHSCORES, fd);
 
     fclose(fd);
 }

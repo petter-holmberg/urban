@@ -31,8 +31,6 @@
 #include "map.h"
 #include "engine.h"
 #include "icache.h"
-#include <cstdio>
-#include <cstdlib>
 #include <cstring>
 
 inline constexpr bool CHECK_MAP_BOUNDRIES = true;

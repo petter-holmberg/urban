@@ -1,22 +1,21 @@
-#include <allegro.h>
-#include <cstdio>
-#include <cstdlib>
-#include <filesystem>
-#include <string>
-/**************************************************************************************/
 #include "config.h"
+#include "allegro.h"
 #include "ctrls.h"
 #include "engine.h"
 #include "game.h"
 #include "keyinfo.h"
 #include "urbfont.h"
+#include <filesystem>
+#include <string>
 /**************************************************************************************/
 void Config::Load()
 {
-    char filename[1024];
+    std::string filename = ::getenv("HOME");
+    filename += "/.urban/ctrl.dat";
+
     FILE* fd = nullptr;
 
-    if ((fd = fopen(filename, "rb")) == nullptr) {
+    if ((fd = fopen(filename.c_str(), "rb")) == nullptr) {
         return;
     }
 

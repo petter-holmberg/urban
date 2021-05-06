@@ -31,7 +31,7 @@
 #ifndef __SCORE_H__
 #define __SCORE_H__
 
-#include <allegro.h>
+#include "allegro.h"
 
 class ScoreBoard {
 	public:

@@ -28,17 +28,11 @@
 
     thomas.nyberg@usa.net                               jonas_b@bitsmart.com
 *****************************************************************************/
-#include <allegro.h>
-#include <atomic>
-#include <chrono>
-#include <cstring>
-#include <ctime>
-#include <thread>
-
+#include "engine.h"
+#include "allegro.h"
 #include "cheat.h"
 #include "config.h"
 #include "ctrls.h"
-#include "engine.h"
 #include "game.h"
 #include "icache.h"
 #include "object.h"
@@ -46,6 +40,13 @@
 #include "otypes.h"
 #include "sort.h"
 #include "urbfont.h"
+#include <algorithm>
+#include <array>
+#include <atomic>
+#include <chrono>
+#include <string>
+#include <string_view>
+#include <thread>
 
 inline constexpr auto LIGHTENING_MAX = 58;
 inline constexpr auto LIGHTENING_STEP = 5;
@@ -135,8 +136,8 @@ char lock_frame_count_to_60hz = 0;
 Object* s_obj[MAX_OBJECTS];
 extern class Config* config;
 volatile int show_next_frame = 0;
-char cheat_code_letters[64];
-int cheat_cl_p = 0;
+std::array<char, 64> cheat_code_letters;
+size_t cheat_cl_p = 0;
 unsigned long cheat_codes_active = 0;
 
 struct Letter Letters[] = {
@@ -701,7 +702,7 @@ always_shake
     char* opt = nullptr;
     opt = map.GetOption("ALWAYS_SHAKE");
 
-    if (opt != nullptr && (strcmp(opt, "ON") == 0)) {
+    if (opt != nullptr && (std::string { opt } == "ON")) {
         always_shake = 1;
     } else {
         always_shake = 0;
@@ -920,7 +921,7 @@ auto Engine::play_level(const char* map_name, struct PlayerData* p_dat, int cont
 
     clear_keybuf();
 
-    memset(cheat_code_letters, 0, 64);
+    cheat_code_letters.fill(0);
     cheat_cl_p = 0;
 
     int return_code = play_loop();
@@ -1036,7 +1037,7 @@ auto Engine::display_map() -> int
                     if (temp == DELETE_ME) {
                         delete innerlayer[i];
                     }
-                    memmove(&innerlayer[i], &innerlayer[i + 1], sizeof(Object*) * (num_innerlayer - i - 1));
+                    std::move(std::begin(innerlayer) + i + 1, std::begin(innerlayer) + num_innerlayer, std::begin(innerlayer) + i);
                     i--;
                     num_innerlayer--;
                 } else {
@@ -1063,7 +1064,7 @@ auto Engine::display_map() -> int
                     if (temp == DELETE_ME) {
                         delete map_effect[i];
                     }
-                    memmove(&map_effect[i], &map_effect[i + 1], sizeof(Object*) * (num_pre_effect - i - 1));
+                    std::move(std::begin(map_effect) + i + 1, std::begin(map_effect) + num_pre_effect, std::begin(map_effect) + i);
                     i--;
                     num_pre_effect--;
                 } else {
@@ -1090,7 +1091,7 @@ auto Engine::display_map() -> int
                     if (temp == DELETE_ME) {
                         delete effects[i];
                     }
-                    memmove(&effects[i], &effects[i + 1], sizeof(Object*) * (num_effects - i - 1));
+                    std::move(std::begin(effects) + i + 1, std::begin(effects) + num_effects, std::begin(effects) + i);
                     i--;
                     num_effects--;
                 } else {
@@ -1114,7 +1115,7 @@ auto Engine::display_map() -> int
                     if (temp == DELETE_ME) {
                         delete alwaysupdate[i];
                     }
-                    memmove(&alwaysupdate[i], &alwaysupdate[i + 1], sizeof(Object*) * (num_alwaysupdate - i - 1));
+                    std::move(std::begin(alwaysupdate) + i + 1, std::begin(alwaysupdate) + num_alwaysupdate, std::begin(alwaysupdate) + i);
                     i--;
                     num_alwaysupdate--;
                 } else {
@@ -1142,7 +1143,7 @@ auto Engine::display_map() -> int
                     if (temp == DELETE_ME) {
                         delete objects[i];
                     }
-                    memmove(&objects[i], &objects[i + 1], sizeof(Object*) * (num_objects - i - 1));
+                    std::move(std::begin(objects) + i + 1, std::begin(objects) + num_objects, std::begin(objects) + i);
                     i--;
                     num_objects--;
 
@@ -1250,8 +1251,8 @@ auto Engine::display_map() -> int
             //compare with known cheatcodes
             int clear_cc = 1;
             for (j = 0; j < NUM_CHEATCODES; j++) {
-                if (strncmp(cheat_codes[j].code, cheat_code_letters, cheat_cl_p) == 0) {
-                    if (strcmp(cheat_codes[j].code, cheat_code_letters) == 0) { // cheat code match
+                if (std::string_view(cheat_codes[j].code, cheat_cl_p) == std::string_view { cheat_code_letters.data(), cheat_cl_p }) {
+                    if (std::string_view { cheat_codes[j].code } == std::string_view { cheat_code_letters.data() }) { // cheat code match
                         cheat_codes_active |= cheat_codes[j].cheat;
                         PushMessage("Cheat activated");
                         break;
@@ -1260,7 +1261,7 @@ auto Engine::display_map() -> int
                 }
             }
             if (clear_cc != 0) {
-                memset(cheat_code_letters, 0, 64);
+                cheat_code_letters.fill(0);
                 cheat_cl_p = 0;
             }
             break;

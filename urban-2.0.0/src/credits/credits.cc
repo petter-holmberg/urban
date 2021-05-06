@@ -33,14 +33,12 @@
 
 *****************************************************************************/
 
+#include "allegro.h"
 #include "engine.h"
 #include "icache.h"
 #include "urbfont.h"
 #include <algorithm>
-#include <allegro.h>
 #include <cmath>
-#include <cstdio>
-#include <cstdlib>
 
 inline constexpr auto LIGHT_SIZE = 128.0;
 

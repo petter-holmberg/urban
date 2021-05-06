@@ -36,7 +36,6 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 #include <array>
-#include <cstdlib>
 
 typedef struct RGB {
     unsigned char r, g, b;
@@ -100,13 +99,12 @@ inline constexpr auto GFX_TEXT = 0;
 inline constexpr auto GFX_AUTODETECT = 0;
 
 int vsync();
-int play_memory_fli(void* fli_data, BITMAP* bmp, int loop, int (*callback)());
+int play_memory_fli(char* fli_data, BITMAP* bmp, int loop, int (*callback)());
 int play_fli(char* filename, BITMAP* bmp, int loop, int (*callback)());
 int allegro_init();
 int install_keyboard();
 void keyboard_update();
 void keyboard_reset();
-int install_timer();
 int set_gfx_mode(int mode, int w, int h, int a, int b);
 int set_palette(const PALETTE& p);
 void blit(BITMAP* source, BITMAP* dest, int source_x, int source_y, int dest_x, int dest_y, int width, int height);
@@ -124,7 +122,7 @@ void putpixel(BITMAP* bmp, int x, int y, int c);
 void line(BITMAP* bmp, int x1, int y1, int x2, int y2, int color);
 void rect(BITMAP* bmp, int x1, int y1, int x2, int y2, int color);
 void rectfill(BITMAP* bmp, int x, int y, int x2, int y2, int c);
-BITMAP* load_bitmap(char* name, PALETTE palette);
+BITMAP* load_bitmap(const char* name, PALETTE palette);
 int set_color(int, RGB* rgb);
 int install_int_ex(void (*proc)(), long speed);
 int install_int(void (*proc)(), long speed);
@@ -143,6 +141,6 @@ void xor_mode(int on);
 extern sf::RenderWindow* window;
 extern BITMAP* screen;
 extern FONT* font;
-extern bool key[128];
+extern std::array<bool, 128> key;
 
 #endif

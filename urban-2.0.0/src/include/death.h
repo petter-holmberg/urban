@@ -1,7 +1,6 @@
 #ifndef __DEATH_H__
 #define __DEATH_H__
 
-#include <cstdlib>
 #include "engine.h"
 
 inline constexpr auto SPLAT_SOUND = "samples/gutsplat.wav";

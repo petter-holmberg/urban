@@ -1,9 +1,8 @@
 #ifndef __DATFILE_H__
 #define __DATFILE_H__
 
-#include <allegro.h>
-#include <cstdint>
-#include <cstdio>
+#include "allegro.h"
+#include <string>
 
 struct dat_entry {
     char filename[120];
@@ -20,9 +19,9 @@ class datfile {
 public:
     datfile(const char* filenam);
     ~datfile();
-    BITMAP* load_pcx(const char* filename, PALETTE& pal);
-    FILE* open_file(const char* filename);
-    char* load_file_to_memory(const char* filename);
+    BITMAP* load_pcx(const std::string& filename, PALETTE& pal);
+    FILE* open_file(const std::string& filename);
+    char* load_file_to_memory(const std::string& filename);
     int GetNumEntries() { return num_entries; };
     struct dat_entry** GetEntries() { return entries; };
 

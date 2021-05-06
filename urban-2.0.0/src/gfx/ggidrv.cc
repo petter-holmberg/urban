@@ -29,16 +29,13 @@
     jonas_b@bitsmart.com
  *
 *****************************************************************************/
+#include "allegro.h"
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 #include <algorithm>
-#include <allegro.h>
 #include <array>
 #include <chrono>
 #include <cmath>
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
 #include <thread>
 
 /**************************************************************************/
@@ -48,7 +45,7 @@ sf::RenderWindow* window;
 BITMAP* screen;
 FONT* font;
 PALETTE black_palette;
-bool key[128];
+std::array<bool, 128> key;
 /**************************************************************************/
 static int screen_offset_x, screen_offset_y;
 static int num_keypressed;
@@ -433,14 +430,7 @@ auto install_keyboard() -> int
 /**************************************************************************/
 void keyboard_reset()
 {
-    memset(key, 0, 128);
-}
-/**************************************************************************/
-auto install_timer() -> int
-{
-    memset(key, 0, 128);
-
-    return 1;
+    key.fill(false);
 }
 /**************************************************************************/
 void close_gfx()
@@ -460,7 +450,7 @@ auto set_gfx_mode(int /*mode*/, int w, int h, int /*a*/, int /*b*/) -> int
     int err = 0;
     char* target = nullptr;
 
-    memset(key, 0, 128);
+    keyboard_reset();
     screen = new BITMAP;
     screen->w = w;
     screen->h = h;
@@ -692,14 +682,14 @@ void blit(BITMAP* source, BITMAP* dest, int source_x, int source_y, int dest_x, 
         while (h > 0) {
 
             ggiPutBox(screen->texture, start_x, ly++, w, 1, src);
-            memcpy(dst, src, w);
+            std::copy(src, src + w, dst);
             dst += destwidth;
             src += srcwidth;
             h--;
         }
     } else {
         while (h > 0) {
-            memcpy(dst, src, w);
+            std::copy(src, src + w, dst);
             dst += destwidth;
             src += srcwidth;
             h--;
@@ -852,8 +842,7 @@ void rectfill(BITMAP* bmp, int x1, int y1, int x2, int y2, int c)
 
     char* ptr = bmp->dat + (y1 * bmp->stride) + x1;
     while (h != 0) {
-
-        memset(ptr, c, w);
+        std::fill(ptr, ptr + w, c);
         ptr += bmp->stride;
         h--;
     }
@@ -1002,7 +991,7 @@ void clear(BITMAP* bmp)
 
     while ((h--) != 0) {
 
-        memset(ptr, 0, stride);
+        std::fill(ptr, ptr + stride, 0);
         ptr += stride;
     }
 
@@ -1023,7 +1012,7 @@ void clear_to_color(BITMAP* bmp, int color)
 
     while ((h--) != 0) {
 
-        memset(ptr, color, stride);
+        std::fill(ptr, ptr + stride, color);
         ptr += stride;
     }
 

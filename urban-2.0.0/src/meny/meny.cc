@@ -32,6 +32,7 @@
 #include <cstdio>
 #include <cstring>
 #include <filesystem>
+#include <string>
 
 #include <unistd.h>
 
@@ -122,7 +123,7 @@ auto MenuChoice(int alternative) -> int
     return 1;
 }
 /*****************************************************************************************/
-auto Do_Menu(const char* text, int num_items, int pos) -> int
+auto Do_Menu(const std::string& text, int num_items, int pos) -> int
 {
     PALETTE pal;
     UrbanFont m(LARGE_FONT);
@@ -132,7 +133,7 @@ auto Do_Menu(const char* text, int num_items, int pos) -> int
     BITMAP* choice = icache.GetImage("pekare.pcx", pal);
     BITMAP* backg = icache.GetImage("ibild.pcx", pal);
     set_palette(pal);
-    BITMAP* textbmp = m.print(text);
+    BITMAP* textbmp = m.print(text.c_str());
     int text_x = (SCREEN_WIDTH - textbmp->w) / 2;
     int text_y = (SCREEN_HEIGHT - textbmp->h) / 2;
     int looping = 1;
@@ -188,7 +189,6 @@ auto Do_Menu(const char* text, int num_items, int pos) -> int
 /*****************************************************************************************/
 void LoadGame()
 {
-    char buffer[80];
     char filename[512];
     FILE* fs = nullptr;
     int slot = 0;
@@ -214,14 +214,13 @@ void LoadGame()
         fclose(fs);
     }
 
-    buffer[0] = 0;
+    std::string buffer;
 
     for (auto& SavedGame : SavedGames) {
         if (SavedGame.level != 0) {
-            strcat(buffer, SavedGame.name);
-            strcat(buffer, "\n");
+            buffer += std::string(SavedGame.name) + "\n";
         } else {
-            strcat(buffer, "EMPTY\n");
+            buffer = "EMPTY\n";
         }
     }
 
@@ -252,7 +251,7 @@ auto main(int argc, char** argv) -> int
 
     allegro_init();
     install_keyboard();
-    install_timer();
+    keyboard_reset();
 
     engine = new Engine;
 
