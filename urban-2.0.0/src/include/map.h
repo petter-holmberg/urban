@@ -33,7 +33,7 @@
 
 #include "datfile.h"
 #include <allegro.h>
-#include <stdio.h>
+#include <cstdio>
 
 inline constexpr auto MAX_TILES = 300;
 inline constexpr auto MAX_OPTIONS = 50;

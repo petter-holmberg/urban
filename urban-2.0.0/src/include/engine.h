@@ -90,9 +90,7 @@ struct PlayerData {
     int score;
 };
 
-extern "C" {
 void screen_update();
-}
 
 class Engine {
 public:

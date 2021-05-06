@@ -34,11 +34,13 @@
 #include <algorithm>
 #include <allegro.h>
 #include <array>
+#include <chrono>
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
-#include <unistd.h>
+#include <thread>
+
 /**************************************************************************/
 /* BITMAP *create_bitmap(int w, int h); */
 /**************************************************************************/
@@ -58,7 +60,7 @@ void textprintf(BITMAP* bmp, FONT* f, int x, int y, int color, const char* forma
 /**************************************************************************/
 void rest(long t)
 {
-    usleep(1000 * t);
+    std::this_thread::sleep_for(std::chrono::microseconds { 1000 * t });
 }
 /**************************************************************************/
 void keyboard_update()

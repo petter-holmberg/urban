@@ -33,7 +33,7 @@
 
 #include <allegro.h>
 
-#include <mikmod.h>
+struct SAMPLE;
 
 struct SCacheEntry {
     char* filename;

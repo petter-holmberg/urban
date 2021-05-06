@@ -35,7 +35,6 @@
 #include <cstdlib>
 #include <cstring>
 #include <mikmod.h>
-#include <unistd.h>
 
 /***************************************************************************/
 SoundCache::SoundCache()

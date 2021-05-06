@@ -29,11 +29,11 @@
     thomas.nyberg@usa.net                               jonas_b@bitsmart.com
 *****************************************************************************/
 #include <allegro.h>
+#include <atomic>
+#include <chrono>
 #include <cstring>
-#include <unistd.h>
-
-#include <csignal>
-#include <sys/time.h>
+#include <ctime>
+#include <thread>
 
 #include "cheat.h"
 #include "config.h"
@@ -46,7 +46,6 @@
 #include "otypes.h"
 #include "sort.h"
 #include "urbfont.h"
-#include <ctime>
 
 inline constexpr auto LIGHTENING_MAX = 58;
 inline constexpr auto LIGHTENING_STEP = 5;
@@ -102,6 +101,33 @@ constexpr auto OBJ_ON_BOTTOM(int map_y)
 {
     return map_y + 500;
 }
+
+class CallbackTimer {
+    std::atomic<bool> is_active {};
+
+public:
+    template <typename Function, typename Duration>
+    CallbackTimer(Function function, Duration interval)
+    {
+        this->is_active = false;
+        std::thread t([=]() {
+            while (true) {
+                if (this->is_active)
+                    return;
+                std::this_thread::sleep_for(interval);
+                if (this->is_active)
+                    return;
+                function();
+            }
+        });
+        t.detach();
+    }
+
+    void stop()
+    {
+        this->is_active = true;
+    }
+};
 
 volatile long n = 0;
 volatile long n2 = 0;
@@ -166,16 +192,9 @@ struct CheatCode cheat_codes[] = {
 
 inline constexpr auto NUM_CHEATCODES = sizeof(cheat_codes) / sizeof(cheat_codes[0]);
 
-extern "C" {
-void testframe(...)
-{
-    n = n2;
-    n2 = 0;
-}
-void update_screen(int /*sig*/)
+void update_screen()
 {
     show_next_frame = 1;
-}
 }
 /**************************************************************************/
 Engine::Engine()
@@ -880,19 +899,7 @@ auto Engine::play_level(const char* map_name, struct PlayerData* p_dat, int cont
     lightening = 0;
 
     create_objects();
-    signal(SIGALRM, update_screen);
-
-    struct itimerval tval {
-    };
-    struct itimerval oldval {
-    };
-
-    tval.it_interval.tv_sec = 0;
-    tval.it_interval.tv_usec = 1000000 / FRAMESPERSEC;
-    tval.it_value.tv_sec = 0;
-    tval.it_value.tv_usec = 1000000 / FRAMESPERSEC;
-
-    setitimer(ITIMER_REAL, &tval, &oldval);
+    CallbackTimer timer { update_screen, std::chrono::microseconds { 1000000 / FRAMESPERSEC } };
     for (i = 0; i < num_messages; i++) {
         PopMessage();
     }
@@ -931,7 +938,8 @@ auto Engine::play_level(const char* map_name, struct PlayerData* p_dat, int cont
     }
 
     // Remove screen update callback
-    setitimer(ITIMER_REAL, &oldval, nullptr);
+    //    setitimer(ITIMER_REAL, &oldval, nullptr);
+    timer.stop();
     clear_keybuf();
     return return_code;
 }
@@ -1217,7 +1225,7 @@ auto Engine::display_map() -> int
     }
 
     while (show_next_frame == 0) {
-        usleep(10);
+        std::this_thread::sleep_for(std::chrono::microseconds { 10 });
     }
 
     show_next_frame = 0;

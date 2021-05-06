@@ -38,7 +38,6 @@
 #include <allegro.h>
 #include <cstdio>
 #include <cstring>
-#include <unistd.h>
 /**************************************************************************/
 inline constexpr auto FRAME_DELAY = 100;
 /**************************************************************************/
@@ -56,7 +55,6 @@ Outtro::~Outtro()
     delete lg;
 }
 /**************************************************************************/
-extern "C" {
 static auto callback() -> int
 {
     static unsigned int count = 0;
@@ -89,7 +87,6 @@ static auto callback() -> int
 
     count++;
     return 0;
-}
 }
 /**************************************************************************/
 inline auto PLAY_FLC(datfile& dat, const char* x, const char* y) -> bool

@@ -32,24 +32,19 @@
 #include "config.h"
 #include "scache.h"
 #include <allegro.h>
+#include <chrono>
 #include <cstdio>
 #include <mikmod.h>
-#include <pthread.h>
-#include <unistd.h>
+#include <thread>
 
 extern Config* config;
 
-static pthread_t playthread;
-
-extern "C" {
-auto module_thread(void* /*arg*/) -> void*
+void module_thread()
 {
-    while (1) {
+    while (true) {
         MikMod_Update();
-        usleep(10);
+        std::this_thread::sleep_for(std::chrono::microseconds { 10 });
     }
-    return nullptr;
-};
 }
 
 inline constexpr auto NUM_VOICES = 32;
@@ -84,7 +79,7 @@ Sound::Sound()
     MikMod_SetNumVoices(12, 4);
     MikMod_EnableOutput();
 
-    pthread_create(&playthread, nullptr, module_thread, nullptr);
+    playthread = std::thread{module_thread};
 }
 
 Sound::~Sound()
@@ -116,6 +111,16 @@ void Sound::StopMusic()
         Player_Stop();
         current_mod = nullptr;
     }
+}
+
+void Sound::SetMusicVolume(int vol)
+{
+    md_musicvolume = vol / 2;
+}
+
+int Sound::GetMusicVolume()
+{
+    return md_musicvolume * 2;
 }
 
 void Sound::LoadSFX(const char* filename)

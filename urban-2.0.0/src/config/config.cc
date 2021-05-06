@@ -1,10 +1,8 @@
 #include <allegro.h>
 #include <cstdio>
 #include <cstdlib>
-#include <fcntl.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <unistd.h>
+#include <filesystem>
+#include <string>
 /**************************************************************************************/
 #include "config.h"
 #include "ctrls.h"
@@ -29,15 +27,15 @@ void Config::Load()
 /**************************************************************************************/
 void Config::Save()
 {
-    char filename[1024];
-    FILE* fd = nullptr;
-
     /* Create dir */
-    sprintf(filename, "%s/.urban", getenv("HOME"));
-    mkdir(filename, S_IRUSR | S_IWUSR | S_IXUSR);
+    std::string filename = ::getenv("HOME");
+    filename += "/.urban";
 
-    sprintf(filename, "%s/.urban/ctrl.dat", getenv("HOME"));
-    if ((fd = fopen(filename, "wb")) == nullptr) {
+    std::filesystem::create_directory(std::filesystem::path { filename });
+
+    filename += "/ctrl.dat";
+    FILE* fd = nullptr;
+    if ((fd = fopen(filename.c_str(), "wb")) == nullptr) {
         return;
     }
 

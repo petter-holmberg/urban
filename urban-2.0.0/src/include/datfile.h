@@ -3,7 +3,7 @@
 
 #include <allegro.h>
 #include <cstdint>
-#include <stdio.h>
+#include <cstdio>
 
 struct dat_entry {
     char filename[120];

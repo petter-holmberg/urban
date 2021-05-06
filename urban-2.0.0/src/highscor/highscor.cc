@@ -35,10 +35,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
-#include <fcntl.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <unistd.h>
+#include <filesystem>
 /***************************************************************************/
 
 /***************************************************************************/
@@ -216,7 +213,7 @@ void HighScore::Save()
 
     /* Create dir */
     sprintf(filename, "%s/.urban", getenv("HOME"));
-    mkdir(filename, S_IRUSR | S_IWUSR | S_IXUSR);
+    std::filesystem::create_directory(std::filesystem::path { filename });
 
     sprintf(filename, "%s/.urban/hs.dat", getenv("HOME"));
 

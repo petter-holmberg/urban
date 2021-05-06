@@ -31,10 +31,10 @@
 #include <allegro.h>
 #include <cstdio>
 #include <cstring>
-#include <fcntl.h>
-#include <sys/stat.h>
-#include <sys/types.h>
+#include <filesystem>
+
 #include <unistd.h>
+
 void close_gfx();
 
 #include "config.h"
@@ -201,7 +201,7 @@ void LoadGame()
         }
         /* Create dir */
         sprintf(filename, "%s/.urban", getenv("HOME"));
-        mkdir(filename, S_IRUSR | S_IWUSR | S_IXUSR);
+        std::filesystem::create_directory(std::filesystem::path { filename });
 
         sprintf(filename, "%s/.urban/savegame.dat", getenv("HOME"));
         if ((fs = fopen(filename, "wb")) != nullptr) {

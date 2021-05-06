@@ -32,6 +32,9 @@
 #define __SOUND_H__
 
 #include "scache.h"
+#include <thread>
+
+struct MODULE;
 
 class Sound {
 	public:
@@ -40,15 +43,17 @@ class Sound {
 
                 int PlayMusic(char *);
                 void StopMusic();
-                void SetMusicVolume(int vol) {md_musicvolume = vol / 2;}
-                int GetMusicVolume() {return md_musicvolume * 2;}
+                void SetMusicVolume(int vol);
+                int GetMusicVolume();
                 void PlaySFX_Critical(const char *);
                 void PlaySFX(const char *);
                 void LoadSFX(const char *);
 
 	private:
         	MODULE *current_mod;
-                SoundCache scache;
-                int soundcard;
+            SoundCache scache;
+            int soundcard;
+            std::thread playthread;
+
 };
 #endif

@@ -39,10 +39,8 @@
 #include <cctype>
 #include <cstdio>
 #include <cstring>
-#include <fcntl.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <unistd.h>
+#include <filesystem>
+
 /**************************************************************************/
 // Global ImageCache
 ImageCache icache;
@@ -279,7 +277,7 @@ auto NewGame(int slot) -> int
         }
         /* Create dir */
         sprintf(filename, "%s/.urban", getenv("HOME"));
-        mkdir(filename, S_IRUSR | S_IWUSR | S_IXUSR);
+        std::filesystem::create_directory(std::filesystem::path { filename });
 
         sprintf(filename, "%s/.urban/savegame.dat", getenv("HOME"));
         if ((fs = fopen(filename, "wb")) != nullptr) {
@@ -342,7 +340,7 @@ auto NewGame(int slot) -> int
 
                     /* Create dir */
                     sprintf(filename, "%s/.urban", getenv("HOME"));
-                    mkdir(filename, S_IRUSR | S_IWUSR | S_IXUSR);
+                    std::filesystem::create_directory(std::filesystem::path { filename });
 
                     sprintf(filename, "%s/.urban/savegame.dat", getenv("HOME"));
                     if ((fs = fopen(filename, "wb")) != nullptr) {

@@ -33,7 +33,7 @@
 
 #include "keyinfo.h"
 #include <allegro.h>
-#include <stdio.h>
+#include <cstdio>
 
 inline constexpr auto CONTROLLER_NONE = 0x00;
 inline constexpr auto CONTROLLER_FILE = 0x01;
