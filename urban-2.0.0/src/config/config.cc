@@ -1,3 +1,21 @@
+/******************************************************************************
+    URBAN 2.0
+    Copyright (C) 2021  Petter Holmberg (petter.holmberg@usa.net)
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*****************************************************************************/
 #include "config.h"
 #include "allegro.h"
 #include "ctrls.h"
@@ -19,7 +37,7 @@ void Config::Load()
         return;
     }
 
-    auto err = fread(&keyconf, sizeof(struct KeyConf), 1, fd);
+    auto err = fread(&keyconf, sizeof(KeyConf), 1, fd);
 
     fclose(fd);
 }
@@ -38,7 +56,7 @@ void Config::Save()
         return;
     }
 
-    fwrite(&keyconf, sizeof(struct KeyConf), 1, fd);
+    fwrite(&keyconf, sizeof(KeyConf), 1, fd);
 
     fclose(fd);
 }
@@ -278,19 +296,18 @@ void Config::StartControls()
 /**************************************************************************************/
 auto Config::GetKey(const char* Label) -> scan_code
 {
-    char buffer[128];
     UrbanFont fnt(SMALL_FONT2);
 
-    sprintf(buffer, "Please press your key for '%s'", Label);
-    fnt.print_centre(buffer, 320 / 2, 90);
+    std::string buffer{"Please press your key for '"};
+    buffer += Label + std::string("'");
+    fnt.print_centre(buffer.c_str(), 320 / 2, 90);
 
     clear_keybuf();
     auto temp = readkey();
     size_t i = 0;
     while (keyinfo[i].num != scan_code::NONE) {
         if (keyinfo[i].num == temp) {
-
-            fnt.print_centre(keyinfo[i].description, 320 / 2, 120);
+            fnt.print_centre(static_cast<const char*>(keyinfo[i].description), 320 / 2, 120);
             rest(500);
             return temp;
         }

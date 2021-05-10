@@ -1,4 +1,22 @@
 /******************************************************************************
+    URBAN 2.0
+    Copyright (C) 2021  Petter Holmberg (petter.holmberg@usa.net)
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*****************************************************************************/
+/******************************************************************************
 
     Bumpmapper for the URBAN credits
     Copyright (C) 1999  Thomas Nyberg
@@ -111,9 +129,6 @@ BITMAP* heightmap = nullptr;
 
 static void InitLightmap()
 {
-    float nx = NAN;
-    float ny = NAN;
-    float nz = NAN;
     static int first = 1;
 
     if (first == 0) {
@@ -124,9 +139,9 @@ static void InitLightmap()
 
     for (int y = 0; y < 256; y++) {
         for (int x = 0; x < 256; x++) {
-            nx = ((x - 128) / LIGHT_SIZE);
-            ny = ((y - 128) / LIGHT_SIZE);
-            nz = 1 - std::sqrt(nx * nx + ny * ny);
+            float nx = ((x - 128) / LIGHT_SIZE);
+            float ny = ((y - 128) / LIGHT_SIZE);
+            float nz = 1 - std::sqrt(nx * nx + ny * ny);
 
             if (nz < 0) {
                 nz = 0;
