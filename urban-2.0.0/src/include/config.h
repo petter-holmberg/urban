@@ -1,6 +1,7 @@
 #ifndef __CONFIG_H__
 #define __CONFIG_H__
 
+#include "ctrls.h"
 #include "keyinfo.h"
 
 inline constexpr auto QUALITY_NORMAL = 1;
@@ -15,18 +16,17 @@ struct KeyConf {
     scan_code key_fire = scan_code::KEY_LCONTROL;
     scan_code key_prevweapon = scan_code::KEY_LSHIFT;
     scan_code key_nextweapon = scan_code::KEY_RSHIFT;
-    int ctrl_type {};
-    int music_vol = 90;
-    int sfx_vol = 128;
-    int gfx_quality = QUALITY_NORMAL;
 };
 
 class Config {
 public:
     Config();
     void Start();
-    struct KeyConf keyconf {
-    };
+    KeyConf keyconf;
+    int ctrl_type = CONTROLLER_KEYBOARD;
+    int music_vol = 90;
+    int sfx_vol = 128;
+    int gfx_quality = QUALITY_NORMAL;
 
 private:
     void StartControls();

@@ -33,14 +33,14 @@
 #include "engine.h"
 #include "icache.h"
 
-struct Fontinfo UrbFontInfo[] = {
+Fontinfo UrbFontInfo[] = {
     { 9, 15, 8, 15 },
     { 32, 32, 34, 41 }
 };
 
-struct CharInfo* charinfo[2];
+CharInfo* charinfo[2];
 
-struct CharInfo charinfo_small[] = {
+CharInfo charinfo_small[] = {
     { 'A', 0, 0 },
     { 'B', 1, 0 },
     { 'C', 2, 0 },
@@ -121,7 +121,7 @@ struct CharInfo charinfo_small[] = {
     { '\0', 0, 0 }
 };
 
-struct CharInfo charinfo_large[] = {
+CharInfo charinfo_large[] = {
     { 'A', 0, 0 },
     { 'B', 1, 0 },
     { 'C', 2, 0 },

@@ -99,7 +99,7 @@ struct AIInfo {
     int num;
 };
 
-struct AIInfo aimove[] = {
+AIInfo aimove[] = {
     { MOVE_LEFT, 300 },
     { MOVE_STOP, 200 },
     { MOVE_RIGHT, 100 },
@@ -108,7 +108,7 @@ struct AIInfo aimove[] = {
     { MOVE_STOP, 200 },
 };
 
-struct AIInfo aifire[] = {
+AIInfo aifire[] = {
     { FIRE_MINIGUN, 200 },
     { FIRE_STOP, 200 },
     { FIRE_CLUSTER, 100 },

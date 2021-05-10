@@ -216,7 +216,7 @@ player_o::player_o(int X, int Y, int Z, int controls)
 
     control_type = controls;
 
-    switch (config->keyconf.ctrl_type) {
+    switch (config->ctrl_type) {
     case CONTROLLER_KEYBOARD:
         ctrl = new Keyboard_ctrl();
         break;

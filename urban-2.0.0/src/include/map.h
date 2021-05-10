@@ -46,7 +46,7 @@ inline constexpr auto BG_TILE_HEIGHT = 120;
 inline constexpr auto PAL_AIR = 0;
 inline constexpr auto PAL_WATER = 1;
 
-typedef int maptype;
+using maptype = int;
 
 class Map {
 public:

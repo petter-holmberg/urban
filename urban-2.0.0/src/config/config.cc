@@ -45,7 +45,6 @@ void Config::Save()
 /**************************************************************************************/
 Config::Config()
 {
-    keyconf.ctrl_type = CONTROLLER_KEYBOARD;
     Load();
 }
 /**************************************************************************************/
@@ -114,7 +113,7 @@ void Config::ConfigureKeyboard()
     }
     blit(bmp, screen, 0, 0, 0, 0, bmp->w, bmp->h);
 
-    keyconf.ctrl_type = CONTROLLER_KEYBOARD;
+    ctrl_type = CONTROLLER_KEYBOARD;
 }
 /**************************************************************************************/
 void Config::ChangeMusicVol()
@@ -122,7 +121,7 @@ void Config::ChangeMusicVol()
     PALETTE pal;
     BITMAP* backg = icache.GetImage("ibild.pcx", pal);
     int running = 1;
-    int vol = keyconf.music_vol;
+    int vol = music_vol;
 
     blit(backg, screen, 0, 0, 0, 0, backg->w, backg->h);
 
@@ -155,7 +154,7 @@ void Config::ChangeMusicVol()
             }
 
             SOUND.SetMusicVolume(vol);
-            keyconf.music_vol = vol;
+            music_vol = vol;
             break;
 
         case scan_code::KEY_UP:
@@ -166,7 +165,7 @@ void Config::ChangeMusicVol()
             }
 
             SOUND.SetMusicVolume(vol);
-            keyconf.music_vol = vol;
+            music_vol = vol;
             break;
 
         default:
@@ -182,7 +181,7 @@ void Config::ChangeSFXVol()
     PALETTE pal;
     BITMAP* backg = icache.GetImage("ibild.pcx", pal);
     int running = 1;
-    int vol = keyconf.sfx_vol;
+    int vol = sfx_vol;
 
     blit(backg, screen, 0, 0, 0, 0, backg->w, backg->h);
 
@@ -214,7 +213,7 @@ void Config::ChangeSFXVol()
                 vol -= 2;
             }
 
-            keyconf.sfx_vol = vol;
+            sfx_vol = vol;
             break;
 
         case scan_code::KEY_UP:
@@ -224,7 +223,7 @@ void Config::ChangeSFXVol()
                 vol += 2;
             }
 
-            keyconf.sfx_vol = vol;
+            sfx_vol = vol;
             break;
 
         default:
@@ -236,10 +235,10 @@ void Config::ChangeSFXVol()
 /**************************************************************************************/
 void Config::ChangeGFXQuality()
 {
-    int tmp = Do_Menu("NORMAL\nHIGH", 2, keyconf.gfx_quality);
+    int tmp = Do_Menu("NORMAL\nHIGH", 2, gfx_quality);
 
     if ((tmp > 0) && (tmp < 3)) {
-        keyconf.gfx_quality = tmp;
+        gfx_quality = tmp;
     }
 }
 /**************************************************************************************/

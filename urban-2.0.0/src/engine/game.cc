@@ -51,7 +51,7 @@ uint32_t flags_ = 0xffffffff;
 
 extern char lock_frame_count_to_60hz;
 
-struct SaveGameData SavedGames[5];
+SaveGameData SavedGames[5];
 
 const char* maps[] = { "gamemaps/level11.map",
     "gamemaps/level12.map",
@@ -85,7 +85,7 @@ int MaxLevelNum = 1;
 
 char* demo_filename;
 
-struct PlayerData DefaultPData = {
+PlayerData DefaultPData = {
     3,
     { -1, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
     { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
@@ -251,8 +251,7 @@ auto NewGame(int slot) -> int
     const char* map_name = nullptr;
     char name[80];
     char filename[1024];
-    struct PlayerData pdat {
-    };
+    PlayerData pdat {};
     int level = 1;
 
     FILE* fs = nullptr;
@@ -276,10 +275,10 @@ auto NewGame(int slot) -> int
 
         sprintf(filename, "%s/.urban/savegame.dat", getenv("HOME"));
         if ((fs = fopen(filename, "wb")) != nullptr) {
-            fwrite(SavedGames, 1, 5 * sizeof(struct SaveGameData), fs);
+            fwrite(SavedGames, 1, 5 * sizeof(SaveGameData), fs);
         }
     } else {
-        auto err = fread(SavedGames, 1, 5 * sizeof(struct SaveGameData), fs);
+        auto err = fread(SavedGames, 1, 5 * sizeof(SaveGameData), fs);
     }
 
     if (fs != nullptr) {

@@ -59,8 +59,8 @@ struct SaveGameData {
     char name[80];
 };
 
-extern struct SaveGameData SavedGames[5];
-extern struct PlayerData DefaultPData;
+extern SaveGameData SavedGames[5];
+extern PlayerData DefaultPData;
 
 extern uint32_t flags_;
 

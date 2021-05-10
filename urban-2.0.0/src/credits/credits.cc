@@ -47,15 +47,13 @@ inline void cblit(BITMAP* bmp, BITMAP* dest, int x, int y)
     masked_blit(bmp, dest, 0, 0, (x) - (bmp)->w / 2, y, (bmp)->w, (bmp)->h);
 }
 
-typedef unsigned char uchar;
-
 struct Lightinfo {
     int x;
     int y;
     int enabled;
 };
 
-struct Lightinfo LI[] = {
+Lightinfo LI[] = {
     { 25, 50, 0 },
     { 250, 150, 0 },
     { 250, 15, 0 },
@@ -107,7 +105,7 @@ const char* special_thanks = "\n"
                              "      NOW\n"
                              "  PLAY URBAN";
 
-uchar lightmap[256 * 256] = {};
+unsigned char lightmap[256 * 256] = {};
 BITMAP* _buffer_ = nullptr;
 BITMAP* heightmap = nullptr;
 
@@ -134,7 +132,7 @@ static void InitLightmap()
                 nz = 0;
             }
 
-            lightmap[x + y * 256] = (uchar)(std::min(255.0F, nz * 191 + nz * nz * nz * nz * nz * nz * nz * nz * nz * 64));
+            lightmap[x + y * 256] = static_cast<unsigned char>(std::min(255.0F, nz * 191 + nz * nz * nz * nz * nz * nz * nz * nz * nz * 64));
         }
     }
 }

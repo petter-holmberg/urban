@@ -138,7 +138,7 @@ std::array<char, 64> cheat_code_letters;
 size_t cheat_cl_p = 0;
 unsigned long cheat_codes_active = 0;
 
-struct Letter Letters[] = {
+Letter Letters[] = {
     { scan_code::KEY_A, 'A' },
     { scan_code::KEY_B, 'B' },
     { scan_code::KEY_C, 'C' },
@@ -169,7 +169,7 @@ struct Letter Letters[] = {
 
 inline constexpr auto NUM_LETTERS = sizeof(Letters) / sizeof(Letters[0]);
 
-struct CheatCode cheat_codes[] = {
+CheatCode cheat_codes[] = {
     { "LINUSISGOD", CHEAT_MK_PLAYER_IMMORTAL },
     { "LINUXRULES", CHEAT_GIVE_PLAYER_HEALTH },
     { "VOLATILE", CHEAT_GIVE_PLAYER_FIRE },
@@ -833,7 +833,7 @@ void Engine::NewGame()
 }
 
 /**************************************************************************/
-auto Engine::play_level(const char* map_name, struct PlayerData* p_dat, int controls) -> int
+auto Engine::play_level(const char* map_name, PlayerData* p_dat, int controls) -> int
 {
     int i = 0;
 

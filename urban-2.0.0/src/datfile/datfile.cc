@@ -104,7 +104,7 @@ auto datfile::load_pcx(const std::string& filename, PALETTE& pal) -> BITMAP*
         exit(2);
     }
 
-    auto err2 = fread((char*)&header, 1, sizeof(struct pcx_header), datfd);
+    auto err2 = fread((char*)&header, 1, sizeof(pcx_header), datfd);
 
     width = get16(header.xmax) - get16(header.xmin) + 1;
     height = get16(header.ymax) - get16(header.ymin) + 1;
@@ -150,8 +150,7 @@ auto datfile::load_pcx(const std::string& filename, PALETTE& pal) -> BITMAP*
 /***************************************************************************/
 datfile::datfile(const char* filename)
 {
-    struct header hdr {
-    };
+    header hdr {};
     char buffer[512];
 
     num_entries = 0;

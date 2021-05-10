@@ -101,11 +101,11 @@ FILE* flc_file = nullptr;
 long flc_offset = 0;
 char* flc_memory_buffer = nullptr;
 
-struct flc_header flc_h;
-struct prefix_chunk prefix_c;
-struct frame_chunk frame_c;
-struct prefix_chunk chunk;
-struct frame_header frame_h;
+flc_header flc_h;
+prefix_chunk prefix_c;
+frame_chunk frame_c;
+prefix_chunk chunk;
+frame_header frame_h;
 BITMAP* flc_bitmap = nullptr;
 BITMAP* target_bitmap = nullptr;
 int (*flc_callback)() = nullptr;
@@ -158,7 +158,7 @@ static auto seek_flc_data(int offset, int mode) -> int
 
 static auto flc_read_header() -> int
 {
-    read_flc_data(reinterpret_cast<char*>(&flc_h), sizeof(struct flc_header));
+    read_flc_data(reinterpret_cast<char*>(&flc_h), sizeof(flc_header));
     if (flc_h.magic != FLC_MAGIC) {
         return 1;
     }
@@ -279,7 +279,7 @@ static auto next_frame() -> int
     int j = 0;
 
     for (j = 0; j < chunk.n_chunks; j++) {
-        read_flc_data(reinterpret_cast<char*>(&frame_h), sizeof(struct frame_header));
+        read_flc_data(reinterpret_cast<char*>(&frame_h), sizeof(frame_header));
         switch (frame_h.type) {
         case FLI_COLOR256:
         /* fallthrough */
@@ -315,7 +315,7 @@ static void do_flc_play(int loop)
         seek_flc_data(flc_h.oframe1, SEEK_SET);
 
         for (i = 0; i < flc_h.n_frames; i++) {
-            read_flc_data(reinterpret_cast<char*>(&chunk), sizeof(struct frame_chunk));
+            read_flc_data(reinterpret_cast<char*>(&chunk), sizeof(frame_chunk));
             next_frame();
             blit(flc_bitmap, target_bitmap, 0, 0, 0, 0, 320, 240);
 

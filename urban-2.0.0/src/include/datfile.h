@@ -26,7 +26,7 @@ public:
     struct dat_entry** GetEntries() { return entries; };
 
 private:
-    struct dat_entry* entries[2000] {};
+    dat_entry* entries[2000] {};
     FILE* datfd;
     int num_entries;
 };

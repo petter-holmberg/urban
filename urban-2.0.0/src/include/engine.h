@@ -96,7 +96,7 @@ public:
     Engine();
     ~Engine();
     void NewGame();
-    int play_level(const char* map_name, struct PlayerData* p_dat = NULL, int controls = 0x02); //OBS!! <- HACK
+    int play_level(const char* map_name, PlayerData* p_dat = nullptr, int controls = 0x02); //OBS!! <- HACK
     void create_objects();
 
     void ClearLevel() { level_complete = 1; }
@@ -166,11 +166,8 @@ private:
     int play_loop();
     void PopMessage();
 
-    //		BITMAP *messages[MAX_MESSAGES];
-    struct MessageQueue messages[MAX_MESSAGES] {
-    };
+    MessageQueue messages[MAX_MESSAGES] {};
     int num_messages;
-    //                friend screen_update();
     /* options till motorn */
     int always_shake; //banan skakar konstant
     int max_time; //tid till undergång!

@@ -140,7 +140,7 @@ void Sound::PlaySFX_Critical(const char* filename)
 
         s = scache.GetSample(filename);
         if (s != nullptr) {
-            md_sndfxvolume = config->keyconf.sfx_vol;
+            md_sndfxvolume = config->sfx_vol;
             Sample_Play(s, 0, SFX_CRITICAL);
         }
     }
@@ -153,7 +153,7 @@ void Sound::PlaySFX(const char* filename)
 
         s = scache.GetSample(filename);
         if (s != nullptr) {
-            md_sndfxvolume = config->keyconf.sfx_vol;
+            md_sndfxvolume = config->sfx_vol;
             Sample_Play(s, 0, 0);
         }
     }

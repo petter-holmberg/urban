@@ -37,10 +37,10 @@
 #include <SFML/Window.hpp>
 #include <array>
 
-typedef struct RGB {
+struct RGB {
     unsigned char r, g, b;
     unsigned char filler;
-} RGB;
+};
 
 inline constexpr auto PAL_SIZE = 256;
 
@@ -49,7 +49,7 @@ using PALETTE = std::array<RGB, PAL_SIZE>;
 extern PALETTE black_palette;
 
 /* a bitmap structure */
-typedef struct BITMAP {
+struct BITMAP {
     int w, h;
     int stride;
     char* dat;
@@ -58,27 +58,27 @@ typedef struct BITMAP {
     sf::Texture texture;
     sf::Sprite* vis {};
     sf::Color pal[PAL_SIZE];
-} BITMAP;
+};
 
 inline constexpr auto FONT_SIZE = 224; /* number of characters in a font */
 
-typedef struct FONT_8x8 /* a simple 8x8 font */
+struct FONT_8x8 /* a simple 8x8 font */
 {
     unsigned char dat[FONT_SIZE][8];
-} FONT_8x8;
+};
 
-typedef struct FONT_8x16 /* a simple 8x16 font */
+struct FONT_8x16 /* a simple 8x16 font */
 {
     unsigned char dat[FONT_SIZE][16];
-} FONT_8x16;
+};
 
-typedef struct FONT_PROP /* a proportional font */
+struct FONT_PROP /* a proportional font */
 {
     BITMAP* dat[FONT_SIZE];
     void (*render)(BITMAP* bmp, BITMAP* sprite, int x, int y, int color);
-} FONT_PROP;
+};
 
-typedef struct FONT /* can be either */
+struct FONT /* can be either */
 {
     int height;
     union {
@@ -86,7 +86,7 @@ typedef struct FONT /* can be either */
         FONT_8x16* dat_8x16;
         FONT_PROP* dat_prop;
     } dat;
-} FONT;
+};
 
 template <typename T>
 constexpr auto get16(T x)
