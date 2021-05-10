@@ -130,12 +130,10 @@ public:
     }
 };
 
-volatile long n = 0;
-volatile long n2 = 0;
 char lock_frame_count_to_60hz = 0;
 Object* s_obj[MAX_OBJECTS];
 extern class Config* config;
-volatile int show_next_frame = 0;
+std::atomic<int> show_next_frame = 0;
 std::array<char, 64> cheat_code_letters;
 size_t cheat_cl_p = 0;
 unsigned long cheat_codes_active = 0;
@@ -982,7 +980,6 @@ auto Engine::display_map() -> int
     if ((do_shake != 0) && always_shake == 0) {
         do_shake--;
     }
-    n2++;
     for (i = bgstartx; i < (bgstartx + 4); i++) {
         for (j = (bgstarty + 3); j >= bgstarty; j--) {
             if (j < 0) { //<- OBS!!! HACK
@@ -1199,6 +1196,7 @@ auto Engine::display_map() -> int
     }
 
     if (key[static_cast<size_t>(scan_code::KEY_F11)]) {
+        long int n;
         textprintf(buffer, font, 0, 0, 36, "Frames/s %ld", n);
     }
 

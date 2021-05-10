@@ -143,14 +143,14 @@ public:
     bool weapon9() { return key[static_cast<size_t>(scan_code::KEY_9)]; }
 
 private:
-    void set_key(int, volatile int**);
-    volatile int* key_up;
-    volatile int* key_down;
-    volatile int* key_left;
-    volatile int* key_right;
-    volatile int* key_jump;
-    volatile int* key_fire;
-    volatile int* key_nextw;
-    volatile int* key_prevw;
+    void set_key(int, int**);
+    int* key_up;
+    int* key_down;
+    int* key_left;
+    int* key_right;
+    int* key_jump;
+    int* key_fire;
+    int* key_nextw;
+    int* key_prevw;
 };
 #endif

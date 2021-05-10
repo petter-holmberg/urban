@@ -37,6 +37,7 @@
 #include "score.h"
 #include "sound.h"
 #include <array>
+#include <atomic>
 
 inline constexpr auto MAX_OBJECTS = 1000;
 inline constexpr auto MAX_INNERLAYER = 100;
@@ -69,9 +70,6 @@ extern Engine ENGINE;
 
 struct Buffer {
     BITMAP* buffer;
-    volatile int updated;
-    volatile int offsetx;
-    volatile int offsety;
 };
 
 inline constexpr auto LOW_PRIORITY = 0x01;
@@ -136,7 +134,7 @@ public:
 private:
     void UpdateLightening();
 
-    volatile char level_complete {};
+    std::atomic<char> level_complete {};
 
     std::array<Object*, MAX_OBJECTS> objects {};
     std::array<Object*, MAX_OBJECTS> alwaysupdate {};

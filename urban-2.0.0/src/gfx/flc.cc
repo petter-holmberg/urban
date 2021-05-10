@@ -108,7 +108,6 @@ struct prefix_chunk chunk;
 struct frame_header frame_h;
 BITMAP* flc_bitmap = nullptr;
 BITMAP* target_bitmap = nullptr;
-volatile unsigned long flc_counter = 0;
 int (*flc_callback)() = nullptr;
 
 static auto read_flc_data(char* buffer, int count) -> int
@@ -316,7 +315,6 @@ static void do_flc_play(int loop)
         seek_flc_data(flc_h.oframe1, SEEK_SET);
 
         for (i = 0; i < flc_h.n_frames; i++) {
-            flc_counter = 0;
             read_flc_data(reinterpret_cast<char*>(&chunk), sizeof(struct frame_chunk));
             next_frame();
             blit(flc_bitmap, target_bitmap, 0, 0, 0, 0, 320, 240);
