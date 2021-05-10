@@ -179,8 +179,6 @@ auto Do_Menu(const std::string& text, int num_items, int pos) -> int
     }
 
     destroy_bitmap(textbmp);
-    icache.FreeImage(choice);
-    icache.FreeImage(backg);
 
     clear_keybuf();
 
@@ -338,7 +336,6 @@ Möjliga växlar:
         PALETTE pal;
         BITMAP* backg = icache.GetImage("ibild.pcx", pal);
         blit(backg, screen, 0, 0, 0, 0, backg->w, backg->h);
-        icache.FreeImage(backg);
 
         rest(500);
 

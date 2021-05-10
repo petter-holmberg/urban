@@ -36,6 +36,7 @@
 #include "object.h"
 #include "score.h"
 #include "sound.h"
+#include <array>
 
 inline constexpr auto MAX_OBJECTS = 1000;
 inline constexpr auto MAX_INNERLAYER = 100;
@@ -137,14 +138,14 @@ private:
 
     volatile char level_complete {};
 
-    Object* objects[MAX_OBJECTS] {};
-    Object* alwaysupdate[MAX_OBJECTS] {};
-    Object* effects[MAX_EFFECTS_OBJECTS] {};
-    Object* dekorations[MAX_DEKORATION_OBJECTS] {};
-    Object* shells[MAX_SHELL_OBJECTS] {}; //Oanvänd?
-    Object* innerlayer[MAX_INNERLAYER] {};
-    Object* map_effect[MAX_MAP_EFFECT] {};
-    Object* map_dekor[MAX_MAP_DEKORATION_OBJECTS] {};
+    std::array<Object*, MAX_OBJECTS> objects {};
+    std::array<Object*, MAX_OBJECTS> alwaysupdate {};
+    std::array<Object*, MAX_EFFECTS_OBJECTS> effects {};
+    std::array<Object*, MAX_DEKORATION_OBJECTS> dekorations {};
+    std::array<Object*, MAX_SHELL_OBJECTS> shells {}; //Oanvänd?
+    std::array<Object*, MAX_INNERLAYER> innerlayer {};
+    std::array<Object*, MAX_MAP_EFFECT> map_effect {};
+    std::array<Object*, MAX_MAP_DEKORATION_OBJECTS> map_dekor {};
 
     int num_objects;
     int num_effects;

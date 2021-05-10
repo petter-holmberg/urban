@@ -28,10 +28,10 @@
 
     thomas.nyberg@usa.net				jonas_b@bitsmart.com
 *****************************************************************************/
+#include "allegro.h"
 #include "engine.h"
 #include "object2.h"
-#include <allegro.h>
-#include <cstring>
+#include <vector>
 /***************************************************************************/
 inline constexpr auto PLASMA_SPEED = 10;
 
@@ -53,7 +53,7 @@ Plasma_o::Plasma_o(int X, int Y, int Z, int Dir, int friendship, int Damage)
     coll_height = height;
     counter = 0;
 
-    images = new BITMAP*;
+    images.resize(1, nullptr);
 
     switch (Dir) {
     case LEFT_DIR:
@@ -65,11 +65,6 @@ Plasma_o::Plasma_o(int X, int Y, int Z, int Dir, int friendship, int Damage)
         break;
     }
     images[0] = icache.GetImage(filename, pal);
-    if (images[0] != nullptr) {
-        num_images++;
-    }
-
-    //	rect(images[0], 0, 0, images[0]->w - 1, images[0]->h - 1, 15);
 
     current_image = 0;
     me = FRIEND_PLASMA;

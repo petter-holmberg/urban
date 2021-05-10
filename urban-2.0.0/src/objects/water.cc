@@ -28,11 +28,10 @@
 
     thomas.nyberg@usa.net				jonas_b@bitsmart.com
 *****************************************************************************/
+#include "allegro.h"
 #include "engine.h"
 #include "object2.h"
-#include <allegro.h>
-#include <cstdlib>
-#include <cstring>
+#include <vector>
 
 /****************************************************************************/
 Water_o::Water_o(int X, int Y, int Z)
@@ -41,21 +40,15 @@ Water_o::Water_o(int X, int Y, int Z)
     PALETTE pal;
     char filename[512];
 
-    images = new BITMAP*[2];
+    images.resize(2, nullptr);
     for (int i = 0; i < 2; i++) {
         sprintf(filename, "water%d.pcx", i + 1);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
     current_image = 0;
 
     height = images[0]->h;
     width = images[0]->w;
-    //	x += TILE_WIDTH / 2;
-    //	x -= width / 2;
-    //	x += TILE_WIDTH;
     y -= height;
     y += 10;
     coll_x = 0;
@@ -93,24 +86,11 @@ auto Water_o::update() -> int
 
 void Water_o::Collision(Object* o)
 {
-
     if (o->GetSpeedY() > 0 && o->GetY() > y) {
         o->SetMode(MODE_WATER);
         ENGINE.map.SetPal(PAL_WATER);
-    } //else if (o->GetY() + o->GetHeight() < y + 10) {
-    else if (o->GetMode() == MODE_WATER && o->GetY() <= y) {
+    } else if (o->GetMode() == MODE_WATER && o->GetY() <= y) {
         o->SetMode(MODE_NORMAL);
         ENGINE.map.SetPal(PAL_AIR);
     }
-
-    /*	if (o->GetSpeedY() < 0 &&
-        	o->GetY() + o->GetHeight() - y <= 10)
-
-	if (o->GetSpeedY() > 0 &&
-	       	o->GetY() > y) {
-		o->SetMode(MODE_WATER);
-	} else if (o->GetSpeedY() < 0 &&
-		o->GetY() + o->GetHeight() - 10 > y)
-        	if (o->GetY() + o->GetHeight()
-        	o->SetMode(MODE_NORMAL);*/
 }

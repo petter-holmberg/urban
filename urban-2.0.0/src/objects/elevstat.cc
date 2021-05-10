@@ -28,11 +28,11 @@
 
     thomas.nyberg@usa.net				jonas_b@bitsmart.com
 *****************************************************************************/
+#include "allegro.h"
 #include "engine.h"
 #include "object2.h"
-#include <allegro.h>
-#include <cstdlib>
-#include <cstring>
+#include <string>
+#include <vector>
 
 inline constexpr auto STATE_NONE = 0x00;
 inline constexpr auto STATE_ACTIVATE = 0x01;
@@ -53,37 +53,16 @@ ElevatorStation_o::ElevatorStation_o(int X, int Y, int Z, int dir, Cardtype Card
     PALETTE pal;
     char filename[512];
 
-    images = new BITMAP*[10];
+    images.resize(10, nullptr);
 
     for (int i = 0; i < 10; i++) {
         sprintf(filename, "elepan%d.pcx", i);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
-    /*
-        switch (dir) {
-        	case UP_DIR:
-                	sprintf(filename, "elepan1.pcx");
-                        break;
-                case DOWN_DIR:
-                	sprintf(filename, "elepan1.pcx");
-                        break;
-                case LEFT_DIR:
-                case RIGHT_DIR:
-                	break;
-	}
-        images[0] = icache.GetImage(filename, pal);
-        if (images[0])
-        	num_images++;
-	*/
     current_image = 0;
 
     height = images[0]->h;
     width = images[0]->w;
-    //	x += TILE_WIDTH / 2;
-    //	x -= width / 2;
     x += TILE_WIDTH;
     y -= height;
     coll_x = -TILE_WIDTH;
@@ -175,10 +154,6 @@ auto ElevatorStation_o::update() -> int
                 (dynamic_cast<Elevator_o*>(elevator))->DeActivate();
             }
         }
-        /*                	if (elevator && elevator->GetY() > (y + height - 8)) {
-                        	state = STATE_NONE;
-                                ((Elevator_o *)elevator)->DeActivate();
-			}*/
         break;
     default:
         break;
@@ -186,7 +161,7 @@ auto ElevatorStation_o::update() -> int
 
     elevator = nullptr;
 
-    current_image = anim.next_frame(num_images - 1, FRAME_DELAY);
+    current_image = anim.next_frame(images.size() - 1, FRAME_DELAY);
 
     return 0;
 }
@@ -203,26 +178,26 @@ auto ElevatorStation_o::StartElevator() -> int
         if (card == none || ((dynamic_cast<player_o*>(PLAYER))->HaveCard(card) != 0)) {
             state = STATE_ACTIVATE;
         } else if (card != none) {
-            char msg[80];
+            std::string msg;
 
             switch (card) {
             case green:
-                strcpy(msg, "Green access denied");
+                msg = "Green access denied";
                 break;
             case blue:
-                strcpy(msg, "Blue access denied");
+                msg = "Blue access denied";
                 break;
             case red:
-                strcpy(msg, "Red access denied");
+                msg = "Red access denied";
                 break;
             case yellow:
-                strcpy(msg, "Yellow access denied");
+                msg = "Yellow access denied";
                 break;
             default:
-                strcpy(msg, "elevstat.cc: unknown card");
+                msg = "elevstat.cc: unknown card";
                 break;
             }
-            ENGINE.PushMessage(msg);
+            ENGINE.PushMessage(msg.c_str());
         }
     }
     return state == STATE_ACTIVATE ? 1 : 0;

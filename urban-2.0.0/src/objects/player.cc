@@ -198,19 +198,6 @@ Weapon Weapons[NUM_WEAPONS] = {
         6, 6, 0, 0, 0, 100 }
 };
 
-/*struct Weapon {
-	int walk_left[6];
-        int walk_right[6];
-        int walk_up[6];
-        int walk_down[6];
-        int fire_left[6];
-        int fire_right[6];
-        int fire_rep;
-	int fire_delay;
-	long ammo;
-        char availible;
-};*/
-
 constexpr auto WEAPON_AVAILIBLE(Weapon* weapon, int current_weapon, int mode)
 {
     return (weapon[current_weapon].ammo && (mode == MODE_NORMAL ? 1 : weapon[current_weapon].waterproof));
@@ -235,307 +222,180 @@ player_o::player_o(int X, int Y, int Z, int controls)
         break;
     };
 
-    //	images = (BITMAP **)malloc(205 * sizeof(BITMAP *));
-    images = new BITMAP*[241];
+    images.resize(241, nullptr);
 
     for (int i = 0; i < 6; i++) {
         sprintf(filename, "urban/h/%d.pcx", i + 1);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
     for (int i = 6; i < 12; i++) {
         sprintf(filename, "urban/v/%d.pcx", i - 5);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
     for (int i = 12; i < 18; i++) {
         sprintf(filename, "urban/f/%d.pcx", i - 11);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
     for (int i = 18; i < 24; i++) {
         sprintf(filename, "urban/b/%d.pcx", i - 17);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
     /* Skjutbilder */
     //Hagelgevär
     for (int i = 24; i < 30; i++) {
         sprintf(filename, "urban/h/%ds.pcx", i - 23);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
     for (int i = 30; i < 36; i++) {
         sprintf(filename, "urban/v/%ds.pcx", i - 29);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
     //Eldkastare
     for (int i = 36; i < 42; i++) {
         sprintf(filename, "urban/flame_h/%ds.pcx", i - 35);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
     for (int i = 42; i < 48; i++) {
         sprintf(filename, "urban/flame_v/%ds.pcx", i - 41);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
     for (int i = 48; i < 54; i++) {
         sprintf(filename, "urban/flame_h/%d.pcx", i - 47);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
     for (int i = 54; i < 60; i++) {
         sprintf(filename, "urban/flame_v/%d.pcx", i - 53);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
     for (int i = 60; i < 66; i++) {
         sprintf(filename, "urban/flame_f/%d.pcx", i - 59);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
 
     //IceMaker(tm)
     for (int i = 66; i < 72; i++) {
         sprintf(filename, "urban/ice/urbhoger/%ds.pcx", i - 65);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
     for (int i = 72; i < 78; i++) {
         sprintf(filename, "urban/ice/urbvanst/%ds.pcx", i - 71);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
     for (int i = 78; i < 84; i++) {
         sprintf(filename, "urban/ice/urbhoger/%d.pcx", i - 77);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
     for (int i = 84; i < 90; i++) {
         sprintf(filename, "urban/ice/urbvanst/%d.pcx", i - 83);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
     for (int i = 90; i < 96; i++) {
         sprintf(filename, "urban/ice/urbfram/%d.pcx", i - 89);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
     //Grenade
     for (int i = 96; i < 102; i++) {
         sprintf(filename, "urban/granadel/urbhoger/%d.pcx", i - 95);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
     for (int i = 102; i < 108; i++) {
         sprintf(filename, "urban/granadel/urbvanst/%d.pcx", i - 101);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
     for (int i = 108; i < 114; i++) {
         sprintf(filename, "urban/granadel/urbfram/%d.pcx", i - 107);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
     for (int i = 114; i < 120; i++) {
         sprintf(filename, "urban/granadel/urbbak/%d.pcx", i - 113);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
     for (int i = 120; i < 126; i++) {
         sprintf(filename, "urban/granadel/urbhoger/%ds.pcx", i - 119);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
     for (int i = 126; i < 132; i++) {
         sprintf(filename, "urban/granadel/urbvanst/%ds.pcx", i - 125);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
 
     //Plasma-weapon
     for (int i = 132; i < 138; i++) {
         sprintf(filename, "plasmal/urbhoger/%d.pcx", i - 131);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
     for (int i = 138; i < 144; i++) {
         sprintf(filename, "plasmal/urbvanst/%d.pcx", i - 137);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
     for (int i = 144; i < 150; i++) {
         sprintf(filename, "plasmal/urbfram/%d.pcx", i - 143);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
     for (int i = 150; i < 156; i++) {
         sprintf(filename, "plasmal/urbbak/%d.pcx", i - 149);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
     for (int i = 156; i < 162; i++) {
         sprintf(filename, "plasmal/urbhoger/%ds.pcx", i - 155);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
     for (int i = 162; i < 168; i++) {
         sprintf(filename, "plasmal/urbvanst/%ds.pcx", i - 161);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
     //Minigun
     for (int i = 168; i < 174; i++) {
         sprintf(filename, "urban/minigun/urbhoger/%d.pcx", i - 167);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
     for (int i = 174; i < 180; i++) {
         sprintf(filename, "urban/minigun/urbvanst/%d.pcx", i - 173);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
     for (int i = 180; i < 186; i++) {
         sprintf(filename, "urban/minigun/urbfram/%d.pcx", i - 179);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
     for (int i = 186; i < 192; i++) {
         sprintf(filename, "urban/minigun/urbbak/%d.pcx", i - 185);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
     for (int i = 192; i < 198; i++) {
         sprintf(filename, "urban/minigun/urbhoger/%ds.pcx", i - 191);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
     for (int i = 198; i < 204; i++) {
         sprintf(filename, "urban/minigun/urbvanst/%ds.pcx", i - 197);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
     //Electric
     for (int i = 204; i < 210; i++) {
         sprintf(filename, "urban/electric/urbhoger/%d.pcx", i - 203);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
     for (int i = 210; i < 216; i++) {
         sprintf(filename, "urban/electric/urbvanst/%d.pcx", i - 209);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
     for (int i = 216; i < 222; i++) {
         sprintf(filename, "urban/electric/urbfram/%d.pcx", i - 215);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
     for (int i = 222; i < 228; i++) {
         sprintf(filename, "urban/electric/urbbak/%d.pcx", i - 221);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
     for (int i = 228; i < 234; i++) {
         sprintf(filename, "urban/electric/urbhoger/%ds.pcx", i - 227);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
     for (int i = 234; i < 240; i++) {
         sprintf(filename, "urban/electric/urbvanst/%ds.pcx", i - 233);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
     sprintf(filename, "urban/empty.pcx");
     images[240] = icache.GetImage(filename, pal);
-    if (images[240] != nullptr) {
-        num_images++;
-    }
-
-    /*	for (int i = 0;i < num_images;i++)
-		rect(images[i], 0, 0, images[i]->w - 1, images[i]->h - 1, 15);*/
 
     weapon = new Weapon[NUM_WEAPONS];
     memcpy(weapon, Weapons, NUM_WEAPONS * sizeof(Weapon));

@@ -28,11 +28,11 @@
 
     thomas.nyberg@usa.net				jonas_b@bitsmart.com
 *****************************************************************************/
+#include "allegro.h"
 #include "engine.h"
 #include "object.h"
 #include "object2.h"
-#include <allegro.h>
-#include <cstring>
+#include <vector>
 
 inline constexpr auto EXPLOSION_SAMPLE = "samples/heart_1.wav";
 inline constexpr auto FIRE_SAMPLE = "samples/grenade.wav";
@@ -47,7 +47,7 @@ rocket_o::rocket_o(int X, int Y, int Z, int Speed, int Mode)
     PALETTE pal;
     char filename[512];
 
-    images = new BITMAP*[1];
+    images.resize(1, nullptr);
 
     SOUND.PlaySFX(FIRE_SAMPLE);
     if (Speed > 0) {
@@ -57,9 +57,6 @@ rocket_o::rocket_o(int X, int Y, int Z, int Speed, int Mode)
     }
 
     images[0] = icache.GetImage(filename, pal);
-    if (images[0] != nullptr) {
-        num_images++;
-    }
 
     height = images[0]->h;
     width = images[0]->w;

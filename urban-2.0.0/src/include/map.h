@@ -33,6 +33,11 @@
 
 #include "allegro.h"
 #include "datfile.h"
+#include <array>
+#include <memory>
+#include <optional>
+#include <string>
+#include <vector>
 
 inline constexpr auto MAX_TILES = 300;
 inline constexpr auto MAX_OPTIONS = 50;
@@ -76,18 +81,18 @@ public:
 
 private:
     static char* GetLine(FILE* fd);
-    maptype* sections[3] {};
-    maptype* objects[3] {};
-    maptype* background;
-    maptype* dekor[3] {};
-    maptype* effect[3] {};
-    BITMAP** Tiles;
-    BITMAP** BGTiles {};
-    datfile* dat;
-    int* TileInfo;
-    char** Filename;
-    char** BGFilename {};
-    char** options;
+    std::array<std::vector<maptype>, 3> sections {};
+    std::array<std::vector<maptype>, 3> objects {};
+    std::vector<maptype> background;
+    std::array<std::vector<maptype>, 3> dekor {};
+    std::array<std::vector<maptype>, 3> effect {};
+    std::array<BITMAP*, MAX_TILES> Tiles {};
+    std::array<BITMAP*, MAX_TILES> BGTiles {};
+    std::unique_ptr<datfile> dat;
+    std::array<int, MAX_TILES> TileInfo {};
+    std::array<std::optional<std::string>, MAX_TILES> Filename {};
+    std::array<std::optional<std::string>, MAX_TILES> BGFilename {};
+    std::array<std::optional<std::string>, MAX_OPTIONS> options {};
 
     int x_size, y_size, bg_x_size, bg_y_size;
     int num_tiles, bg_num_tiles;

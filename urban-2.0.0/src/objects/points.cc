@@ -28,11 +28,10 @@
 
     thomas.nyberg@usa.net				jonas_b@bitsmart.com
 *****************************************************************************/
+#include "allegro.h"
 #include "engine.h"
 #include "object2.h"
-#include <allegro.h>
-#include <cstdlib>
-#include <cstring>
+#include <vector>
 
 inline constexpr auto EXIST_DELAY = 100;
 inline constexpr auto MOVE_DELAY = 2;
@@ -44,14 +43,10 @@ Points_o::Points_o(int X, int Y, int Z, int score)
     char filename[512];
     int i = 0;
 
-    images = new BITMAP*[10];
-    //        sprintf(filename, "xbarrel.pcx");
+    images.resize(10, nullptr);
     for (i = 0; i < 10; i++) {
         sprintf(filename, "points/%d00.pcx", i + 1);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
 
     current_image = (score / 100) - 1;
@@ -64,15 +59,10 @@ Points_o::Points_o(int X, int Y, int Z, int score)
 
     height = images[0]->h;
     width = images[0]->w;
-    //	x += TILE_WIDTH / 2;
-    //	x -= width / 2;
-    //        y -= height;
     coll_x = 0;
     coll_y = 0;
     coll_width = width;
     coll_height = height;
-
-    //	rect(images[0], 0, 0, images[0]->w - 1, images[0]->h - 1, 15);
 
     energy = 1;
     strength = 0;

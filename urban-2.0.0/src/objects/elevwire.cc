@@ -28,11 +28,10 @@
 
     thomas.nyberg@usa.net				jonas_b@bitsmart.com
 *****************************************************************************/
+#include "allegro.h"
 #include "engine.h"
 #include "object2.h"
-#include <allegro.h>
-#include <cstdlib>
-#include <cstring>
+#include <vector>
 
 inline constexpr auto STATE_NONE = 0x00;
 inline constexpr auto STATE_FIND = 0x01;
@@ -44,12 +43,9 @@ ElevatorWire_o::ElevatorWire_o(int X, int Y, int Z)
     PALETTE pal;
     char filename[512];
 
-    images = new BITMAP*;
+    images.resize(1, nullptr);
     sprintf(filename, "connect.pcx");
     images[0] = icache.GetImage(filename, pal);
-    if (images[0] != nullptr) {
-        num_images++;
-    }
 
     current_image = 0;
 

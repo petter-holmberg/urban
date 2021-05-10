@@ -28,11 +28,10 @@
 
     thomas.nyberg@usa.net				jonas_b@bitsmart.com
 *****************************************************************************/
+#include "allegro.h"
 #include "engine.h"
 #include "object.h"
-#include <allegro.h>
-#include <cstdlib>
-#include <cstring>
+#include <vector>
 
 Barrel_o::Barrel_o(int X, int Y, int Z, int Type)
     : Object(X, Y, Z)
@@ -40,12 +39,9 @@ Barrel_o::Barrel_o(int X, int Y, int Z, int Type)
     PALETTE pal;
     char filename[512];
 
-    images = new BITMAP*[2];
+    images.resize(2, nullptr);
     sprintf(filename, "xbarrel.pcx");
     images[0] = icache.GetImage(filename, pal);
-    if (images[0] != nullptr) {
-        num_images++;
-    }
 
     current_image = 0;
 

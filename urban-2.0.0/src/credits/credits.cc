@@ -249,7 +249,6 @@ void showcredits()
 
     hmap = icache.GetImage("credits/bump.pcx", pal);
 
-    icache.FreeImage(icache.GetImage("credits/palette.pcx", pal));
     clear(screen);
     set_palette(pal);
 
@@ -293,7 +292,6 @@ void showcredits()
             }
             fade_out(10);
             destroy_bitmap(_buffer_);
-            icache.FreeImage(hmap);
             return;
         }
     }
@@ -386,7 +384,6 @@ void showcredits()
     }
 
     destroy_bitmap(_buffer_);
-    icache.FreeImage(hmap);
 
     fade_out(10);
 }

@@ -28,9 +28,10 @@
 
     thomas.nyberg@usa.net				jonas_b@bitsmart.com
 *****************************************************************************/
+#include "allegro.h"
 #include "engine.h"
 #include "object.h"
-#include <allegro.h>
+#include <vector>
 
 inline constexpr auto FRAME_DELAY = 4;
 inline constexpr auto BURN_DELAY = 2000;
@@ -43,14 +44,11 @@ Fire_o::Fire_o(int X, int Y, int Z, int size)
     int i = 0;
 
     anim.reset();
-    images = new BITMAP*[4];
+    images.resize(4, nullptr);
 
     for (i = 0; i < 4; i++) {
         sprintf(filename, "%s/%d.pcx", size == 1 ? "fire" : "smallfir", i + 1);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
 
     height = images[0]->h;

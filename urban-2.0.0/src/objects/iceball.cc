@@ -28,9 +28,10 @@
 
     thomas.nyberg@usa.net				jonas_b@bitsmart.com
 *****************************************************************************/
+#include "allegro.h"
 #include "engine.h"
 #include "object.h"
-#include <allegro.h>
+#include <vector>
 
 inline constexpr auto X_SPEED = 1;
 inline constexpr auto FRAME_DELAY = 4;
@@ -43,21 +44,15 @@ IceBall_o::IceBall_o(int X, int Y, int Z, int Friends, int SpeedX, int SpeedY, i
     int i = 0;
 
     anim.reset();
-    images = new BITMAP*[16];
+    images.resize(16, nullptr);
 
     for (i = 0; i < 8; i++) {
         sprintf(filename, "ice/v/%d.pcx", i + 1);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
     for (i = 8; i < 16; i++) {
         sprintf(filename, "ice/h/%d.pcx", i - 7);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
 
     height = images[0]->h;
@@ -70,7 +65,8 @@ IceBall_o::IceBall_o(int X, int Y, int Z, int Friends, int SpeedX, int SpeedY, i
     direction = SpeedX < 0 ? LEFT_DIR : RIGHT_DIR;
 
     current_image = direction == LEFT_DIR ? 0 : 8;
-    //stå med fötterna
+
+    //stand on feet
     y -= (height / 2);
 
     x = (direction == LEFT_DIR ? x - width : x);

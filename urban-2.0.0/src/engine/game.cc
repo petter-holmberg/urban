@@ -138,7 +138,6 @@ void display_level_info(int level)
 
     BITMAP* bmp = icache.GetImage("ibild.pcx", Pal);
     blit(bmp, screen, 0, 0, 0, 0, bmp->w, bmp->h);
-    icache.FreeImage(bmp);
     if (level == -1) {
         sprintf(message, "GAME OVER");
     } else if (level > NUM_LEVELS) {

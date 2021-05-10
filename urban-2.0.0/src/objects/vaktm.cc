@@ -65,21 +65,15 @@ Vaktm_o::Vaktm_o(int X, int Y, int Z)
     int i = 0;
 
     anim.reset();
-    images = new BITMAP*[8];
+    images.resize(8, nullptr);
 
     for (i = 0; i < 4; i++) {
         sprintf(filename, "vaktm/v/%d.pcx", i + 1);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
     for (i = 4; i < 8; i++) {
         sprintf(filename, "vaktm/h/%d.pcx", i - 3);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
 
     current_image = 0;

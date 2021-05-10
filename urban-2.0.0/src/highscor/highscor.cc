@@ -102,8 +102,6 @@ auto HighScore::GetName() -> std::string
     set_palette(pal);
     blit(backg, screen, 0, 0, 0, 0, 320, 240);
 
-    icache.FreeImage(backg);
-
     clear_keybuf();
 
     do {

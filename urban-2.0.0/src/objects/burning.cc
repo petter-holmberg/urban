@@ -28,11 +28,10 @@
 
     thomas.nyberg@usa.net				jonas_b@bitsmart.com
 *****************************************************************************/
+#include "allegro.h"
 #include "engine.h"
 #include "object.h"
-#include <allegro.h>
-#include <cstdlib>
-#include <cstring>
+#include <vector>
 
 inline constexpr auto PROB_WALK_START = 0;
 inline constexpr auto PROB_WALK_END = 80;
@@ -68,28 +67,19 @@ BurningBody_o::BurningBody_o(int X, int Y, int Z, int Move)
     int i = 0;
 
     anim.reset();
-    images = new BITMAP*[12];
+    images.resize(12, nullptr);
 
     for (i = 0; i < 4; i++) {
         sprintf(filename, "burning/burnh/%d.pcx", i + 1);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
     for (i = 4; i < 8; i++) {
         sprintf(filename, "burning/burnv/%d.pcx", i - 3);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
     for (i = 8; i < 11; i++) {
         sprintf(filename, "burning/%d.pcx", i - 7);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
 
     current_image = Move != 0 ? 0 : 10;

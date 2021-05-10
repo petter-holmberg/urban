@@ -32,27 +32,29 @@
 #define __SCACHE_H__
 
 #include "allegro.h"
+#include <memory>
+#include <string>
+#include <string_view>
+#include <vector>
 
 struct SAMPLE;
 
 struct SCacheEntry {
-    char* filename;
-    SAMPLE* sample;
-    int count;
+    std::string filename;
+    SAMPLE* sample {};
 };
 
 class SoundCache {
 public:
     SoundCache();
     SAMPLE* GetSample(const char* filename);
-    void FreeSample(SAMPLE* sample);
     ~SoundCache();
 
 private:
-    SCacheEntry* FindEntry(const char* filename);
+    SCacheEntry* FindEntry(std::string_view filename);
     int num_samples;
     int max_samples;
-    SCacheEntry* cache;
+    std::vector<SCacheEntry> cache;
 };
 
 extern SoundCache scache;

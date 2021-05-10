@@ -33,6 +33,7 @@
 
 #include "allegro.h"
 #include "anim.h"
+#include <vector>
 
 inline constexpr auto RIGHT_DIR = 0;
 inline constexpr auto LEFT_DIR = 1;
@@ -175,12 +176,11 @@ public:
     int SetEnergy(int s) { return (energy = s); }
     int IsImmortal() { return state & 0x80; }; // STATE_IMMORTAL = 0x80
 protected:
-    BITMAP** images;
+    std::vector<BITMAP*> images;
     int x, y, z;
     int layer;
     int speed_x, speed_y, speed_z;
     int current_image;
-    int num_images;
     int width {}, height {};
     int mode;
 

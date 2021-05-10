@@ -31,10 +31,9 @@
 #include "scache.h"
 #include "game.h"
 #include <allegro.h>
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
 #include <mikmod.h>
+#include <string_view>
+#include <vector>
 
 /***************************************************************************/
 SoundCache::SoundCache()
@@ -42,35 +41,23 @@ SoundCache::SoundCache()
     num_samples = 0;
     max_samples = 5;
 
-    cache = (SCacheEntry*)malloc(max_samples * sizeof(SCacheEntry));
+    cache.resize(max_samples);
 }
 
 /***************************************************************************/
-void SoundCache::FreeSample(SAMPLE* sample)
+SoundCache::~SoundCache()
 {
-
-    for (int i = 0; i < num_samples; i++) {
-        if (sample == cache[i].sample) {
-
-            cache[i].count--;
-            return;
+    for (auto& entry : cache) {
+        if (entry.sample != nullptr) {
+            ::Sample_Free(entry.sample);
         }
     }
 }
 /***************************************************************************/
-SoundCache::~SoundCache()
-{
-    /*	for(int i=0;i<num_images;i++) {
-        	destroy_bitmap(cache[i].bitmap);
-                free(cache[i].filename);
-        }*/
-}
-/***************************************************************************/
-auto SoundCache::FindEntry(const char* filename) -> SCacheEntry*
+auto SoundCache::FindEntry(std::string_view filename) -> SCacheEntry*
 {
     for (int i = 0; i < num_samples; i++) {
-
-        if (strcmp(filename, cache[i].filename) == 0) {
+        if (filename == cache[i].filename) {
             return &cache[i];
         }
     }
@@ -85,19 +72,16 @@ auto SoundCache::GetSample(const char* filename) -> SAMPLE*
     SCacheEntry* entry = nullptr;
     // Allready in cache
     if ((entry = FindEntry(pathname)) != nullptr) {
-        entry->count++;
         return entry->sample;
 
-    } // Need more entires?
+    } // Need more entries?
     if (num_samples == max_samples) {
         max_samples += 5;
-        cache = (SCacheEntry*)
-            realloc(cache, max_samples * sizeof(SCacheEntry));
+        cache.resize(max_samples);
     }
     entry = &cache[num_samples++];
-    entry->sample = Sample_Load(pathname);
-    entry->filename = strdup(pathname);
-    entry->count = 1;
+    entry->sample = ::Sample_Load(pathname);
+    entry->filename = pathname;
 
     return entry->sample;
 }

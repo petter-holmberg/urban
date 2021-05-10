@@ -28,10 +28,10 @@
 
     thomas.nyberg@usa.net				jonas_b@bitsmart.com
 *****************************************************************************/
+#include "allegro.h"
 #include "engine.h"
 #include "object2.h"
-#include <allegro.h>
-#include <cstring>
+#include <vector>
 
 /****************************************************************************/
 inline constexpr auto GRENADE_SPEED = 4;
@@ -43,14 +43,10 @@ AirGrenade_o::AirGrenade_o(int X, int Y, int Z, int SpeedX, int SpeedY, int Spee
     PALETTE pal;
     char filename[512];
 
-    images = new BITMAP*[1];
+    images.resize(1, nullptr);
 
-    //        sprintf(filename, "soldier2/kula.pcx");
     sprintf(filename, "airgren.pcx");
     images[0] = icache.GetImage(filename, pal);
-    if (images[0] != nullptr) {
-        num_images++;
-    }
 
     height = images[0]->h;
     width = images[0]->w;
@@ -70,9 +66,7 @@ AirGrenade_o::AirGrenade_o(int X, int Y, int Z, int SpeedX, int SpeedY, int Spee
     speed_y = SpeedY;
 
     energy = 10000000;
-    //        strength = 100;
     strength = 0;
-    //        speed_y = -(2 + random() % 5);
 
     counter = 0;
 }

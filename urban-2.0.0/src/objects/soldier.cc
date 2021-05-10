@@ -28,12 +28,11 @@
 
     thomas.nyberg@usa.net				jonas_b@bitsmart.com
 *****************************************************************************/
+#include "allegro.h"
 #include "death.h"
 #include "engine.h"
 #include "object.h"
-#include <allegro.h>
-#include <cstdlib>
-#include <cstring>
+#include <vector>
 
 inline constexpr auto PROB_WALK_START = 0;
 inline constexpr auto PROB_WALK_END = 40;
@@ -78,37 +77,25 @@ soldier_o::soldier_o(int X, int Y, int Z)
     int i = 0;
 
     anim.reset();
-    images = (BITMAP**)malloc(30 * sizeof(BITMAP*));
+    images.resize(30, nullptr);
 
     for (i = 0; i < 5; i++) {
         sprintf(filename, "soldier/soldh/%d.pcx", i + 1);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
     for (i = 5; i < 8; i++) {
         sprintf(filename, "soldier/soldh/shot%d.pcx", i - 4);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
 
     for (i = 8; i < 13; i++) {
         sprintf(filename, "soldier/soldv/%d.pcx", i - 7);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
 
     for (i = 13; i < 16; i++) {
         sprintf(filename, "soldier/soldv/shot%d.pcx", i - 12);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
 
     current_image = 4;

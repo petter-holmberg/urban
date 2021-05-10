@@ -28,9 +28,10 @@
 
     thomas.nyberg@usa.net				jonas_b@bitsmart.com
 *****************************************************************************/
+#include "allegro.h"
 #include "engine.h"
 #include "object.h"
-#include <allegro.h>
+#include <vector>
 
 gnistor_o::gnistor_o(int X, int Y, int Z, int /*Speed_X*/, int /*Speed_Y*/, int /*Speed_Z*/, int Direction)
     : Object(X, Y, Z)
@@ -40,20 +41,18 @@ gnistor_o::gnistor_o(int X, int Y, int Z, int /*Speed_X*/, int /*Speed_Y*/, int 
     int i = 0;
 
     anim.reset();
-    images = new BITMAP*[3];
+    images.resize(3, nullptr);
 
     for (i = 0; i < 3; i++) {
         sprintf(filename, "gnist/%s/%d.pcx", Direction == LEFT_DIR ? "v" : "h", i + 1);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
     height = images[0]->h;
     width = images[0]->w;
 
     current_image = 0;
-    //stå med fötterna
+
+    //stand on feet
     y -= (height / 2);
 
     x -= (width / 2);

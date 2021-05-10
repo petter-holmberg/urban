@@ -67,11 +67,6 @@ ScoreBoard::ScoreBoard()
 /*************************************************************************/
 ScoreBoard::~ScoreBoard()
 {
-    for (int i = 0; i < 12; i++) {
-
-        icache.FreeImage(face[i]);
-        face[i] = nullptr;
-    }
 }
 /*************************************************************************/
 void ScoreBoard::Display(BITMAP* bitmap)

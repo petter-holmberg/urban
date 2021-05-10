@@ -28,12 +28,11 @@
 
     thomas.nyberg@usa.net				jonas_b@bitsmart.com
 *****************************************************************************/
+#include "allegro.h"
 #include "death.h"
 #include "engine.h"
 #include "object.h"
-#include <allegro.h>
-#include <cstdlib>
-#include <cstring>
+#include <vector>
 
 inline constexpr auto PROB_WALK_START = 0;
 inline constexpr auto PROB_WALK_END = 50;
@@ -97,49 +96,31 @@ Crycheck_o::Crycheck_o(int X, int Y, int Z)
     int i = 0;
 
     anim.reset();
-    images = new BITMAP*[42];
+    images.resize(42, nullptr);
 
     for (i = 0; i < 5; i++) {
         sprintf(filename, "inspecto/inspv/%d.pcx", i + 1);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
     for (i = 5; i < 10; i++) {
         sprintf(filename, "inspecto/insph/%d.pcx", i + 1 - 5);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
     for (i = 10; i < 14; i++) {
         sprintf(filename, "inspecto/inspv/shot%d.pcx", i + 1 - 10);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
     for (i = 14; i < 18; i++) {
         sprintf(filename, "inspecto/insph/shot%d.pcx", i + 1 - 14);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
     for (i = 18; i < 30; i++) {
         sprintf(filename, "inspecto/insph/dead%d.pcx", i + 1 - 18);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
     for (i = 30; i < 42; i++) {
         sprintf(filename, "inspecto/inspv/dead%d.pcx", i + 1 - 30);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
 
     current_image = 1;

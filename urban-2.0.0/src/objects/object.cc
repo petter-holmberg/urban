@@ -29,15 +29,17 @@
     thomas.nyberg@usa.net				jonas_b@bitsmart.com
 *****************************************************************************/
 #include "object.h"
+#include "allegro.h"
 #include "engine.h"
 #include "icache.h"
-#include <allegro.h>
+#include <vector>
 
 Object::Object(int X, int Y, int Z, int Mode)
 {
-    images = nullptr;
-    num_images = current_image = 0;
-    speed_z = speed_x = speed_y = 0;
+    current_image = 0;
+    speed_z = 0;
+    speed_x = 0;
+    speed_y = 0;
     direction = 0;
     layer = (Z / TILE_TOP_HEIGHT);
     x = X;
@@ -49,20 +51,13 @@ Object::Object(int X, int Y, int Z, int Mode)
 
 Object::~Object()
 {
-    int i = 0;
-    for (i = 0; i < num_images; i++) {
-        if (images[i] != nullptr) {
-            icache.FreeImage(images[i]);
-        }
-    }
 }
 
 auto Object::GetImage() -> BITMAP*
 {
-    if (current_image < num_images) {
+    if (current_image < images.size()) {
         return images[current_image];
-    }
-    {
+    } else {
         return images[0];
     }
 }

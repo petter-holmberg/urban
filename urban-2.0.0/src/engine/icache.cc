@@ -44,49 +44,19 @@ ImageCache::ImageCache()
     num_images = 0;
     max_images = 5;
 
-    cache = (CacheEntry*)malloc(max_images * sizeof(CacheEntry));
+    cache.resize(max_images);
     if constexpr (USE_DATFILE) {
         dat = new datfile("urban.dat");
     }
 }
 /***************************************************************************/
-void ImageCache::FreeImage(BITMAP* bitmap)
-{
-
-    for (int i = 0; i < num_images; i++) {
-        if (bitmap == cache[i].bitmap) {
-
-            cache[i].count--;
-            /*                        if(cache[i].count == 0) {
-                        	destroy_bitmap(cache[i].bitmap);
-                                free(cache[i].filename);
-                                memmove(&cache[i], &cache[i+1], sizeof(CacheEntry) * (num_images - i - 1));
-                                num_images--;
-                        }*/
-            return;
-        }
-    }
-}
-/***************************************************************************/
 ImageCache::~ImageCache()
 {
-    /*
-	int i;
-	FILE *f;
-        f = fopen("icache.txt", "w");
-        fprintf(f, "Total number of pictures: %d\n", num_images);
-        for (i = 0;i < num_images;i++)
-	        fprintf(f, "Filename: %s, Num users: %d\n", cache[i].filename, cache[i].count);
-	fclose(f);*/
-    /*	for(int i=0;i<num_images;i++) {
-        	destroy_bitmap(cache[i].bitmap);
-                free(cache[i].filename);
-        }*/
 }
 /***************************************************************************/
 auto ImageCache::FindEntry(const char* filename) -> CacheEntry*
 {
-    for (int i = 0; i < num_images; i++) {
+    for (int i = 0; i < cache.size(); i++) {
 
         if (std::string_view(filename) == std::string_view(std::begin(cache[i].filename))) {
             return &cache[i];
@@ -115,8 +85,7 @@ auto ImageCache::GetImage(const char* filename, PALETTE& pal) -> BITMAP*
     } // Need more entires?
     if (num_images == max_images) {
         max_images += 5;
-        cache = (CacheEntry*)
-            realloc(cache, max_images * sizeof(CacheEntry));
+        cache.resize(max_images);
     }
     entry = &cache[num_images++];
 

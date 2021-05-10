@@ -28,12 +28,11 @@
 
     thomas.nyberg@usa.net				jonas_b@bitsmart.com
 *****************************************************************************/
+#include "allegro.h"
 #include "death.h"
 #include "engine.h"
 #include "object.h"
-#include <allegro.h>
-#include <cstdlib>
-#include <cstring>
+#include <vector>
 
 inline constexpr auto PROB_WALK_START = 0;
 inline constexpr auto PROB_WALK_END = 60;
@@ -77,50 +76,31 @@ Einstein_o::Einstein_o(int X, int Y, int Z)
     int i = 0;
 
     anim.reset();
-    //	images = (BITMAP **)malloc(30 * sizeof(BITMAP *));
-    images = new BITMAP*[30];
+    images.resize(30, nullptr);
 
     for (i = 0; i < 5; i++) {
         sprintf(filename, "prof2/prof2h/%d.pcx", i + 1);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
     for (i = 5; i < 10; i++) {
         sprintf(filename, "prof2/prof2v/%d.pcx", i - 4);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
     for (i = 10; i < 17; i++) {
         sprintf(filename, "prof2/prof2h/dead%d.pcx", i - 9);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
     for (i = 17; i < 24; i++) {
         sprintf(filename, "prof2/prof2v/dead%d.pcx", i - 16);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
     for (i = 24; i < 27; i++) {
         sprintf(filename, "prof2/prof2h/write%d.pcx", i - 23);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
     for (i = 27; i < 30; i++) {
         sprintf(filename, "prof2/prof2v/write%d.pcx", i - 26);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
 
     current_image = 5;

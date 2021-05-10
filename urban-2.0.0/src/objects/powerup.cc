@@ -28,10 +28,10 @@
 
     thomas.nyberg@usa.net				jonas_b@bitsmart.com
 *****************************************************************************/
+#include "allegro.h"
 #include "engine.h"
 #include "object.h"
-#include <allegro.h>
-#include <cstring>
+#include <vector>
 
 /****************************************************************************/
 inline constexpr auto POWERUP_STRENGTH = 100;
@@ -43,7 +43,7 @@ powerup_o::powerup_o(int X, int Y, int Z, int Type)
     char filename[512];
 
     type = Type;
-    images = new BITMAP*;
+    images.resize(1);
     msg[0] = '\0';
     switch (type) {
     case POWERUP_ENERGY:
@@ -141,9 +141,6 @@ powerup_o::powerup_o(int X, int Y, int Z, int Type)
         break;
     }
     images[0] = icache.GetImage(filename, pal);
-    if (images[0] != nullptr) {
-        num_images++;
-    }
 
     current_image = 0;
 

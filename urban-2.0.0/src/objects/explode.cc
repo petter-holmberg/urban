@@ -28,9 +28,10 @@
 
     thomas.nyberg@usa.net				jonas_b@bitsmart.com
 *****************************************************************************/
+#include "allegro.h"
 #include "engine.h"
 #include "object.h"
-#include <allegro.h>
+#include <vector>
 
 inline constexpr auto EXPLODE_SAMPLE = "samples/ex12.wav";
 inline constexpr auto EXPLODE_SPEED = 4;
@@ -44,14 +45,11 @@ explosion_o::explosion_o(int X, int Y, int Z, int /*Speed_X*/, int /*Speed_Y*/, 
     int i = 0;
 
     anim.reset();
-    images = new BITMAP*[10];
+    images.resize(10, nullptr);
 
     for (i = 0; i < 10; i++) {
         sprintf(filename, "expl/%d.pcx", i + 1);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
     height = images[0]->h;
     width = images[0]->w;
@@ -73,7 +71,6 @@ explosion_o::explosion_o(int X, int Y, int Z, int /*Speed_X*/, int /*Speed_Y*/, 
     friends = FRIEND_EXPLOSION | Friends;
     enemies = ~friends;
     counter = EXPLODE_FRAMES;
-    //        counter2 = random() % 10;
     me = FRIEND_EXPLOSION;
     ENGINE.EnableEarthquake();
     SOUND.PlaySFX(EXPLODE_SAMPLE);

@@ -31,7 +31,12 @@
 #include "map.h"
 #include "engine.h"
 #include "icache.h"
+#include <algorithm>
 #include <cstring>
+#include <memory>
+#include <optional>
+#include <string>
+#include <vector>
 
 inline constexpr bool CHECK_MAP_BOUNDRIES = true;
 
@@ -308,32 +313,20 @@ struct BGLoadInfo {
 /***************************************************************************/
 Map::Map()
 {
-    PALETTE Blue;
-
-    dat = new datfile("levels.dat");
-    sections[0] = sections[1] = sections[2] = nullptr;
+    dat = std::make_unique<datfile>("levels.dat");
     num_tiles = x_size = y_size = 0;
     bg_num_tiles = bg_x_size = bg_y_size = 0;
-    Tiles = nullptr;
-    Filename = nullptr;
-    TileInfo = nullptr;
-    objects[0] = objects[1] = objects[2] = nullptr;
-    effect[0] = effect[1] = effect[2] = nullptr;
-    dekor[0] = dekor[1] = dekor[2] = nullptr;
-    options = nullptr;
-    background = nullptr;
     pal_type = PAL_AIR;
 
     pal_count = 0;
     // Get palette
     BITMAP* bmp = icache.GetImage("tiles/desk10.pcx", Pal_air);
-    icache.FreeImage(bmp);
 
     Pal = Pal_air;
 
     // Create a blue palette
+    PALETTE Blue;
     for (auto& i : Blue) {
-
         i.r = i.g = 0;
         i.b = 63;
     }
@@ -342,28 +335,15 @@ Map::Map()
 /***************************************************************************/
 void Map::NewLevel(int width, int height)
 {
+    sections[0].clear();
+    sections[1].clear();
+    sections[2].clear();
 
-    if (sections[0] != nullptr) {
-        delete[] sections[0];
-    }
-    if (sections[1] != nullptr) {
-        delete[] sections[1];
-    }
-    if (sections[2] != nullptr) {
-        delete[] sections[2];
-    }
+    objects[0].clear();
+    objects[1].clear();
+    objects[2].clear();
 
-    if (objects[0] != nullptr) {
-        delete[] objects[0];
-    }
-    if (objects[1] != nullptr) {
-        delete[] objects[1];
-    }
-    if (objects[2] != nullptr) {
-        delete[] objects[2];
-    }
-
-    delete[] background;
+    background.clear();
 
     x_size = width;
     y_size = height;
@@ -374,44 +354,30 @@ void Map::NewLevel(int width, int height)
         bg_y_size = 4;
     }
 
-    background = (int*)calloc(bg_x_size * bg_y_size, sizeof(int));
-
     // Default background
-    for (int i = 0; i < (bg_x_size * bg_y_size); i++) {
-        background[i] = 1;
-    }
+    background.resize(bg_x_size * bg_y_size, 1);
 
-    sections[0] = (int*)calloc(x_size * y_size, sizeof(int));
-    sections[1] = (int*)calloc(x_size * y_size, sizeof(int));
-    sections[2] = (int*)calloc(x_size * y_size, sizeof(int));
-    objects[0] = (int*)calloc(x_size * y_size, sizeof(int));
-    objects[1] = (int*)calloc(x_size * y_size, sizeof(int));
-    objects[2] = (int*)calloc(x_size * y_size, sizeof(int));
+    sections[0].resize(x_size * y_size, 0);
+    sections[1] = sections[0];
+    sections[2] = sections[0];
+    objects[0].resize(x_size * y_size, 0);
+    objects[1] = objects[0];
+    objects[2] = objects[0];
     if constexpr (USE_DEKORATIONS) {
-        dekor[0] = (int*)calloc(x_size * y_size, sizeof(int));
-        dekor[1] = (int*)calloc(x_size * y_size, sizeof(int));
-        dekor[2] = (int*)calloc(x_size * y_size, sizeof(int));
+        dekor[0].resize(x_size * y_size, 0);
+        dekor[1] = dekor[0];
+        dekor[2] = dekor[0];
     }
     if constexpr (USE_EFFECTS) {
-        effect[0] = (int*)calloc(x_size * y_size, sizeof(int));
-        effect[1] = (int*)calloc(x_size * y_size, sizeof(int));
-        effect[2] = (int*)calloc(x_size * y_size, sizeof(int));
+        effect[0].resize(x_size * y_size, 0);
+        effect[1] = effect[0];
+        effect[2] = effect[0];
     }
-    options = (char**)calloc(MAX_OPTIONS, sizeof(char*));
+    options.fill(std::nullopt);
 }
 /***************************************************************************/
 Map::~Map()
 {
-    if (sections[0] != nullptr) {
-        delete[] sections[0];
-    }
-    if (sections[1] != nullptr) {
-        delete[] sections[1];
-    }
-    if (sections[2] != nullptr) {
-        delete[] sections[2];
-    }
-    /* OBS!!!!!!!!!!!! Fria allt minne, bitte! */
 }
 /***************************************************************************/
 auto Map::SaveMap(const char* filename) -> int
@@ -492,11 +458,12 @@ auto Map::SaveMap(const char* filename) -> int
     }
     fprintf(fd, "</BACKGROUND>\n\n");
 
-    if (options != nullptr) {
+    if (std::find(std::begin(options), std::end(options), std::nullopt) != std::end(options)) {
         fprintf(fd, "<OPTIONS>\n");
         x = 0;
-        while (options[x] != nullptr) {
-            fprintf(fd, "%s\n", options[x++]);
+        while (options[x]) {
+            fprintf(fd, "%s\n", options[x]->c_str());
+            ++x;
         }
         fprintf(fd, "</OPTIONS>\n");
     }
@@ -517,53 +484,14 @@ auto Map::LoadMap(const char* filename) -> int
 
     x_size = y_size = 0;
 
-    if (sections[0] != nullptr) {
-        free(sections[0]);
-    }
-    if (sections[1] != nullptr) {
-        free(sections[1]);
-    }
-    if (sections[2] != nullptr) {
-        free(sections[2]);
-    }
-    if (objects[0] != nullptr) {
-        free(objects[0]);
-    }
-    if (objects[1] != nullptr) {
-        free(objects[1]);
-    }
-    if (objects[2] != nullptr) {
-        free(objects[2]);
-    }
-
-    if (effect[0] != nullptr) {
-        free(effect[0]);
-    }
-    if (effect[1] != nullptr) {
-        free(effect[1]);
-    }
-    if (effect[2] != nullptr) {
-        free(effect[2]);
-    }
-    if (dekor[0] != nullptr) {
-        free(dekor[0]);
-    }
-    if (dekor[1] != nullptr) {
-        free(dekor[1]);
-    }
-    if (dekor[2] != nullptr) {
-        free(dekor[2]);
-    }
-    if (background != nullptr) {
-        free(background);
-    }
-    if (options != nullptr) {
-        free(options);
-    }
-    effect[0] = effect[1] = effect[2] = nullptr;
-    dekor[0] = dekor[1] = dekor[2] = nullptr;
-    background = nullptr;
-    options = nullptr;
+    sections.fill({});
+    objects.fill({});
+    effect.fill({});
+    dekor.fill({});
+    background.clear();
+    effect.fill({});
+    dekor.fill({});
+    options.fill(std::nullopt);
 
     int using_dat = 1;
 
@@ -599,40 +527,18 @@ auto Map::LoadMap(const char* filename) -> int
         return 0;
     }
 
-    for (i = 0; i < num_tiles; i++) {
+    Filename.fill(std::nullopt);
+    BGFilename.fill(std::nullopt);
 
-        delete[] Filename[i];
-        icache.FreeImage(Tiles[i]);
-    }
+    Tiles.fill(nullptr);
+    TileInfo.fill(0);
 
-    for (i = 0; i < bg_num_tiles; i++) {
-
-        delete[] BGFilename[i];
-        icache.FreeImage(BGTiles[i]);
-    }
-
-    if (Tiles != nullptr) {
-        free(Tiles);
-    }
-    if (Filename != nullptr) {
-        free(Filename);
-    }
-    if (TileInfo != nullptr) {
-        free(TileInfo);
-    }
-
-    Tiles = (BITMAP**)malloc(MAX_TILES * sizeof(BITMAP*));
-    Filename = (char**)malloc(MAX_TILES * sizeof(char*));
-    TileInfo = (int*)malloc(MAX_TILES * sizeof(int));
-
-    BGTiles = (BITMAP**)malloc(MAX_TILES * sizeof(BITMAP*));
-    BGFilename = (char**)malloc(MAX_TILES * sizeof(char*));
+    BGTiles.fill(nullptr);
 
     i = 0;
     num_tiles = 0;
     while (strlen(tiles_to_load[i].filename) != 0U) {
-
-        Filename[num_tiles] = strdup(tiles_to_load[i].filename);
+        Filename[num_tiles] = tiles_to_load[i].filename;
         Tiles[num_tiles] = icache.GetImage(tiles_to_load[i].filename, tmppal);
         TileInfo[num_tiles] = tiles_to_load[i].tile_info;
         num_tiles++;
@@ -642,8 +548,7 @@ auto Map::LoadMap(const char* filename) -> int
     i = 0;
     bg_num_tiles = 0;
     while (strlen(bg_to_load[i].filename) != 0U) {
-
-        BGFilename[bg_num_tiles] = strdup(bg_to_load[i].filename);
+        BGFilename[bg_num_tiles] = bg_to_load[i].filename;
         BGTiles[bg_num_tiles] = icache.GetImage(bg_to_load[i].filename, tmppal);
         bg_num_tiles++;
         i++;
@@ -658,7 +563,7 @@ auto Map::LoadMap(const char* filename) -> int
             while (static_cast<int>(strcmp("</TILES>", (line = GetLine(fd))) != 0) != 0) {
 
                 Tiles[num_tiles] = icache.GetImage(line + 5, tmppal);
-                Filename[num_tiles] = strdup(line + 5);
+                Filename[num_tiles] = line + 5;
                 TileInfo[num_tiles] = (int)strtol(line, nullptr, 16);
 
                 if (Tiles[num_tiles] == nullptr) {
@@ -673,7 +578,7 @@ auto Map::LoadMap(const char* filename) -> int
             while (static_cast<int>(strcmp("</BGTILES>", (line = GetLine(fd))) != 0) != 0) {
 
                 BGTiles[bg_num_tiles] = icache.GetImage(line + 5, tmppal);
-                BGFilename[bg_num_tiles] = strdup(line + 5);
+                BGFilename[bg_num_tiles] = line + 5;
 
                 if (BGTiles[bg_num_tiles] == nullptr) {
 
@@ -685,8 +590,7 @@ auto Map::LoadMap(const char* filename) -> int
         }
 
         if (strcmp(line, "<SECTION_0>") == 0) {
-            sections[0] = new maptype[x_size * y_size];
-
+            sections[0].resize(x_size * y_size);
             for (int i = 0; i < y_size; i++) {
                 int j = 0;
                 line = GetLine(fd);
@@ -704,8 +608,7 @@ auto Map::LoadMap(const char* filename) -> int
         }
 
         if (strcmp(line, "<SECTION_1>") == 0) {
-            sections[1] = new maptype[x_size * y_size];
-
+            sections[1].resize(x_size * y_size);
             for (int i = 0; i < y_size; i++) {
                 int j = 0;
                 line = GetLine(fd);
@@ -722,8 +625,7 @@ auto Map::LoadMap(const char* filename) -> int
             }
         }
         if (strcmp(line, "<SECTION_2>") == 0) {
-            sections[2] = new maptype[x_size * y_size];
-
+            sections[2].resize(x_size * y_size);
             for (int i = 0; i < y_size; i++) {
                 int j = 0;
                 line = GetLine(fd);
@@ -740,8 +642,7 @@ auto Map::LoadMap(const char* filename) -> int
             }
         }
         if (strcmp(line, "<OBJECT_0>") == 0) {
-            objects[0] = new maptype[x_size * y_size];
-
+            objects[0].resize(x_size * y_size);
             for (int i = 0; i < y_size; i++) {
                 int j = 0;
                 line = GetLine(fd);
@@ -758,8 +659,7 @@ auto Map::LoadMap(const char* filename) -> int
             }
         }
         if (strcmp(line, "<OBJECT_1>") == 0) {
-            objects[1] = new maptype[x_size * y_size];
-
+            objects[1].resize(x_size * y_size);
             for (int i = 0; i < y_size; i++) {
                 int j = 0;
                 line = GetLine(fd);
@@ -776,8 +676,7 @@ auto Map::LoadMap(const char* filename) -> int
             }
         }
         if (strcmp(line, "<OBJECT_2>") == 0) {
-            objects[2] = new maptype[x_size * y_size];
-
+            objects[2].resize(x_size * y_size);
             for (int i = 0; i < y_size; i++) {
                 int j = 0;
                 line = GetLine(fd);
@@ -797,8 +696,7 @@ auto Map::LoadMap(const char* filename) -> int
             }
         }
         if (strcmp(line, "<BACKGROUND>") == 0) {
-            background = new maptype[bg_x_size * bg_y_size];
-
+            background.resize(bg_x_size * bg_y_size);
             for (int i = 0; i < bg_y_size; i++) {
                 int j = 0;
                 line = GetLine(fd);
@@ -816,8 +714,7 @@ auto Map::LoadMap(const char* filename) -> int
         }
         if constexpr (USE_DEKORATIONS) {
             if (strcmp(line, "<DEKOR_0>") == 0) {
-                dekor[0] = new maptype[x_size * y_size];
-
+                dekor[0].resize(x_size * y_size);
                 for (int i = 0; i < y_size; i++) {
                     int j = 0;
                     line = GetLine(fd);
@@ -834,8 +731,7 @@ auto Map::LoadMap(const char* filename) -> int
                 }
             }
             if (strcmp(line, "<DEKOR_1>") == 0) {
-                dekor[1] = new maptype[x_size * y_size];
-
+                dekor[1].resize(x_size * y_size);
                 for (int i = 0; i < y_size; i++) {
                     int j = 0;
                     line = GetLine(fd);
@@ -852,8 +748,7 @@ auto Map::LoadMap(const char* filename) -> int
                 }
             }
             if (strcmp(line, "<DEKOR_2>") == 0) {
-                dekor[2] = new maptype[x_size * y_size];
-
+                dekor[2].resize(x_size * y_size);
                 for (int i = 0; i < y_size; i++) {
                     int j = 0;
                     line = GetLine(fd);
@@ -872,7 +767,7 @@ auto Map::LoadMap(const char* filename) -> int
         }
         if constexpr (USE_EFFECTS) {
             if (strcmp(line, "<EFFECT_0>") == 0) {
-                effect[0] = new maptype[x_size * y_size];
+                effect[0].resize(x_size * y_size);
 
                 for (int i = 0; i < y_size; i++) {
                     int j = 0;
@@ -890,8 +785,7 @@ auto Map::LoadMap(const char* filename) -> int
                 }
             }
             if (strcmp(line, "<EFFECT_1>") == 0) {
-                effect[1] = new maptype[x_size * y_size];
-
+                effect[1].resize(x_size * y_size);
                 for (int i = 0; i < y_size; i++) {
                     int j = 0;
                     line = GetLine(fd);
@@ -908,8 +802,7 @@ auto Map::LoadMap(const char* filename) -> int
                 }
             }
             if (strcmp(line, "<EFFECT_2>") == 0) {
-                effect[2] = new maptype[x_size * y_size];
-
+                effect[2].resize(x_size * y_size);
                 for (int i = 0; i < y_size; i++) {
                     int j = 0;
                     line = GetLine(fd);
@@ -927,14 +820,14 @@ auto Map::LoadMap(const char* filename) -> int
             }
         }
         if (strcmp(line, "<OPTIONS>") == 0) {
-            options = (char**)calloc(MAX_OPTIONS, sizeof(char*));
+            options.fill(std::nullopt);
             i = 0;
             char* tok = nullptr;
             do {
                 line = GetLine(fd);
                 tok = strtok(line, "\n");
                 if (static_cast<int>(strcmp(tok, "</OPTIONS>") != 0) != 0) {
-                    options[i++] = strdup(tok);
+                    options[i++] = tok;
                     if (i > MAX_OPTIONS) {
                         return 0;
                     }
@@ -983,7 +876,7 @@ auto Map::GetBackGround(int x, int y) -> int
             return 0;
         }
     }
-    if (background == nullptr) {
+    if (background.empty()) {
         return 0;
     }
     return background[x + (y * bg_x_size)];
@@ -1015,7 +908,7 @@ auto Map::GetEffect(int x, int y, int z) -> int
                 return 0;
             }
         }
-        if (effect[z] == nullptr) {
+        if (effect[z].empty()) {
             return 0;
         }
         return effect[z][x + (y * x_size)];
@@ -1054,7 +947,7 @@ auto Map::GetDekor(int x, int y, int z) -> int
                 return 0;
             }
         }
-        if (dekor[z] == nullptr) {
+        if (dekor[z].empty()) {
             return 0;
         }
         return dekor[z][x + (y * x_size)];
@@ -1215,13 +1108,10 @@ auto Map::GetOption(const char* name) -> char*
     int i = 0;
     char* tok = nullptr;
     char* temp = nullptr;
-    if (options == nullptr) {
-        return nullptr;
-    }
 
     for (i = 0; i < MAX_OPTIONS; i++) {
-        if (options[i] != nullptr) {
-            temp = strdup(options[i]);
+        if (options[i]) {
+            temp = strdup(options[i]->c_str());
             tok = strtok(temp, "=\n");
             if (strcmp(tok, name) == 0) {
                 return strtok(nullptr, "=\n");
@@ -1236,15 +1126,9 @@ auto Map::GetOption(const char* name) -> char*
 /***************************************************************************/
 void Map::SetOption(const char* name)
 {
-    int i = 0;
-
-    if (options == nullptr) {
-        options = (char**)calloc(MAX_OPTIONS, sizeof(char*));
-    }
-
-    for (i = 0; i < MAX_OPTIONS; i++) {
-        if (options[i] == nullptr) {
-            options[i] = strdup(name);
+    for (int i = 0; i < MAX_OPTIONS; i++) {
+        if (!options[i]) {
+            options[i] = name;
             return;
         }
     }

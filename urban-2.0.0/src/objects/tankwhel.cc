@@ -28,11 +28,10 @@
 
     thomas.nyberg@usa.net				jonas_b@bitsmart.com
 *****************************************************************************/
+#include "allegro.h"
 #include "engine.h"
 #include "object2.h"
-#include <allegro.h>
-#include <cstdlib>
-#include <cstring>
+#include <vector>
 
 inline constexpr auto STATE_NONE = 0;
 
@@ -58,21 +57,15 @@ TankWheel_o::TankWheel_o(int X, int Y, int Z)
 
     anim.reset();
 
-    images = new BITMAP*[6];
+    images.resize(6, nullptr);
 
     for (i = 0; i < 3; i++) {
         sprintf(filename, "boss/v/band%d.pcx", i + 1);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
     for (i = 3; i < 6; i++) {
         sprintf(filename, "boss/h/band%d.pcx", i - 2);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
     current_image = 0;
 
@@ -82,10 +75,8 @@ TankWheel_o::TankWheel_o(int X, int Y, int Z)
     coll_y = 0;
     coll_width = width;
     coll_height = height;
-    //        for (i = 0;i < num_images;i++)
-    //		rect(images[i], coll_x, coll_y, coll_x + coll_width, coll_y + coll_height, 15);
 
-    //stå med fötterna
+    //stand on feet
     y -= images[0]->h;
     energy = 10;
     strength = 10;
@@ -103,8 +94,6 @@ TankWheel_o::TankWheel_o(int X, int Y, int Z)
 
 auto TankWheel_o::update() -> int
 {
-    //	int r;
-
     if (energy <= 0) {
         return -1;
     }

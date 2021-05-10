@@ -28,13 +28,12 @@
 
     thomas.nyberg@usa.net				jonas_b@bitsmart.com
 *****************************************************************************/
+#include "allegro.h"
 #include "death.h"
 #include "engine.h"
 #include "object.h"
 #include "object2.h"
-#include <allegro.h>
-#include <cstdlib>
-#include <cstring>
+#include <vector>
 
 inline constexpr auto PROB_WALK_START = 0;
 inline constexpr auto PROB_WALK_END = 50;
@@ -95,87 +94,48 @@ soldier4_o::soldier4_o(int X, int Y, int Z)
     int i = 0;
 
     anim.reset();
-    //	images = (BITMAP **)malloc(30 * sizeof(BITMAP *));
-    images = new BITMAP*[26];
+    images.resize(26, nullptr);
 
     for (i = 0; i < 5; i++) {
         sprintf(filename, "soldier2/v/%d.pcx", i + 1);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
     for (i = 5; i < 10; i++) {
         sprintf(filename, "soldier2/h/%d.pcx", i + 1 - 5);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
     for (i = 10; i < 15; i++) {
         sprintf(filename, "soldier2/f/%d.pcx", i + 1 - 10);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
     for (i = 15; i < 20; i++) {
         sprintf(filename, "soldier2/b/%d.pcx", i + 1 - 15);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
     for (i = 20; i < 22; i++) {
         sprintf(filename, "soldier2/v/shot%d.pcx", i + 1 - 20);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
     for (i = 22; i < 24; i++) {
         sprintf(filename, "soldier2/h/shot%d.pcx", i + 1 - 22);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
     sprintf(filename, "soldier2/h/hit.pcx");
     images[24] = icache.GetImage(filename, pal);
-    if (images[24] != nullptr) {
-        num_images++;
-    }
 
     sprintf(filename, "soldier2/v/hit.pcx");
     images[25] = icache.GetImage(filename, pal);
-    if (images[25] != nullptr) {
-        num_images++;
-    }
 
     current_image = 1;
 
     height = images[0]->h;
     width = images[0]->w;
-    /*        coll_x = 0;
-        coll_y = 0;
-        coll_width = width;
-        coll_height = height;*/
     coll_x = 20;
     coll_y = 0;
     coll_width = 45;
     coll_height = height - 1;
-    //        for (i = 0;i < num_images;i++)
-    //		rect(images[i], coll_x, coll_y, coll_x + coll_width, coll_y + coll_height, 15);
 
-    /*
-
-coll_x = 33
-coll_y = 0
-coll_width = 64
-coll_height = height
-*/
-
-    //stå med fötterna
+    //stand on feet
     y -= images[0]->h;
     energy = 20;
     strength = 10;

@@ -28,10 +28,10 @@
 
     thomas.nyberg@usa.net				jonas_b@bitsmart.com
 *****************************************************************************/
+#include "allegro.h"
 #include "engine.h"
 #include "object2.h"
-#include <allegro.h>
-#include <cstdio>
+#include <vector>
 
 SmallExplosion_o::SmallExplosion_o(int X, int Y, int Z)
     : Object(X, Y, Z)
@@ -41,14 +41,11 @@ SmallExplosion_o::SmallExplosion_o(int X, int Y, int Z)
     int i = 0;
 
     anim.reset();
-    images = new BITMAP*[10];
+    images.resize(10);
 
     for (i = 0; i < 10; i++) {
         sprintf(filename, "smallexp/%d.pcx", i + 1);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
     height = images[0]->h;
     width = images[0]->w;

@@ -28,9 +28,10 @@
 
     thomas.nyberg@usa.net				jonas_b@bitsmart.com
 *****************************************************************************/
+#include "allegro.h"
 #include "engine.h"
 #include "object2.h"
-#include <allegro.h>
+#include <string>
 
 inline constexpr auto X_SPEED = 1;
 inline constexpr auto FRAME_DELAY = 2;
@@ -45,14 +46,11 @@ Beam_o::Beam_o(int X, int Y, int Z, int Friends, int SpeedX, int SpeedY)
     int i = 0;
 
     anim.reset();
-    images = new BITMAP*[5];
+    images.resize(5, nullptr);
 
     for (i = 0; i < 5; i++) {
         sprintf(filename, "beam/%d.pcx", i + 1);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
 
     height = images[0]->h;
@@ -65,9 +63,8 @@ Beam_o::Beam_o(int X, int Y, int Z, int Friends, int SpeedX, int SpeedY)
     direction = SpeedX < 0 ? LEFT_DIR : RIGHT_DIR;
 
     current_image = direction == LEFT_DIR ? 0 : 8;
-    //stå med fötterna
-    //        y -= (height / 2);
 
+    //stand on feet
     x = (direction == LEFT_DIR ? x - width : x);
     energy = 10000000;
     strength = 10;

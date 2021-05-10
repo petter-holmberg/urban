@@ -28,9 +28,10 @@
 
     thomas.nyberg@usa.net				jonas_b@bitsmart.com
 *****************************************************************************/
+#include "allegro.h"
 #include "engine.h"
 #include "object.h"
-#include <allegro.h>
+#include <vector>
 
 inline constexpr auto MAX_Y_SPEED = 4;
 inline constexpr auto Y_ACCEL = 1;
@@ -42,14 +43,11 @@ Animation_o::Animation_o(int X, int Y, int Z, const char* name, int num_pics, in
     PALETTE pal;
     char filename[512];
 
-    images = new BITMAP*[num_pics];
+    images.resize(num_pics, nullptr);
 
     for (i = 0; i < num_pics; i++) {
         sprintf(filename, "%s%d.pcx", name, i + 1);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
 
     coll_x = 0;
@@ -93,8 +91,8 @@ auto Animation_o::update() -> int
         }
     }
 
-    current_image = anim.next_frame(num_images, 8);
-    if (current_image == num_images) {
+    current_image = anim.next_frame(images.size(), 8);
+    if (current_image == images.size()) {
         if (DekorationFrame != -1) {
             current_image = DekorationFrame;
             ENGINE.create_dekoration(this);

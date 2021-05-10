@@ -28,28 +28,20 @@
 
     thomas.nyberg@usa.net				jonas_b@bitsmart.com
 *****************************************************************************/
+#include "allegro.h"
 #include "engine.h"
 #include "object.h"
-#include <allegro.h>
-#include <cstring>
+#include <vector>
 
 /****************************************************************************/
 checkpoint_o::checkpoint_o(int X, int Y, int Z)
     : Object(X, Y, Z)
 {
     PALETTE pal;
-    char filename[512];
 
-    images = new BITMAP*[2];
-    strcpy(filename, "items/check.pcx");
-    images[0] = icache.GetImage(filename, pal);
-    if (images[0] != nullptr) {
-        num_images++;
-    }
-    /*        strcpy(filename, "items/check2.pcx");
-        images[1] = icache.GetImage(filename, pal);
-        if (images[1])
-        	num_images++;*/
+    images.resize(1, nullptr);
+    std::string filename { "items/check.pcx" };
+    images[0] = icache.GetImage(filename.c_str(), pal);
 
     current_image = 0;
 

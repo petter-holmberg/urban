@@ -35,26 +35,26 @@
 #include "datfile.h"
 #include <array>
 #include <memory>
+#include <vector>
 
 struct CacheEntry {
-    std::array<char, 80> filename;
-    BITMAP* bitmap;
-    int count;
-    PALETTE pal;
+    std::array<char, 80> filename {};
+    BITMAP* bitmap {};
+    int count {};
+    PALETTE pal {};
 };
 
 class ImageCache {
 public:
     ImageCache();
     BITMAP* GetImage(const char* filename, PALETTE& pal);
-    void FreeImage(BITMAP* bitmap);
     ~ImageCache();
 
 private:
     CacheEntry* FindEntry(const char* filename);
     int num_images;
     int max_images;
-    CacheEntry* cache;
+    std::vector<CacheEntry> cache;
     datfile* dat;
 };
 

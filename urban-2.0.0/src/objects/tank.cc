@@ -28,14 +28,13 @@
 
     thomas.nyberg@usa.net				jonas_b@bitsmart.com
 *****************************************************************************/
+#include "allegro.h"
 #include "engine.h"
 #include "game.h"
 #include "object.h"
 #include "object2.h"
 #include <algorithm>
-#include <allegro.h>
-#include <cstdlib>
-#include <cstring>
+#include <vector>
 
 inline constexpr auto WARNING_SAMPLE = "samples/airnuke.wav";
 inline constexpr auto MAX_CLUSTER_COUNTER = 5;
@@ -132,74 +131,44 @@ Tank_o::Tank_o(int X, int Y, int Z)
 
     anim.reset();
 
-    images = new BITMAP*[26];
+    images.resize(26, nullptr);
 
     for (i = 0; i < 3; i++) {
         sprintf(filename, "boss/v/skada0/%d.pcx", i + 1);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
     for (i = 3; i < 6; i++) {
         sprintf(filename, "boss/v/skada1/%d.pcx", i - 2);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
     for (i = 6; i < 9; i++) {
         sprintf(filename, "boss/v/skada2/%d.pcx", i - 5);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
     for (i = 9; i < 12; i++) {
         sprintf(filename, "boss/v/skada3/%d.pcx", i - 8);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
     for (i = 12; i < 15; i++) {
         sprintf(filename, "boss/h/skada0/%d.pcx", i - 11);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
     for (i = 15; i < 18; i++) {
         sprintf(filename, "boss/h/skada1/%d.pcx", i - 14);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
     for (i = 18; i < 21; i++) {
         sprintf(filename, "boss/h/skada2/%d.pcx", i - 17);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
     for (i = 21; i < 24; i++) {
         sprintf(filename, "boss/h/skada3/%d.pcx", i - 20);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
     sprintf(filename, "boss/v/dead.pcx");
     images[24] = icache.GetImage(filename, pal);
-    if (images[24] != nullptr) {
-        num_images++;
-    }
     sprintf(filename, "boss/h/dead.pcx");
     images[25] = icache.GetImage(filename, pal);
-    if (images[25] != nullptr) {
-        num_images++;
-    }
 
     current_image = 0;
 

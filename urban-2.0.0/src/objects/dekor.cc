@@ -28,24 +28,19 @@
 
     thomas.nyberg@usa.net				jonas_b@bitsmart.com
 *****************************************************************************/
+#include "allegro.h"
 #include "engine.h"
 #include "object2.h"
-#include <allegro.h>
-#include <cstdlib>
-#include <cstring>
+#include <vector>
 
 Dekor_o::Dekor_o(int X, int Y, int Z, const char* filename)
     : Object(X, Y, Z)
 {
     PALETTE pal;
 
-    images = new BITMAP*;
+    images.resize(1, nullptr);
 
     images[0] = icache.GetImage(filename, pal);
-
-    if (images[0] != nullptr) {
-        num_images++;
-    }
 
     current_image = 0;
 

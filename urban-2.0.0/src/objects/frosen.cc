@@ -28,11 +28,10 @@
 
     thomas.nyberg@usa.net				jonas_b@bitsmart.com
 *****************************************************************************/
+#include "allegro.h"
 #include "engine.h"
 #include "object.h"
-#include <allegro.h>
-#include <cstdlib>
-#include <cstring>
+#include <vector>
 
 inline constexpr auto STATE_FROSEN = 0;
 inline constexpr auto STATE_CRACKING = 1;
@@ -46,9 +45,8 @@ FrosenBody_o::FrosenBody_o(int X, int Y, int Z, int dir)
 {
     PALETTE pal;
     char filename[512];
-    //        int i;
 
-    images = new BITMAP*;
+    images.resize(1, nullptr);
 
     if (dir == LEFT_DIR) {
         sprintf(filename, "iced/v/6.pcx");
@@ -57,9 +55,6 @@ FrosenBody_o::FrosenBody_o(int X, int Y, int Z, int dir)
     }
 
     images[0] = icache.GetImage(filename, pal);
-    if (images[0] != nullptr) {
-        num_images++;
-    }
 
     current_image = 0;
 
@@ -90,13 +85,8 @@ auto FrosenBody_o::update() -> int
         } else {
             ENGINE.create_effect(new Animation_o(x, y + height, z, "iced/h/", 5, 4));
         }
-        //Animation_o(int X, int Y, int Z, char *name, int num_pics, int dek_frame = -1, int Speed_X = 0, int Speed_Y = 0, int Speed_Z = 0);
-        //		else
         return -1;
     }
-    //ENGINE.create_effect(new Animation_o(x, y + height, z, "soldier2\\v\\dead", 4, 3));
-    //	if (energy <= 0)
-    //        	return -1;
 
     return 0;
 }

@@ -28,11 +28,10 @@
 
     thomas.nyberg@usa.net				jonas_b@bitsmart.com
 *****************************************************************************/
+#include "allegro.h"
 #include "engine.h"
 #include "object2.h"
-#include <allegro.h>
-#include <cstdlib>
-#include <cstring>
+#include <vector>
 
 inline constexpr auto STATE_NONE = 0x00;
 inline constexpr auto STATE_MOVE = 0x01;
@@ -45,19 +44,14 @@ Elevator_o::Elevator_o(int X, int Y, int Z)
     PALETTE pal;
     char filename[512];
 
-    images = new BITMAP*;
+    images.resize(1, nullptr);
     sprintf(filename, "elevator.pcx");
     images[0] = icache.GetImage(filename, pal);
-    if (images[0] != nullptr) {
-        num_images++;
-    }
 
     current_image = 0;
 
     height = images[0]->h;
     width = images[0]->w;
-    //	x += TILE_WIDTH / 2;
-    //	x -= width / 2;
     x += TILE_WIDTH;
     y -= height;
     y += 8; //OBS! hack

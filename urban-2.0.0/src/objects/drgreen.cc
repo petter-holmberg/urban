@@ -28,12 +28,11 @@
 
     thomas.nyberg@usa.net				jonas_b@bitsmart.com
 *****************************************************************************/
+#include "allegro.h"
 #include "death.h"
 #include "engine.h"
 #include "object2.h"
-#include <allegro.h>
-#include <cstdlib>
-#include <cstring>
+#include <vector>
 
 inline constexpr auto PROB_WALK_START = 0;
 inline constexpr auto PROB_WALK_END = 60;
@@ -77,35 +76,23 @@ DrGreen_o::DrGreen_o(int X, int Y, int Z)
     int i = 0;
 
     anim.reset();
-    images = new BITMAP*[18];
+    images.resize(18, nullptr);
 
     for (i = 0; i < 5; i++) {
         sprintf(filename, "doc/doch/%d.pcx", i + 1);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
     for (i = 5; i < 10; i++) {
         sprintf(filename, "doc/docv/%d.pcx", i - 4);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
     for (i = 10; i < 14; i++) {
         sprintf(filename, "doc/docv/dead%d.pcx", i - 9);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
     for (i = 14; i < 18; i++) {
         sprintf(filename, "doc/docv/dead%d.pcx", i - 13);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
     current_image = 5;
 

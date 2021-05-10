@@ -121,7 +121,6 @@ inline void DISPLAY_IMAGE(BITMAP* bmp, PALETTE& palette, const char* x)
     bmp = icache.GetImage(x, palette);
     set_palette(palette);
     blit(bmp, screen, 0, 0, 0, 0, 320, 240);
-    icache.FreeImage(bmp);
 }
 
 inline void PLAY_MOD(const char* x)

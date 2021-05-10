@@ -28,10 +28,10 @@
 
     thomas.nyberg@usa.net				jonas_b@bitsmart.com
 *****************************************************************************/
+#include "allegro.h"
 #include "engine.h"
 #include "object2.h"
-#include <allegro.h>
-#include <cstring>
+#include <vector>
 
 inline constexpr auto EXPLOSION_SAMPLE = "samples/heart_1.wav";
 inline constexpr auto FIRE_SAMPLE = "samples/grenade.wav";
@@ -45,14 +45,10 @@ ClusterGrenade_o::ClusterGrenade_o(int X, int Y, int Z, int SpeedX, int SpeedY, 
     PALETTE pal;
     char filename[512];
 
-    images = new BITMAP*[1];
+    images.resize(1, nullptr);
 
-    //        SOUND.PlaySFX(FIRE_SAMPLE);
     sprintf(filename, "soldier2/kula.pcx");
     images[0] = icache.GetImage(filename, pal);
-    if (images[0] != nullptr) {
-        num_images++;
-    }
 
     height = images[0]->h;
     width = images[0]->w;

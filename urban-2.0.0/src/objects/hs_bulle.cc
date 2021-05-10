@@ -28,10 +28,10 @@
 
     thomas.nyberg@usa.net				jonas_b@bitsmart.com
 *****************************************************************************/
+#include "allegro.h"
 #include "engine.h"
 #include "object.h"
-#include <allegro.h>
-#include <cstring>
+#include <vector>
 /***************************************************************************/
 inline constexpr auto HS_SPEED = 7;
 inline constexpr auto FIRE_SAMPLE = "samples/gun2.wav";
@@ -53,15 +53,10 @@ HighSpeed_Bullet_o::HighSpeed_Bullet_o(int X, int Y, int Z, int Dir, int friends
     coll_height = height;
     counter = 0;
 
-    images = new BITMAP*;
+    images.resize(1, nullptr);
 
     sprintf(filename, "hsbullet.pcx");
     images[0] = icache.GetImage(filename, pal);
-    if (images[0] != nullptr) {
-        num_images++;
-    }
-
-    //	rect(images[0], 0, 0, images[0]->w - 1, images[0]->h - 1, 15);
 
     current_image = 0;
     me = FRIEND_HS_BULLET;

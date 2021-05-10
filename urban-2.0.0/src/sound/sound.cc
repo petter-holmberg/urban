@@ -128,11 +128,7 @@ void Sound::LoadSFX(const char* filename)
     SAMPLE* s = nullptr;
 
     if (soundcard != 0) {
-
         s = scache.GetSample(filename);
-        if (s != nullptr) {
-            scache.FreeSample(s);
-        }
     }
 }
 

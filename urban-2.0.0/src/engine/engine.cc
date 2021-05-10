@@ -790,8 +790,6 @@ always_shake
             }
         }
     }
-
-    icache.FreeImage(ibild);
 }
 /**************************************************************************/
 void Engine::NewGame()
@@ -804,7 +802,7 @@ void Engine::NewGame()
     }
     for (i = 0; i < num_alwaysupdate; i++) {
 
-        delete objects[i];
+        delete alwaysupdate[i];
     }
     player = nullptr;
     for (i = 0; i < num_effects; i++) {
@@ -1612,14 +1610,10 @@ auto Engine::play_loop() -> int
 
 void Engine::PushMessage(const char* msg, int prior)
 {
-    static UrbanFont* font = nullptr;
-
-    if (font == nullptr) {
-        font = new UrbanFont(SMALL_FONT);
-    }
+    static UrbanFont font(SMALL_FONT);
 
     messages[0].priority = prior;
-    messages[0].msg = font->print(msg);
+    messages[0].msg = font.print(msg);
     messages[0].delay = 0;
     num_messages = 1;
 }

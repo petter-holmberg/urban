@@ -28,11 +28,10 @@
 
     thomas.nyberg@usa.net				jonas_b@bitsmart.com
 *****************************************************************************/
+#include "allegro.h"
 #include "engine.h"
 #include "object.h"
-#include <allegro.h>
-#include <cstdlib>
-#include <cstring>
+#include <vector>
 /****************************************************************************/
 inline constexpr auto STRENGTH_MINE = 100;
 inline constexpr auto STATE_NONE = 0x00;
@@ -43,13 +42,10 @@ Spy_o::Spy_o(int X, int Y, int Z)
 {
     PALETTE pal;
     char filename[512];
-    images = new BITMAP*[1];
+    images.resize(1);
 
     sprintf(filename, "mine2.pcx");
     images[0] = icache.GetImage(filename, pal);
-    if (images[0] != nullptr) {
-        num_images++;
-    }
 
     current_image = 0;
 

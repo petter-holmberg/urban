@@ -114,8 +114,6 @@ auto datfile::load_pcx(const std::string& filename, PALETTE& pal) -> BITMAP*
     cpl = header.color_planes;
 
     if ((err == 0) && ((bmp = create_bitmap(width, height)) != nullptr)) {
-        //	if ((!err) && (fbuf = (uint8 *) malloc (width * height * bpp)) ) {
-        //        	bmp = create_bitmap(width, height);
         lptr = (uint8_t*)bmp->dat;
 
         for (i = 0; i < (signed)height; i++) {
@@ -136,7 +134,6 @@ auto datfile::load_pcx(const std::string& filename, PALETTE& pal) -> BITMAP*
             } while (lptr < nextlptr);
             lptr = nextlptr;
         }
-        //		memcpy(bmp->dat, fbuf, width * height);
 
         if (fgetc(datfd) == 12) {
             for (i = 0; i < 256; i++) {

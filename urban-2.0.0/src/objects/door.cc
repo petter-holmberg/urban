@@ -28,10 +28,9 @@
 
     thomas.nyberg@usa.net				jonas_b@bitsmart.com
 *****************************************************************************/
+#include "allegro.h"
 #include "engine.h"
 #include "object.h"
-#include <allegro.h>
-#include <cstring>
 
 inline constexpr auto FRAME_DELAY = 5;
 /****************************************************************************/
@@ -44,15 +43,12 @@ Door_o::Door_o(int X, int Y, int /*Z*/, Cardtype Card)
     char filename[512];
     int i = 0;
 
-    images = new BITMAP*[5];
+    images.resize(5, nullptr);
     card = Card;
 
     for (i = 0; i < 5; i++) {
         sprintf(filename, "new-door/%d.pcx", i + 1);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
 
     current_image = 0;

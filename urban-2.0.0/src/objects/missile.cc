@@ -28,10 +28,10 @@
 
     thomas.nyberg@usa.net				jonas_b@bitsmart.com
 *****************************************************************************/
+#include "allegro.h"
 #include "engine.h"
 #include "object2.h"
-#include <allegro.h>
-#include <cstring>
+#include <vector>
 
 inline constexpr auto FIRE_SAMPLE = "samples/missile1.wav";
 /****************************************************************************/
@@ -45,16 +45,12 @@ Missile_o::Missile_o(int X, int Y, int Z, int Speed)
     PALETTE pal;
     char filename[512];
 
-    images = new BITMAP*[2];
+    images.resize(2, nullptr);
 
     SOUND.PlaySFX(FIRE_SAMPLE);
     for (i = 0; i < 2; i++) {
         sprintf(filename, "%s/%d.pcx", Speed > 0 ? "skotth" : "skottv", i + 1);
-
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
 
     height = images[0]->h;

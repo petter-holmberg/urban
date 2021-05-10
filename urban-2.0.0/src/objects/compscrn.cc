@@ -28,27 +28,22 @@
 
     thomas.nyberg@usa.net				jonas_b@bitsmart.com
 *****************************************************************************/
+#include "allegro.h"
 #include "engine.h"
 #include "object2.h"
-#include <allegro.h>
-#include <cstdlib>
-#include <cstring>
+#include <vector>
 
 ComputerScreen_o::ComputerScreen_o(int X, int Y, int Z, int Type)
     : Object(X, Y, Z)
 {
     PALETTE pal;
 
-    images = new BITMAP*;
+    images.resize(1, nullptr);
 
     if (Type == 0) {
         images[0] = icache.GetImage("dekor/skarm1.pcx", pal);
     } else if (Type == 1) {
         images[0] = icache.GetImage("dekor/skarm2.pcx", pal);
-    }
-
-    if (images[0] != nullptr) {
-        num_images++;
     }
 
     current_image = 0;

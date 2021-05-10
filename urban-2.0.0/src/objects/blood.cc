@@ -28,11 +28,10 @@
 
     thomas.nyberg@usa.net				jonas_b@bitsmart.com
 *****************************************************************************/
+#include "allegro.h"
 #include "engine.h"
 #include "object.h"
-#include <allegro.h>
-#include <cstdlib>
-#include <cstring>
+#include <vector>
 
 inline constexpr auto MAX_Y_SPEED = 8;
 inline constexpr auto Y_ACCEL = 1;
@@ -44,14 +43,11 @@ blood_o::blood_o(int X, int Y, int Z, int Speed_X, int Speed_Y, int Speed_Z)
     PALETTE pal;
     char filename[512];
 
-    images = (BITMAP**)malloc(3 * sizeof(BITMAP*));
+    images.resize(3, nullptr);
 
     for (i = 0; i < 3; i++) {
         sprintf(filename, "dead/blod%d.pcx", i + 1);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
 
     coll_x = 0;

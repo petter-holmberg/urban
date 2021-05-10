@@ -115,8 +115,6 @@ void Config::ConfigureKeyboard()
     blit(bmp, screen, 0, 0, 0, 0, bmp->w, bmp->h);
 
     keyconf.ctrl_type = CONTROLLER_KEYBOARD;
-
-    icache.FreeImage(bmp);
 }
 /**************************************************************************************/
 void Config::ChangeMusicVol()
@@ -177,7 +175,6 @@ void Config::ChangeMusicVol()
             break;
         };
     };
-    icache.FreeImage(backg);
 }
 /**************************************************************************************/
 void Config::ChangeSFXVol()
@@ -235,7 +232,6 @@ void Config::ChangeSFXVol()
             break;
         };
     };
-    icache.FreeImage(backg);
 }
 /**************************************************************************************/
 void Config::ChangeGFXQuality()

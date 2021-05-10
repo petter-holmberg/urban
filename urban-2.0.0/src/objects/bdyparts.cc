@@ -28,9 +28,10 @@
 
     thomas.nyberg@usa.net				jonas_b@bitsmart.com
 *****************************************************************************/
+#include "allegro.h"
 #include "engine.h"
 #include "object.h"
-#include <allegro.h>
+#include <vector>
 /****************************************************************************/
 inline constexpr auto MAX_Y_SPEED = 4;
 inline constexpr auto MIN_Y_SPEED = -4;
@@ -46,14 +47,11 @@ bodyparts_o::bodyparts_o(int X, int Y, int Z, const char* name, int num_pics, in
     PALETTE pal;
     char filename[512];
 
-    images = new BITMAP*[num_pics];
+    images.resize(num_pics, nullptr);
 
     for (i = 0; i < num_pics; i++) {
         sprintf(filename, "%s%d.pcx", name, i + 1);
         images[i] = icache.GetImage(filename, pal);
-        if (images[i] != nullptr) {
-            num_images++;
-        }
     }
     coll_x = 0;
     coll_y = 0;
@@ -113,7 +111,7 @@ auto bodyparts_o::update() -> int
         speed_y += Y_ACCEL;
     }
 
-    current_image = anim.next_frame(num_images - 1, 4);
+    current_image = anim.next_frame(images.size() - 1, 4);
     if (speed_y != 0) {
         x += speed_x;
     }
