@@ -292,7 +292,11 @@ auto keypressed() -> int
 auto readkey() -> scan_code
 {
     sf::Event event {};
-    while (window->pollEvent(event) && event.type != sf::Event::KeyPressed) { }
+    while (true) {
+        if (window->pollEvent(event) && event.type == sf::Event::KeyPressed) {
+            break;
+        }
+    }
 
     if (num_keypressed != 0) {
         num_keypressed--;
@@ -423,6 +427,26 @@ auto readkey() -> scan_code
     return scan_code::NONE;
 }
 /**************************************************************************/
+auto readtext() -> char
+{
+    sf::Event event {};
+    while (true) {
+        if (window->pollEvent(event)) {
+            if (event.type == sf::Event::TextEntered) {
+                break;
+            } else if (event.text.unicode == 59) { // backspace
+                break;
+            }
+        }
+    }
+
+    if (event.text.unicode < 128) {
+        return static_cast<char>(event.text.unicode);
+    } else {
+        return 0;
+    }
+}
+/**************************************************************************/
 static int first = 1;
 auto allegro_init() -> int
 {
@@ -473,6 +497,7 @@ auto set_gfx_mode(int /*mode*/, int w, int h, int /*a*/, int /*b*/) -> int
     screen->w = w;
     screen->h = h;
 
+    sf::err().rdbuf(nullptr);
     window = new sf::RenderWindow();
     window->create(sf::VideoMode(w * 4, h * 4), "URBAN");
     screen->vis = new sf::Sprite;

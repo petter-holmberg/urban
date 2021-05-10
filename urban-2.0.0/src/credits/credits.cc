@@ -245,7 +245,6 @@ inline void DELAY(int x)
 void showcredits()
 {
     PALETTE pal;
-    UrbanFont* ufont = nullptr;
     BITMAP* hmap = nullptr;
     BITMAP* tmp = nullptr;
     BITMAP* txt = nullptr;
@@ -257,10 +256,12 @@ void showcredits()
 
     InitLightmap();
 
-    ufont = new UrbanFont(LARGE_FONT);
+    UrbanFont ufont(LARGE_FONT);
     _buffer_ = create_bitmap(320, SCREEN_HEIGHT);
 
     hmap = icache.GetImage("credits/bump.pcx", pal);
+
+    icache.GetImage("credits/palette.pcx", pal);
 
     clear(screen);
     set_palette(pal);
@@ -274,17 +275,17 @@ void showcredits()
 
     blit(hmap, heightmap, 0, 0, 0, 0, hmap->w, hmap->h);
 
-    ufont->SetScale(180);
-    txt = ufont->print("URBAN");
+    ufont.SetScale(180);
+    txt = ufont.print("URBAN");
     cblit(txt, heightmap, 160, 30);
     destroy_bitmap(txt);
 
-    ufont->SetScale(60);
-    txt = ufont->print("THE");
+    ufont.SetScale(60);
+    txt = ufont.print("THE");
     cblit(txt, heightmap, 160, 120);
     destroy_bitmap(txt);
 
-    txt = ufont->print("CYBORG PROJECT");
+    txt = ufont.print("CYBORG PROJECT");
     cblit(txt, heightmap, 160, 150);
     destroy_bitmap(txt);
 
@@ -313,13 +314,13 @@ void showcredits()
     for (i = 0; i < NUMCI; i++) {
         blit(hmap, heightmap, 0, 0, 0, 0, hmap->w, hmap->h);
 
-        ufont->SetScale(80);
-        txt = ufont->print(_ci[i].title);
+        ufont.SetScale(80);
+        txt = ufont.print(_ci[i].title);
         cblit(txt, heightmap, 160, 20);
         destroy_bitmap(txt);
-        ufont->SetScale(100);
+        ufont.SetScale(100);
 
-        txt = ufont->print(_ci[i].name);
+        txt = ufont.print(_ci[i].name);
         cblit(txt, heightmap, 160, 80);
 
         if (i == 0 || (i > 0 && (_ci[i - 1].erase_title != 0))) {
@@ -347,7 +348,6 @@ void showcredits()
                 DoBump(tmp, 0, SCREEN_HEIGHT);
                 blit(_buffer_, screen, 0, 0, 0, 0, _buffer_->w, _buffer_->h);
             }
-            //                        quitting = 1;
             return;
         }
 
@@ -356,14 +356,12 @@ void showcredits()
         } else {
             starty = 10;
         }
-
-        /*                destroy_bitmap(morf(tmp, hmap, starty, stopy, 10));*/
         destroy_bitmap(tmp);
     }
 
     if ((special_thanks != nullptr) && (quitting == 0)) {
-        ufont->SetScale(60);
-        txt = ufont->print(special_thanks);
+        ufont.SetScale(60);
+        txt = ufont.print(special_thanks);
 
         blit(hmap, heightmap, 0, 0, 0, 0, hmap->w, hmap->h);
         cblit(txt, heightmap, 160, SCREEN_HEIGHT - 60);
@@ -391,6 +389,7 @@ void showcredits()
                 }
                 break;
             }
+            DELAY(20);
         }
         destroy_bitmap(txt);
         destroy_bitmap(tmp);

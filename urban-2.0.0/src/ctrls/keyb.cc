@@ -34,7 +34,7 @@
 
 extern Config* config;
 
-inline constexpr auto USE_CONFIG_KEYS = false;
+inline constexpr auto USE_CONFIG_KEYS = true;
 
 Keyboard_ctrl::Keyboard_ctrl()
 {

@@ -154,6 +154,8 @@ void Config::ChangeMusicVol()
         vol + (SCREEN_WIDTH - 256) / 2, 120, 192);
 
     while (running != 0) {
+        clear_keybuf();
+
         blit(backg, screen, 0, 100, 0, 100, backg->w, 23);
 
         rectfill(screen, (SCREEN_WIDTH - 256) / 2 + 2, 102,
@@ -186,12 +188,12 @@ void Config::ChangeMusicVol()
             music_vol = vol;
             break;
 
-        default:
+        case scan_code::KEY_ESC:
             running = 0;
             Save();
             break;
         };
-    };
+    }
 }
 /**************************************************************************************/
 void Config::ChangeSFXVol()
@@ -244,8 +246,9 @@ void Config::ChangeSFXVol()
             sfx_vol = vol;
             break;
 
-        default:
+        case scan_code::KEY_ESC:
             running = 0;
+            Save();
             break;
         };
     };
@@ -298,7 +301,7 @@ auto Config::GetKey(const char* Label) -> scan_code
 {
     UrbanFont fnt(SMALL_FONT2);
 
-    std::string buffer{"Please press your key for '"};
+    std::string buffer { "Please press your key for '" };
     buffer += Label + std::string("'");
     fnt.print_centre(buffer.c_str(), 320 / 2, 90);
 

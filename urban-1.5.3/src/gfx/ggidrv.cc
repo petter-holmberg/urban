@@ -27,7 +27,7 @@
     or email:
 
     jonas_b@bitsmart.com
- * 
+ *
 *****************************************************************************/
 #include <string.h>
 #include <stdio.h>
@@ -57,18 +57,18 @@ void keyboard_update() {
 	struct timeval tv={0, 0};
         ggi_event event;
         ggi_event_mask event_mask = (ggi_event_mask) (emKeyPress | emKeyRelease);
-        
+
 	while(ggiEventPoll(screen->vis, event_mask, &tv)) {
-        
+
         	ggiEventRead(screen->vis, &event, event_mask);
-                
+
 #define CASE_KEY(x, y) \
 	case x: \
 		key[y] = (event.any.type == evKeyPress)?1:0; \
 	        break;
-                
+
 		switch(event.key.label) {
-	   
+
                 	CASE_KEY(GIIUC_A, KEY_A);
                 	CASE_KEY(GIIUC_B, KEY_B);
                 	CASE_KEY(GIIUC_C, KEY_C);
@@ -141,18 +141,18 @@ int keypressed() {
 	struct timeval tv={0, 0};
         ggi_event event;
         ggi_event_mask event_mask = (ggi_event_mask) (emKeyPress);
-	
+
 	if(num_keypressed)
 		return 1;
-        
+
 	if(!ggiEventPoll(screen->vis, event_mask, &tv))
 		return 0;
 
 	num_keypressed = 1;
-	
+
 	return 1;
 /*       	ggiEventRead(screen->vis, &event, event_mask);
-	
+
 	return (event.any.type == evKeyPress)?1:0;*/
 }
 /**************************************************************************/
@@ -161,19 +161,19 @@ int readkey() {
         ggi_event event;
    	int Key;
         ggi_event_mask event_mask = (ggi_event_mask) (emKeyPress | emKeyRepeat);
-        
+
 	while(!ggiEventPoll(screen->vis, event_mask, &tv));
-	
+
 	if(num_keypressed)
 		num_keypressed--;
-      
+
        	ggiEventRead(screen->vis, &event, event_mask);
-   
+
 #define CASE_KEY(x, y) case x: \
 	return y << 8 | (event.key.sym & 0xff);
-   
+
 	switch(event.key.label) {
-	   
+
                	CASE_KEY(GIIUC_A, KEY_A);
                	CASE_KEY(GIIUC_B, KEY_B);
                	CASE_KEY(GIIUC_C, KEY_C);
@@ -252,16 +252,16 @@ int allegro_init() {
 
         for(int i=0;i<256;i++)
         	black_palette[i].r = black_palette[i].g = black_palette[i].b = 0;
-        
+
 	return 1;
 }
 /**************************************************************************/
 int install_keyboard() {
 	if(first)
         	allegro_init();
-	
-	num_keypressed = 0;                
-	
+
+	num_keypressed = 0;
+
 	return 1;
 }
 /**************************************************************************/
@@ -271,7 +271,7 @@ void keyboard_reset() {
 /**************************************************************************/
 int install_timer() {
 	memset(key, 0, 128);
-        
+
 	return 1;
 }
 /**************************************************************************/
@@ -280,7 +280,7 @@ void close_gfx() {
 		return;
 	if(screen->vis == NULL)
 		return;
-	
+
 	fprintf(stderr, "Closing ggi...");
 	ggiClose(screen->vis);
 	fprintf(stderr, "done\n");
@@ -291,46 +291,46 @@ int set_gfx_mode(int mode, int w, int h, int a, int b) {
         int err;
         ggi_mode m;
 	char *target;
-        
+
 	memset(key, 0, 128);
 	screen = new BITMAP;
         screen->w = w;
         screen->h = h;
-        
+
         if(!(screen->vis = ggiOpen(NULL))) {
         	ggiPanic("GGI Panic, Can't open default visual!\n");
         }
 
         ggiSetFlags(screen->vis, GGIFLAG_ASYNC);
-        
+
         if((err = ggiSetSimpleMode(screen->vis, w, h, GGI_AUTO, GT_8BIT))) {
-	   
+
 	        if((err = ggiSetSimpleMode(screen->vis, GGI_AUTO, GGI_AUTO, GGI_AUTO, GT_8BIT))) {
-	   
+
 	        	fprintf(stderr, "Looks like you don't have a 256 color target\nTesting with palemu target (this makes URBAN slower)\n", w, h);
-			
+
 			ggiClose(screen->vis);
-						
+
 			if(getenv("GGI_DISPLAY") == NULL)
 				target = strdup("palemu");
 			else {
 				target = new char[4096];
 				sprintf(target, "palemu:%s", getenv("GGI_DISPLAY"));
 			}
-			
+
 		        if(!(screen->vis = ggiOpen(target))) {
 				delete [] target;
 		        	ggiPanic("GGI Panic, Can't open palemu visual!\n");
 		        }
 			delete [] target;
-			
+
 		        ggiSetFlags(screen->vis, GGIFLAG_ASYNC);
-			
+
 		        if((err = ggiSetSimpleMode(screen->vis, w, h, GGI_AUTO, GT_8BIT))) {
-	   
+
 			        if((err = ggiSetSimpleMode(screen->vis, GGI_AUTO, GGI_AUTO, GGI_AUTO, GT_8BIT))) {
 			        	fprintf(stderr, "Urban need at least %dx%d with at least 256 colors\n", w, h);
-					exit(1);					
+					exit(1);
 				}
 			}
 		}
@@ -340,13 +340,13 @@ int set_gfx_mode(int mode, int w, int h, int a, int b) {
         if(m.visible.x < w || m.visible.y < h) {
         	fprintf(stderr, "Urban need at least %dx%d with at least 256 colors\n", w, h);
         }
-	   
+
         if(((buf = ggiDBGetBuffer(screen->vis, 0)) == NULL)||(!(buf->type & GGI_DB_SIMPLE_PLB))) {
-        
+
         	fprintf(stderr, "Can't get screen directbuffer (this makes URBAN slower)\n");
 
 	} else {
-		
+
 	        screen->dat = (char *)buf->write;
 	        screen->stride = buf->buffer.plb.stride;
 
@@ -361,10 +361,10 @@ int set_gfx_mode(int mode, int w, int h, int a, int b) {
                 	screen_offset_y =((m.visible.y - h) / 2);
         	}
 		screen->line = new char *[screen->h];
-	
+
 		for(int i=0;i < screen->h;i++)
 			screen->line[i] = screen->dat + i * screen->stride;
-	
+
 		have_directbuffer = 1;
 		return err;
 	}
@@ -373,12 +373,12 @@ int set_gfx_mode(int mode, int w, int h, int a, int b) {
 	screen->stride = screen->w;
 
 	screen_offset_x = screen_offset_y = 0;
-	
+
 	screen->line = new char *[screen->h];
-	
+
 	for(int i=0;i < screen->h;i++)
 		screen->line[i] = screen->dat + i * screen->stride;
-	
+
 	have_directbuffer = 0;
 }
 /**************************************************************************/
@@ -387,13 +387,13 @@ int set_palette(PALETTE p) {
 	int i;
 
         for(i=0;i<256;i++) {
-        
+
         	pal[i].r = p[i].r << 10;
         	pal[i].g = p[i].g << 10;
         	pal[i].b = p[i].b << 10;
         }
         ggiSetPalette(screen->vis, 0, 1 << 8, pal);
-        
+
 	return 0;
 };
 /**************************************************************************/
@@ -403,7 +403,7 @@ void get_palette(PALETTE p) {
 
         ggiGetPalette(screen->vis, 0, 1 << 8, pal);
         for(i=0;i<256;i++) {
-        
+
         	p[i].r = pal[i].r >> 10;
         	p[i].g = pal[i].g >> 10;
         	p[i].b = pal[i].b >> 10;
@@ -414,16 +414,16 @@ void stretch_line(char *src, char *dst, int s_w, int d_w) {
         char *dst_end = dst + d_w;
         int i1, i2, dd;
 	int x_inc = s_w / d_w;
-	
+
 	s_w %= d_w;
-	
+
 	i2 = (dd = (i1 = 2 * s_w) - d_w) - d_w;
-	
+
         for(;dst < dst_end;dst++,src+=x_inc) {
-        
+
 		*dst = *src;
                 if(dd >= 0) {
-                
+
                 	src++;
                         dd += i2;
                 } else
@@ -440,10 +440,10 @@ void stretch_blit(BITMAP *source, BITMAP *dest, int source_x, int source_y, int 
         char *src = source->dat + source->stride * source_y + source_x;
         int destwidth = dest->stride;
         int srcwidth = source->stride;
-        
+
 	/* Clipping */
         if(start_x < 0) {
-        
+
         	w += start_x;
                 src -= start_x;
                 start_x = 0;
@@ -452,26 +452,26 @@ void stretch_blit(BITMAP *source, BITMAP *dest, int source_x, int source_y, int 
         	w = dest->w;
         }
         if(start_y < 0) {
-        
+
         	h += start_y;
                 src -= (start_y * source->stride);
                 start_y = 0;
         }
         if((start_y  + h)> dest->h) {
-        
+
         	h -= (start_y  + h) - dest->h;
         }
         if((start_x  + w)> dest->w) {
-        
+
         	w -= (start_x  + w) - dest->w;
         }
         if(h < 0)
         	return;
         if(w < 0)
         	return;
-                
+
 	dst = dest->dat + (dest->stride * start_y) + start_x;
-        
+
         if(h > dest->h) {
         	h = dest->h;
         }
@@ -479,11 +479,11 @@ void stretch_blit(BITMAP *source, BITMAP *dest, int source_x, int source_y, int 
         char *dst_end = dst + (destwidth * h);
         int j = s_h / d_h;
 	int i1, i2, dd;
-	
+
 	s_h %= d_h;
-	
+
 	i2 = (dd = (i1 = 2 * s_h) - d_h) - d_h;
-        
+
         for(;dst < dst_end;dst+=destwidth,src+=(j * srcwidth)) {
         	stretch_line(src, dst, s_w, w);
                 if(dd >= 0) {
@@ -507,9 +507,9 @@ void blit(BITMAP *source, BITMAP *dest, int source_x, int source_y, int dest_x, 
         char *src = source->dat + source->stride * source_y + source_x;
         int destwidth = dest->stride;
         int srcwidth = source->stride;
-        
+
         if(start_x < 0) {
-        
+
         	w += start_x;
                 src -= start_x;
                 start_x = 0;
@@ -518,26 +518,26 @@ void blit(BITMAP *source, BITMAP *dest, int source_x, int source_y, int dest_x, 
         	w = dest->w;
         }
         if(start_y < 0) {
-        
+
         	h += start_y;
                 src -= (start_y * source->stride);
                 start_y = 0;
         }
         if((start_y  + h)> dest->h) {
-        
+
         	h -= (start_y  + h) - dest->h;
         }
         if((start_x  + w)> dest->w) {
-        
+
         	w -= (start_x  + w) - dest->w;
         }
         if(h < 0)
         	return;
         if(w < 0)
         	return;
-                
+
 	dst = dest->dat + (dest->stride * start_y) + start_x;
-        
+
         if(h > dest->h) {
         	h = dest->h;
         }
@@ -546,7 +546,7 @@ void blit(BITMAP *source, BITMAP *dest, int source_x, int source_y, int dest_x, 
 //		int lx = (int)src - ((int)source->dat + source_y * source->stride);
 		int ly = source_y;
 		while (h > 0) {
-			
+
 			ggiPutBox(screen->vis, start_x, ly++, w, 1, src);
 			memcpy(dst, src, w);
 			dst += destwidth;
@@ -562,12 +562,12 @@ void blit(BITMAP *source, BITMAP *dest, int source_x, int source_y, int dest_x, 
 		}
 	}
         if(dest == screen) {
-/*		ggiPutBox(screen->vis, start_x + screen_offset_x, 
+/*		ggiPutBox(screen->vis, start_x + screen_offset_x,
 			  start_y + screen_offset_y, w, h2, screen->dat);*/
-		
+
 	       	ggiFlushRegion(screen->vis, start_x + screen_offset_x,
 	               	start_y + screen_offset_y, w, h2);
-		
+
 	}
 }
 /**************************************************************************/
@@ -580,9 +580,9 @@ void masked_blit(BITMAP *source, BITMAP *dest, int source_x, int source_y, int d
         register char *src = source->dat + source->stride * source_y + source_x;
         int destwidth = dest->stride;
         int srcwidth = source->stride;
-        
+
         if(start_x < 0) {
-        
+
         	w += start_x;
                 src -= start_x;
                 start_x = 0;
@@ -591,26 +591,26 @@ void masked_blit(BITMAP *source, BITMAP *dest, int source_x, int source_y, int d
         	w = dest->w;
         }
         if(start_y < 0) {
-        
+
         	h += start_y;
                 src -= (start_y * source->stride);
                 start_y = 0;
         }
         if((start_y  + h)> dest->h) {
-        
+
         	h -= (start_y  + h) - dest->h;
         }
         if((start_x  + w)> dest->w) {
-        
+
         	w -= (start_x  + w) - dest->w;
         }
         if(h < 0)
         	return;
         if(w < 0)
         	return;
-                
+
 	dst = dest->dat + (dest->stride * start_y) + start_x;
-        
+
         if(h > dest->h) {
         	h = dest->h;
         }
@@ -619,7 +619,7 @@ void masked_blit(BITMAP *source, BITMAP *dest, int source_x, int source_y, int d
 //		int lx = (int)dst - ((int)dest->dat + dest_y * dest->stride);
 		int ly = dest_y;
 		while (h > 0) {
-			
+
 	        	for(register int i = 0;i< w;i++)
 	                	if(src[i])
 	                        	dst[i] = src[i];
@@ -669,7 +669,7 @@ void rectfill(BITMAP *bmp, int x1, int y1, int x2, int y2, int c) {
 
 	char *ptr = bmp->dat + (y1 * bmp->stride) + x1;
         while(h) {
-        
+
 	        memset(ptr, c, w);
                 ptr += bmp->stride;
                 h--;
@@ -686,7 +686,7 @@ void rectfill(BITMAP *bmp, int x1, int y1, int x2, int y2, int c) {
 /**************************************************************************/
 void destroy_bitmap(BITMAP *bmp) {
 	free(bmp->dat);
-        
+
         free(bmp);
 }
 /**************************************************************************/
@@ -694,13 +694,13 @@ void clear_keybuf() {
 	struct timeval tv={0, 0};
         ggi_event event;
         ggi_event_mask event_mask = (ggi_event_mask) (emKeyPress | emKeyRelease | emKeyRepeat);
-        
+
 	while(ggiEventPoll(screen->vis, event_mask, &tv))
         	ggiEventRead(screen->vis, &event, event_mask);
 
-	keyboard_reset();	
-	
-	num_keypressed = 0;                
+	keyboard_reset();
+
+	num_keypressed = 0;
 };
 /**************************************************************************/
 int install_int_ex(void (*proc)(), long speed) {
@@ -721,7 +721,7 @@ int set_color(int i, RGB *rgb) {
         Color.g = rgb->g << 10;
         Color.b = rgb->b << 10;
         ggiSetPalette(screen->vis, i, 1, &Color);
-        
+
 	return 0;
 }
 /**************************************************************************/
@@ -731,7 +731,7 @@ int vsync() {
 /**************************************************************************/
 void fade_interpolate(PALLETE src, PALETTE dest, PALETTE out, int pos, int start, int end) {
 	for(int i = start; i < end; i++) {
-        
+
         	out[i].r = ((src[i].r * (64 - pos)) + (dest[i].r * pos)) / 64;
         	out[i].g = ((src[i].g * (64 - pos)) + (dest[i].g * pos)) / 64;
         	out[i].b = ((src[i].b * (64 - pos)) + (dest[i].b * pos)) / 64;
@@ -746,7 +746,7 @@ void fade_in(PALLETE p, int speed) {
         get_palette(tmp_pal);
 
         for(i=0;i < 65; i+=speed) {
-        
+
 		fade_interpolate(tmp_pal, p, pal, i, 0, 255);
 	        set_palette(pal);
                 ggiFlush(screen->vis);
@@ -764,7 +764,7 @@ void fade_out(int speed) {
         get_palette(tmp_pal);
 
         for(i=0;i < 65; i+=speed) {
-        
+
 		fade_interpolate(tmp_pal, black_palette, pal, i, 0, 255);
 	        set_palette(pal);
                 ggiFlush(screen->vis);
@@ -782,14 +782,14 @@ BITMAP *create_bitmap(int w, int h) {
 
         bmp->vis = NULL;
         bmp->dat = new char[w * h];
-	
+
 	bmp->line = new char *[h];
-	
+
 	for(int i=0;i < bmp->h;i++)
 		bmp->line[i] = bmp->dat + i * bmp->stride;
-	
+
         clear(bmp);
-        
+
         return bmp;
 }
 /**************************************************************************/
@@ -807,13 +807,13 @@ void clear(BITMAP *bmp) {
 	register int h = bmp->h;
 	register char *ptr = bmp->dat;
 	register int stride = bmp->stride;
-	
+
 	while(h--) {
-		
+
 		memset(ptr, 0, stride);
 		ptr += stride;
 	}
-	
+
 	if(bmp == screen) {
 		if(!have_directbuffer) {
 			ggiSetGCForeground(screen->vis, 0);
@@ -827,13 +827,13 @@ void clear_to_color(BITMAP *bmp, register int color) {
 	register int h = bmp->h;
 	register char *ptr = bmp->dat;
 	register int stride = bmp->stride;
-	
+
 	while(h--) {
-		
+
 		memset(ptr, color, stride);
 		ptr += stride;
 	}
-	
+
 	if(bmp == screen) {
 		if(!have_directbuffer) {
 			ggiSetGCForeground(screen->vis, color);
@@ -841,7 +841,7 @@ void clear_to_color(BITMAP *bmp, register int color) {
 		}
 		ggiFlush(screen->vis);
 	}
-	
+
 }
 /**************************************************************************/
 

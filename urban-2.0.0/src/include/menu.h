@@ -25,7 +25,6 @@ public:
     ~Menu();
     int show_menu(int type);
 private
-    ;
     int current_choice;
     int num_choices;
 };

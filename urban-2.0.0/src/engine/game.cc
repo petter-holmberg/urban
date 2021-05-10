@@ -265,7 +265,7 @@ auto GetLevelName(std::string text) -> int
 auto NewGame(int slot) -> int
 {
     int quit = 0;
-    HighScore* hs = nullptr;
+    std::unique_ptr<HighScore> hs;
     const char* map_name = nullptr;
     char name[80];
     char filename[1024];
@@ -319,11 +319,8 @@ auto NewGame(int slot) -> int
 
             quit = 1;
             display_level_info(-1);
-            hs = new HighScore(ENGINE.score.GetScore(), level);
-            delete hs;
-
+            hs.reset(new HighScore(ENGINE.score.GetScore(), level));
             break;
-
         case 0: // ESC pressed
             fade_out(5);
             quit = 1;
@@ -341,8 +338,7 @@ auto NewGame(int slot) -> int
             if (level > NUM_LEVELS) {
                 quit = 1;
                 level--;
-                hs = new HighScore(ENGINE.score.GetScore(), level);
-                delete hs;
+                hs.reset(new HighScore(ENGINE.score.GetScore(), level));
             } else {
                 slot = SaveGame(name);
                 if (slot != 0) {

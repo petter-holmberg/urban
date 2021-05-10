@@ -108,11 +108,7 @@ auto HighScore::GetName() -> std::string
     UrbanFont fnt(SMALL_FONT2);
 
     if (Name.empty()) {
-        if (getenv("USER") != nullptr) {
-            Name = ::getenv("USER");
-        } else {
-            Name = "Unknown";
-        }
+        Name = "Unknown";
     }
 
     auto pos = Name.size();
@@ -135,34 +131,27 @@ auto HighScore::GetName() -> std::string
 
         masked_blit(textbmp, screen, 0, 0, 50, 60, 220, 55);
 
-        auto key = readkey();
+        auto letter = readtext();
 
-        if (key == scan_code::KEY_ENTER) {
-
+        if (letter == 13) { // ENTER
             Name[pos] = 0;
             destroy_bitmap(textbmp);
             return Name;
         }
-        if (key == scan_code::KEY_ESC) {
-
+        if (letter == 27) { // ESC
             destroy_bitmap(textbmp);
             Name = "Unknown";
             return Name;
         }
-        if (key == scan_code::KEY_BACKSPACE) {
+        if (letter == 59) { // BACKSPACE
             if (pos == 0) {
                 continue;
             }
             pos--;
             Name[pos] = 0;
-        } else if (pos < 10) {
-            /*
-            if (!((key & 0xff) < 'A' || (key & 0xff) > 'z') || ((key & 0xff) == ' ')) {
-
-                Name[pos++] = (key & 0xff);
-                Name[pos] = 0;
-            }
-*/
+        } else if (((letter >= 'A') && (letter <= 'z')) || (letter == ' ')) {
+            Name[pos++] = letter;
+            Name[pos] = 0;
         }
     } while (1);
 
@@ -194,11 +183,6 @@ void HighScore::Open()
 {
     // Reset Score
     highscore.fill({});
-#ifdef HSFILENAME
-    if ((fd = fopen(HSFILENAME, "rb")) == nullptr) {
-        return;
-    }
-#else
     char filename[1024];
 
     sprintf(filename, "%s/.urban/hs.dat", getenv("HOME"));
@@ -206,7 +190,6 @@ void HighScore::Open()
     if ((fd = fopen(filename, "rb")) == nullptr) {
         return;
     }
-#endif
 
     auto err = fread(highscore.data(), sizeof(Score_t), NUM_HIGHSCORES, fd);
 
@@ -215,15 +198,8 @@ void HighScore::Open()
 /***************************************************************************/
 void HighScore::Save()
 {
-
-#ifdef HSFILENAME
-    if ((fd = fopen(HSFILENAME, "wb")) == nullptr) {
-        return;
-    }
-#else
     char filename[1024];
 
-    /* Create dir */
     sprintf(filename, "%s/.urban", getenv("HOME"));
     std::filesystem::create_directory(std::filesystem::path { filename });
 
@@ -232,7 +208,6 @@ void HighScore::Save()
     if ((fd = fopen(filename, "wb")) == nullptr) {
         return;
     }
-#endif
 
     fwrite(highscore.data(), sizeof(Score_t), NUM_HIGHSCORES, fd);
 

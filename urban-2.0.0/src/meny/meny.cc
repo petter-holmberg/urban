@@ -80,7 +80,7 @@ void LoadGame();
 /*****************************************************************************************/
 auto MenuChoice(int alternative) -> int
 {
-    HighScore* hs = nullptr;
+    std::unique_ptr<HighScore> hs;
 
     switch (alternative) {
     case 1:
@@ -107,9 +107,8 @@ auto MenuChoice(int alternative) -> int
         break;
 
     case 3:
-        hs = new HighScore();
+        hs.reset(new HighScore());
         readkey();
-        delete hs;
         break;
 
     case 4:
@@ -159,9 +158,11 @@ auto Do_Menu(const std::string& text, int num_items, int pos) -> int
     blit(backg, screen, 0, 0, 0, 0, backg->w, backg->h);
     masked_blit(textbmp, screen, 0, 0, text_x, text_y, textbmp->w, textbmp->h);
 
-    clear_keybuf();
+    masked_blit(choice, screen, 0, 0, text_x - 10 - choice->w, text_y + FONT_H * (pos - 1), choice->w, choice->h);
+    rest(1000);
 
     while (looping != 0) {
+        clear_keybuf();
 
         blit(backg, screen, text_x - 10 - choice->w, text_y - 20, text_x - 10 - choice->w, text_y - 20, choice->w, choice->h * 10);
         masked_blit(choice, screen, 0, 0, text_x - 10 - choice->w, text_y + FONT_H * (pos - 1), choice->w, choice->h);

@@ -131,6 +131,7 @@ void masked_blit(BITMAP* source, BITMAP* dest, int source_x, int source_y, int d
 void destroy_bitmap(BITMAP* bmp);
 void clear_keybuf();
 scan_code readkey();
+char readtext();
 BITMAP* create_bitmap(int w, int h);
 void textout(BITMAP* bmp, FONT* f, char* str, int x, int y, int color);
 void textout_centre(BITMAP* bmp, FONT* f, char* str, int x, int y, int color);
