@@ -53,6 +53,8 @@ To install the music and sound effects, simply copy the `snd` directory to `/usr
 
 If the installation was successful the game should be installed under `/usr/local/bin/urban` and can be started by typing `urban` in a console. Game configuration, highscores and savegame files are located in `~/.urban/`.
 
+Pictures of the original script (in Swedish) are included in the repository.
+
 Story
 -----
 
