@@ -411,10 +411,12 @@ auto readkey() -> scan_code
         return scan_code::KEY_9;
     case sf::Keyboard::Key::Num0:
         return scan_code::KEY_0;
-    case sf::Keyboard::Key::Escape:
-        return scan_code::KEY_ESC;
     case sf::Keyboard::Key::Space:
         return scan_code::KEY_SPACE;
+    case sf::Keyboard::Key::Escape:
+        return scan_code::KEY_ESC;
+    case sf::Keyboard::Key::Backspace:
+        return scan_code::KEY_BACKSPACE;
     case sf::Keyboard::Key::Up:
         return scan_code::KEY_UP;
     case sf::Keyboard::Key::Down:
@@ -423,7 +425,10 @@ auto readkey() -> scan_code
         return scan_code::KEY_LEFT;
     case sf::Keyboard::Key::Right:
         return scan_code::KEY_RIGHT;
+    case sf::Keyboard::Key::Enter:
+        return scan_code::KEY_ENTER;
     }
+
     return scan_code::NONE;
 }
 /**************************************************************************/

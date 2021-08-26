@@ -110,9 +110,9 @@ PlayerData DefaultPData = {
     300, 0
 };
 
-auto GetLevelName(std::string text) -> int;
+auto GetLevelName(std::string& text) -> int;
 /**************************************************************************/
-auto SaveGame(std::string name) -> int
+auto SaveGame(std::string& name) -> int
 {
     int pos = 0;
 
@@ -184,26 +184,23 @@ void display_level_info(int level)
     clear_keybuf();
 }
 /**************************************************************************/
-auto GetLevelName(std::string text) -> int
+auto GetLevelName(std::string& text) -> int
 {
     char message[50];
-    int pos = 1;
     UrbanFont fnt(SMALL_FONT2);
 
     if (text.empty()) {
         text = "MYLEVEL";
     }
+    int pos = text.size();
 
-    // Ritar ett rutnär
+    // Draws a grid
     for (int x = 0; x < 320; x += 2) {
         for (int y = 0; y < 240; y += 2) {
-
             putpixel(screen, x, y, 0);
             putpixel(screen, x + 1, y + 1, 0);
         }
     }
-
-    pos = text.size();
 
     BITMAP* textbmp = create_bitmap(220, 55);
 
@@ -224,13 +221,9 @@ auto GetLevelName(std::string text) -> int
         auto key = readkey();
 
         if (key == scan_code::KEY_ENTER) {
-
-            text[pos] = 0;
-            /*                        strupr(text);*/
             return 1;
         }
         if (key == scan_code::KEY_ESC) {
-
             destroy_bitmap(textbmp);
             return 0;
         }
@@ -238,23 +231,58 @@ auto GetLevelName(std::string text) -> int
             if (pos == 0) {
                 continue;
             }
-            pos--;
-            text[pos] = 0;
+            text.pop_back();
+            --pos;
         }
         if (key == scan_code::KEY_SPACE) {
             if (pos > 9) {
                 continue;
             }
-            text[pos++] = ' ';
-        } else if (pos < 9) {
-
-            /*
-            if (!((key & 0xff) < 'A' || (key & 0xff) > 'z') || ((key & 0xff) == ' ')) {
-
-                text[pos++] = toupper((key & 0xff));
-                text[pos] = 0;
+            text.push_back(' ');
+            ++pos;
+        } else {
+            if (pos > 9) {
+                continue;
             }
-*/
+            switch (key) {
+                case scan_code::KEY_A:
+                case scan_code::KEY_B:
+                case scan_code::KEY_C:
+                case scan_code::KEY_D:
+                case scan_code::KEY_E:
+                case scan_code::KEY_F:
+                case scan_code::KEY_G:
+                case scan_code::KEY_H:
+                case scan_code::KEY_I:
+                case scan_code::KEY_J:
+                case scan_code::KEY_K:
+                case scan_code::KEY_L:
+                case scan_code::KEY_M:
+                case scan_code::KEY_N:
+                case scan_code::KEY_O:
+                case scan_code::KEY_P:
+                case scan_code::KEY_Q:
+                case scan_code::KEY_R:
+                case scan_code::KEY_S:
+                case scan_code::KEY_T:
+                case scan_code::KEY_U:
+                case scan_code::KEY_V:
+                case scan_code::KEY_W:
+                case scan_code::KEY_X:
+                case scan_code::KEY_Y:
+                case scan_code::KEY_Z:
+                {
+                    int i = 0;
+                    while (keyinfo[i].num != key) {
+                        ++i;
+                    }
+                    text.push_back(keyinfo[i].description[0]);
+                    ++pos;
+                    break;
+                }
+                default:
+                    break;
+            }
         }
     } while (1);
 
@@ -267,7 +295,7 @@ auto NewGame(int slot) -> int
     int quit = 0;
     std::unique_ptr<HighScore> hs;
     const char* map_name = nullptr;
-    char name[80];
+    std::string name;
     char filename[1024];
     PlayerData pdat {};
     int level = 1;
@@ -344,8 +372,7 @@ auto NewGame(int slot) -> int
                 if (slot != 0) {
                     SavedGames[slot - 1].dat = pdat;
                     SavedGames[slot - 1].level = level;
-                    std::copy(std::begin(name), std::end(name), std::begin(SavedGames[slot - 1].name));
-
+                    std::copy_n(name.c_str(), name.size() + 1, SavedGames[slot - 1].name);
                     /* Create dir */
                     sprintf(filename, "%s/.urban", getenv("HOME"));
                     std::filesystem::create_directory(std::filesystem::path { filename });

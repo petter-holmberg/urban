@@ -237,7 +237,7 @@ void LoadGame()
         if (SavedGame.level != 0) {
             buffer += std::string(SavedGame.name) + "\n";
         } else {
-            buffer = "EMPTY\n";
+            buffer += "EMPTY\n";
         }
     }
 
