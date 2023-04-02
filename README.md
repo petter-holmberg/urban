@@ -44,7 +44,7 @@ Some of the main updates to the source code in U.R.B.A.N 2.0 include:
 
 On Ubuntu, U.R.B.A.N 2.0 can be installed as follows:
 
-    cd urban-2.0.0
+    cd urban-2.0
     ./configure
     make
     sudo make install
